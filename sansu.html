@@ -2225,29 +2225,31 @@
 
   function buildKukuOverview(area) {
     for (var d = 1; d <= 9; d++) {
-      var ds = danStats(d);
+      (function (dd) {
+      var ds = danStats(dd);
       var row = el('div', 'danrow' + (ds.clear === 9 ? ' done' : ''));
       var head = el('div', 'dr-head');
-      head.appendChild(el('span', 'dr-t', d + 'の だん'));
+      head.appendChild(el('span', 'dr-t', dd + 'の だん'));
       var rb = el('span', 'dr-bar');
       var rbf = el('i');
       rbf.style.width = (ds.clear / 9 * 100) + '%';
       if (ds.clear === 9) { rbf.className = 'full'; }
       rb.appendChild(rbf);
       head.appendChild(rb);
-      head.appendChild(el('span', 'dr-r', ds.clear + ' / 9' + (ds.clear === 9 ? ' ' + STAMPS['d' + d] : '')));
+      head.appendChild(el('span', 'dr-r', ds.clear + ' / 9' + (ds.clear === 9 ? ' ' + STAMPS['d' + dd] : '')));
       var kbtn = el('button', 'dr-kara', '🎧');
       kbtn.type = 'button';
-      kbtn.setAttribute('aria-label', d + 'の だんを うたう');
-      kbtn.addEventListener('click', function () { openKaraoke(d); });
+      kbtn.setAttribute('aria-label', dd + 'の だんを うたう');
+      kbtn.addEventListener('click', function () { openKaraoke(dd); });
       head.appendChild(kbtn);
       row.appendChild(head);
       var cells = el('div', 'dr-cells');
       for (var b = 1; b <= 9; b++) {
-        cells.appendChild(buildCell(BY_KEY['k' + d + ',' + b], false));
+        cells.appendChild(buildCell(BY_KEY['k' + dd + ',' + b], false));
       }
       row.appendChild(cells);
       area.appendChild(row);
+      })(d);
     }
   }
 
