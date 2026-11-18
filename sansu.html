@@ -710,6 +710,7 @@
     .kara-tip{display:none}
   }
 </style>
+<script src="./kuku-audio.js"></script>
 <script>
 /* ===== わくわく パーク 共通プレイヤー =====
    トップで えらんだ なまえを、この アプリでも そのまま つかう。
@@ -1568,9 +1569,87 @@
     } catch (e) { return null; }
   }
 
+  /* ---------- こえ（MP3 ファイル・プレイヤーは 1つだけ） ----------
+     1つの プレイヤーを つかいまわすと、iOS の Safari でも Fire の Silk でも
+     つぎつぎ ならせる（ブラウザの じどう さいせい ブロックを うけない）。
+     MP3 が ない ときだけ、これまで どおり はなす しくみに もどる。 */
+  var karaPlayer = null;
+  var karaVoiceTok = 0;
+
+  function kukuAudio() {
+    var pack = window.KUKU_AUDIO;
+    return (pack && typeof pack === 'object') ? pack : null;
+  }
+
+  function karaEl() {
+    if (karaPlayer) { return karaPlayer; }
+    try {
+      karaPlayer = new Audio();
+      karaPlayer.preload = 'auto';
+      karaPlayer.setAttribute('playsinline', '');
+    } catch (e) { karaPlayer = null; }
+    return karaPlayer;
+  }
+
+  function karaVoiceStop() {
+    karaVoiceTok += 1;
+    if (!karaPlayer) { return; }
+    try { karaPlayer.pause(); } catch (e) {}
+    try { karaPlayer.onended = null; karaPlayer.onerror = null; } catch (e) {}
+  }
+
+  /* key（'k1,1' など）の MP3 を ならす。おわったら done。
+     MP3 が よめない・ない ときは、はなす しくみで よむ。 */
+  function karaSay(key, text, done) {
+    if (muted) { return; }
+    var pack = kukuAudio();
+    var el = pack ? karaEl() : null;
+    var tok = ++karaVoiceTok;
+    var finished = false;
+
+    function finish() {
+      if (finished || tok !== karaVoiceTok) { return; }
+      finished = true;
+      done();
+    }
+
+    function bySpeech() {
+      var u = speakYomi(text, karaRate());
+      if (u) { u.onend = finish; u.onerror = finish; }
+    }
+
+    if (!pack || !el || !pack[key]) { bySpeech(); return; }
+    var started = false;
+    el.onended = finish;
+    el.onerror = function () {
+      if (started) { return; }
+      started = true;
+      el.onended = null;
+      el.onerror = null;
+      bySpeech();
+    };
+    try {
+      el.pause();
+      el.src = pack[key];
+      el.playbackRate = Math.max(0.5, Math.min(2, kara.speed));
+      el.currentTime = 0;
+      var pr = el.play();
+      if (pr && typeof pr.catch === 'function') {
+        pr.catch(function () {
+          if (started) { return; }
+          started = true;
+          el.onended = null;
+          el.onerror = null;
+          bySpeech();
+        });
+      }
+    } catch (e) { bySpeech(); }
+  }
+
   /* 「とめる」を おした とき・だんや そくどを かえた とき だけ つかう。
      ふつうの すてっぷ すすみ（advance）では よばない こと。 */
   function karaSilence() {
+    karaVoiceStop();
     try { if (window.speechSynthesis) { window.speechSynthesis.cancel(); } } catch (e) {}
   }
 
@@ -1766,33 +1845,32 @@
     var y = yomiOf(q);
     var parts = splitYomi(y);
     var spoken = kara.hide ? parts.front : y;
+    var key = 'k' + kara.dan + ',' + (kara.i + 1) + (kara.hide ? '_q' : '');
     karaShow(kara.i);
     playBeat(kara.i);
-    var ms = karaStepMs(spoken, kara.speed) + (kara.hide ? 900 : 0);
+    var ms = karaStepMs(spoken, kara.speed);
     var t0 = Date.now();
-    var u = speakYomi(spoken, karaRate());
     var moved = false;
 
     function advance() {
       if (moved) { return; }
       moved = true;
       if (!kara.playing || kara.token !== tok) { return; }
-      /* ここで karaSilence()（＝cancel）を よぶと、iOS では つぎの speak が
-         うちけされて むせいに なる。自然な すすみ では よばない。 */
       kara.i += 1;
       if (kara.i >= KARA_TOTAL) { karaFinish(); return; }
       karaStep();
     }
 
-    kara.timer = setTimeout(advance, ms + 1200);
-    if (u) {
-      u.onend = function () {
-        if (moved) { return; }
-        var left = ms - (Date.now() - t0);
-        if (kara.timer) { clearTimeout(kara.timer); }
-        kara.timer = setTimeout(advance, Math.max(180, left + 160));
-      };
-    }
+    /* こえが でなくても・ファイルが こわれて いても すすむ ための 保険 */
+    kara.timer = setTimeout(advance, ms + 4200);
+
+    karaSay(key, spoken, function () {
+      if (moved) { return; }
+      var gap = kara.hide ? 1300 : 280;
+      var wait = Math.max(0, ms - (Date.now() - t0)) + gap;
+      if (kara.timer) { clearTimeout(kara.timer); }
+      kara.timer = setTimeout(advance, wait);
+    });
   }
 
   function karaFinish() {
@@ -2864,7 +2942,13 @@
     savePref();
     var btn = $('btnMute');
     btn.textContent = muted ? '🔇' : '🔊';
-    if (muted) { btn.classList.add('off'); }
+    if (muted) {
+      btn.classList.add('off');
+      /* すぐ とめる */
+      karaVoiceStop();
+      try { if (window.speechSynthesis) { window.speechSynthesis.cancel(); } } catch (e) {}
+      if (kara.playing) { karaStop(); }
+    }
     else { btn.classList.remove('off'); playTap(); }
   }
 
@@ -3075,6 +3159,7 @@
       setSpeed: setKaraSpeed,
       toggleHide: toggleKaraHide,
       stepMs: karaStepMs,
+      playerOf: function () { return karaPlayer; },
       nowCard: function () {
         var n = document.querySelector('#karaCards .kcard.now');
         return n ? n.getAttribute('data-i') : null;
