@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>layout check</title>
+<style>
+  body{margin:0;padding:6px;font:12px/1.3 sans-serif;background:#DDD;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start}
+  .sw{background:#fff;border:1px solid #AAA}
+  iframe{display:block;border:0}
+</style>
+</head>
+<body>
+<script>
+  const apps = ["kokugo","sansu","kokki","hyakunin","shiritori","todofuken"];
+  for (const w of [375, 820]) {
+    for (const a of apps) {
+      const box = document.createElement("div");
+      box.className = "sw";
+      const f = document.createElement("iframe");
+      f.width = w; f.height = (w < 500 ? 812 : 1000);
+      f.dataset.app = a; f.dataset.w = w;
+      f.src = a + ".html";
+      box.appendChild(f);
+      document.body.appendChild(box);
+    }
+  }
+</script>
+</body>
+</html>
