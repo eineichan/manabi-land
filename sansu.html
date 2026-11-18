@@ -528,7 +528,235 @@
     transition:transform .12s ease,box-shadow .12s ease;
   }
   .home-back:active{transform:scale(.95);box-shadow:0 2px 6px rgba(120,101,90,.16)}
+
+  /* ---------- player ---------- */
+  .santop{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-right:52px}
+  .pl-chip{
+    display:inline-flex;align-items:center;gap:6px;max-width:186px;min-height:38px;
+    padding:8px 13px;border-radius:999px;background:#fff;border:2px solid var(--line);
+    color:var(--ink2);font-family:inherit;font-size:13.5px;font-weight:800;
+    box-shadow:0 4px 12px rgba(120,101,90,.14);cursor:pointer;
+  }
+  .pl-chip:active{transform:scale(.96)}
+  .pl-chip .pln{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pl-ov{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(74,66,62,.42)}
+  .pl-ov.open{display:flex}
+  .pl-box{width:100%;max-width:360px;max-height:86vh;overflow:auto;background:#fff;border-radius:24px;padding:16px;box-shadow:0 20px 50px rgba(90,70,60,.3)}
+  .pl-box h2{margin:0 0 4px;font-size:17px;color:var(--ink)}
+  .pllead{margin:0 0 10px;font-size:10.5px;font-weight:800;color:var(--ink3);letter-spacing:.06em}
+  .pl-row{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:16px;background:#FBF7F1;border:2px solid #F3EADF;margin-bottom:7px}
+  .pl-row.on{border-color:var(--mint);background:#F1FAF5}
+  .pl-row .plemo{font-size:22px;line-height:1}
+  .pl-row .plmid{display:flex;flex-direction:column;min-width:0;flex:1}
+  .pl-row .plname{font-size:14px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pl-row .plnum{font-size:10.5px;font-weight:800;color:var(--ink3)}
+  .pl-row button{flex:0 0 auto;border:0;border-radius:999px;padding:8px 12px;background:var(--mint);color:#2F564B;font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
+  .pl-row .now{background:none;color:var(--rose-ink);font-size:12px;padding:8px 4px}
+  .pl-add{margin-top:4px;border-top:2px dashed #F3EADF;padding-top:10px}
+  .pl-ics{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+  .pl-ics button{width:36px;height:36px;border-radius:50%;border:2px solid #F3EADF;background:#fff;font-size:18px;line-height:1;font-family:inherit;cursor:pointer}
+  .pl-ics button.on{border-color:var(--rose-1);background:#FFF5F7}
+  .pl-name{width:100%;min-height:44px;border-radius:14px;border:2px solid #F0E7D9;background:#FFFDF9;padding:10px 12px;font-family:inherit;font-size:16px;font-weight:800;color:var(--ink)}
+  .pl-err{margin:6px 0 0;font-size:11.5px;font-weight:800;color:#B03A56;min-height:1.2em}
+  .pl-close{margin-top:10px;width:100%;border:0;border-radius:18px;padding:12px;background:#F6F1E8;color:var(--ink2);font-family:inherit;font-size:14px;font-weight:800;cursor:pointer}
 </style>
+<script>
+/* ===== わくわく パーク 共通プレイヤー =====
+   トップで えらんだ なまえを、この アプリでも そのまま つかう。
+   ほかの アプリの なまえも まとめて、はじめての ときは ひきつぐ。 */
+(function () {
+  'use strict';
+  var SH_P = 'wakuwaku-park:players';
+  var SH_C = 'wakuwaku-park:current';
+  var CFG = {"kind": "array", "listKey": "sansu-board-v2:players", "curKey": "sansu-board-v2:current"};
+
+  function g(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+  function s(k, v) { try { window.localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+  function rm(k) { try { window.localStorage.removeItem(k); } catch (e) {} }
+  function j(k) { var r = g(k); if (r == null) { return null; } try { return JSON.parse(r); } catch (e) { return null; } }
+  function isArr(x) { return Object.prototype.toString.call(x) === '[object Array]'; }
+
+  /* カタカナ → ひらがな（しりとりロボが なまえを ひらがなに するため） */
+  function toHira(str) {
+    var out = '', i, c;
+    str = String(str == null ? '' : str);
+    for (i = 0; i < str.length; i++) {
+      c = str.charCodeAt(i);
+      if (c >= 0x30A1 && c <= 0x30F6) { out += String.fromCharCode(c - 0x60); }
+      else { out += str.charAt(i); }
+    }
+    return out;
+  }
+  function nrm(str) { return toHira(str).replace(/[\s\u3000]+/g, ''); }
+
+  /* おなじ なまえ か（8もじで きられる アプリが あるので、みじかい ほうが まえに つく なら おなじ） */
+  function sameName(a, b) {
+    var x = nrm(a), y = nrm(b), L;
+    if (!x || !y) { return false; }
+    if (x === y) { return true; }
+    L = Math.min(x.length, y.length);
+    if (L < 3) { return false; }
+    return x.slice(0, L) === y.slice(0, L);
+  }
+
+  function clean(list) {
+    var out = [], i, p;
+    if (!isArr(list)) { return out; }
+    for (i = 0; i < list.length; i++) {
+      p = list[i];
+      if (p && p.id && p.name) {
+        out.push({ id: String(p.id), name: String(p.name).slice(0, 10), icon: String(p.icon || '🐰') });
+      }
+    }
+    return out;
+  }
+  function byId(list, id) {
+    for (var i = 0; i < list.length; i++) { if (String(list[i].id) === String(id)) { return list[i]; } }
+    return null;
+  }
+  function byName(list, name) {
+    for (var i = 0; i < list.length; i++) { if (sameName(list[i].name, name)) { return list[i]; } }
+    return null;
+  }
+
+  /* ---- この アプリの ほぞん ---- */
+  function readListOf(kind, key) {
+    if (kind === 'array') { return clean(j(key)); }
+    var o = j(key) || {};
+    return clean(o.players);
+  }
+  function ownList() { return readListOf(CFG.kind, CFG.listKey); }
+  function ownWrite(list) {
+    if (CFG.kind === 'array') { s(CFG.listKey, JSON.stringify(list)); return; }
+    var o = j(CFG.listKey) || {};
+    o.players = list;
+    s(CFG.listKey, JSON.stringify(o));
+  }
+  function ownCur() {
+    if (CFG.kind === 'array') { return g(CFG.curKey) || ''; }
+    var o = j(CFG.listKey) || {};
+    return o[CFG.curField || 'cur'] || '';
+  }
+  function ownCurWrite(id) {
+    if (CFG.kind === 'array') {
+      if (id) { s(CFG.curKey, String(id)); } else { rm(CFG.curKey); }
+      return;
+    }
+    var o = j(CFG.listKey) || {};
+    o[CFG.curField || 'cur'] = id || null;
+    s(CFG.listKey, JSON.stringify(o));
+  }
+
+  /* ---- まとめるときに みる アプリ ---- */
+  var SOURCES = [
+    { kind: 'array', listKey: 'kotoba-quiz-v2:players' },
+    { kind: 'obj', listKey: 'shiritori-robot-v3:meta' },
+    { kind: 'array', listKey: 'hyakunin-isshu-v2:players' },
+    { kind: 'obj', listKey: 'todofuken-sugoroku-v2' },
+    { kind: 'array', listKey: 'kokki-flashcard-v2:players' },
+    { kind: 'array', listKey: 'sansu-board-v2:players' }
+  ];
+
+  function readShared() { return clean(j(SH_P)); }
+  function writeShared(list) { s(SH_P, JSON.stringify(list)); }
+
+  function ensure(list, p) {
+    var hit = byId(list, p.id) || byName(list, p.name);
+    if (hit) { return hit; }
+    list.push({ id: String(p.id), name: String(p.name).slice(0, 10), icon: String(p.icon || '🐰') });
+    return list[list.length - 1];
+  }
+
+  function newId() {
+    return 'w' + String(new Date().getTime().toString(36)) + String(Math.floor(Math.random() * 900) + 100);
+  }
+
+  /* ほかの アプリで つかっている なまえを まとめる */
+  function gather(shared) {
+    var changed = false, i, k, list, before;
+    for (i = 0; i < SOURCES.length; i++) {
+      list = readListOf(SOURCES[i].kind, SOURCES[i].listKey);
+      for (k = 0; k < list.length; k++) {
+        before = shared.length;
+        ensure(shared, list[k]);
+        if (shared.length !== before) { changed = true; }
+      }
+    }
+    return changed;
+  }
+
+  /* アプリを ひらいた ときの つなぎこみ。
+     トップで えらんだ なまえが あれば、その なまえで すぐ はじめる。 */
+  function sync() {
+    var shared = readShared(), own = ownList(), changed = false, i, before, curId, curP, op;
+
+    changed = gather(shared);
+    for (i = 0; i < own.length; i++) {
+      before = shared.length;
+      ensure(shared, own[i]);
+      if (shared.length !== before) { changed = true; }
+    }
+
+    curId = g(SH_C) || '';
+    curP = byId(shared, curId);
+    if (!curP) {
+      var oc = ownCur(), ocp = byId(own, oc);
+      curP = byId(shared, oc) || (ocp ? byName(shared, ocp.name) : null) || (own[0] ? byName(shared, own[0].name) : null) || shared[0] || null;
+    }
+    if (curP) {
+      if (String(curId) !== String(curP.id)) { s(SH_C, curP.id); }
+      if (!byId(shared, curP.id)) { shared.push(curP); changed = true; }
+    }
+    if (changed) { writeShared(shared); }
+    if (!curP) { return null; }
+
+    op = byName(own, curP.name) || byId(own, curP.id);
+    if (!op) {
+      op = { id: curP.id, name: curP.name, icon: curP.icon };
+      own.push(op);
+      changed = true;
+    }
+    /* ほかの きょうだいも すぐ えらべるように、なまえを そろえておく */
+    for (i = 0; i < shared.length; i++) {
+      if (!byName(own, shared[i].name) && !byId(own, shared[i].id)) {
+        own.push({ id: shared[i].id, name: shared[i].name, icon: shared[i].icon });
+        changed = true;
+      }
+    }
+    if (changed) { ownWrite(own); }
+    ownCurWrite(op.id);
+    return { own: op, shared: curP };
+  }
+
+  /* アプリの なかで なまえを かえた とき（トップと そろえる） */
+  function setCurrent(name, icon) {
+    var nm = String(name == null ? '' : name).replace(/[\s\u3000]+/g, '').slice(0, 10);
+    if (!nm) { return null; }
+    var shared = readShared(), p = byName(shared, nm);
+    if (!p) {
+      p = { id: newId(), name: nm, icon: String(icon || '🐰') };
+      shared.push(p);
+    } else if (icon && p.icon !== icon) {
+      p.icon = String(icon);
+    }
+    writeShared(shared);
+    s(SH_C, p.id);
+    return p;
+  }
+
+  window.WakuwakuPark = {
+    players: function () { return readShared(); },
+    current: function () { return g(SH_C) || ''; },
+    currentPlayer: function () { return byId(readShared(), g(SH_C) || ''); },
+    setCurrent: setCurrent,
+    nameOf: function (id) { var p = byId(readShared(), id); return p ? p.name : ''; },
+    sameName: sameName,
+    sync: sync
+  };
+
+  sync();
+})();
+</script>
 </head>
 <body>
 <div class="app" id="app">
@@ -537,7 +765,10 @@
 
   <!-- ===== home / board ===== -->
   <section class="screen active" id="screen-home">
-    <a class="home-back" href="./index.html" aria-label="まなびランドへ もどる">🏠 もどる</a>
+    <div class="santop">
+      <a class="home-back" href="./index.html" aria-label="まなびランドへ もどる">🏠 もどる</a>
+      <button class="pl-chip" id="plChip" type="button" aria-label="なまえを かえる"><span id="plChipIcon" aria-hidden="true">🙂</span><span class="pln" id="plChipName">なまえ</span></button>
+    </div>
 
     <div class="home-head">
       <div class="hh-top">
@@ -619,6 +850,22 @@
 
 <canvas id="fx"></canvas>
 
+<!-- ===== player ===== -->
+<div class="pl-ov" id="plOverlay">
+  <div class="pl-box" role="dialog" aria-modal="true" aria-labelledby="plTitle">
+    <h2 id="plTitle">だれが あそぶ？</h2>
+    <p class="pllead">なまえごとに きろくが のこるよ</p>
+    <div id="plList"></div>
+    <div class="pl-add">
+      <div class="pl-ics" id="plIcs"></div>
+      <input class="pl-name" id="plName" type="text" maxlength="10" placeholder="なまえ（ひらがな）" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <p class="pl-err" id="plErr"></p>
+      <button class="btn btn-mint btn-small" id="plAdd" type="button">とうろく する</button>
+    </div>
+    <button class="pl-close" id="plClose" type="button">とじる</button>
+  </div>
+</div>
+
 <script>
 (function () {
   'use strict';
@@ -682,15 +929,200 @@
 
   var STORE_KEY = 'sansu-board-v2';
   var MUTE_KEY = 'sansu-board-muted';
+  var PLAYERS_KEY = 'sansu-board-v2:players';
+  var CKEY = 'sansu-board-v2:current';
+  var PLAYER_MAX = 8;
+  var ICONS = ['🐰', '🌸', '🍡', '🌙', '⭐', '🍓', '🐱', '🐶'];
+  var PLAYERS = [];
+  var CUR = null;
+  var pickedIcon = ICONS[0];
   var store = blankStore();
   var muted = false;
 
   function blankStore() { return { v: 2, q: {}, done: {}, rounds: 0 }; }
 
+  /* ---------- player helpers ---------- */
+
+  function readLS(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+  function writeLS(k, v) { try { window.localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+  function dropLS(k) { try { window.localStorage.removeItem(k); } catch (e) {} }
+
+  /* なまえは ひらがなに そろえる（カタカナは ひらがなに、それいがいは けす） */
+  function toHira(s) {
+    var t = String(s == null ? '' : s), out = '', i, c;
+    for (i = 0; i < t.length; i++) {
+      c = t.charCodeAt(i);
+      if (c >= 0x30A1 && c <= 0x30F6) { out += String.fromCharCode(c - 0x60); }
+      else if (c >= 0x3041 && c <= 0x3096) { out += t.charAt(i); }
+    }
+    return out;
+  }
+
+  function storeKeyOf(pid) { return pid ? 'sansu-board-v2:p:' + pid : STORE_KEY; }
+  function storeKey() { return storeKeyOf(CUR && CUR.id); }
+
+  function loadPlayers() {
+    PLAYERS = [];
+    var a = null;
+    try { a = JSON.parse(readLS(PLAYERS_KEY) || 'null'); } catch (e) { a = null; }
+    if (Object.prototype.toString.call(a) === '[object Array]') {
+      for (var i = 0; i < a.length; i++) {
+        var p = a[i];
+        if (p && p.id && p.name) {
+          PLAYERS.push({ id: String(p.id), name: String(p.name), icon: String(p.icon || ICONS[0]) });
+        }
+      }
+    }
+    CUR = null;
+    var cid = readLS(CKEY) || '';
+    for (var k = 0; k < PLAYERS.length; k++) {
+      if (PLAYERS[k].id === cid) { CUR = PLAYERS[k]; }
+    }
+    if (!CUR && window.WakuwakuPark) {
+      var mp = window.WakuwakuPark.currentPlayer();
+      if (mp) {
+        CUR = { id: String(mp.id), name: String(mp.name), icon: String(mp.icon || ICONS[0]) };
+        PLAYERS.push(CUR);
+        savePlayers();
+        writeLS(CKEY, CUR.id);
+      }
+    }
+    if (!CUR && PLAYERS.length) { CUR = PLAYERS[0]; writeLS(CKEY, CUR.id); }
+  }
+
+  function savePlayers() { writeLS(PLAYERS_KEY, JSON.stringify(PLAYERS)); }
+
+  /* とうろく まえに あそんだ きろくを、さいしょの プレイヤーに ひきつぐ */
+  function adoptLegacy() {
+    if (!CUR) { return; }
+    var pk = storeKeyOf(CUR.id);
+    if (readLS(pk)) { return; }
+    var old = readLS(STORE_KEY);
+    if (!old) { return; }
+    writeLS(pk, old);
+    dropLS(STORE_KEY);
+  }
+
+  function clearCountOf(pid) {
+    var d = null;
+    try { d = JSON.parse(readLS(storeKeyOf(pid)) || 'null'); } catch (e) { d = null; }
+    var q = (d && d.q && typeof d.q === 'object') ? d.q : {}, c = 0, k;
+    for (k in q) {
+      if (!Object.prototype.hasOwnProperty.call(q, k)) { continue; }
+      if (q[k] && q[k].c) { c++; }
+    }
+    return c;
+  }
+
+  function paintChip() {
+    var emo = $('plChipIcon'), nm = $('plChipName');
+    if (!emo || !nm) { return; }
+    emo.textContent = CUR ? (CUR.icon || ICONS[0]) : '🙂';
+    nm.textContent = CUR ? CUR.name : 'なまえ';
+  }
+
+  function paintIcons() {
+    var host = $('plIcs');
+    if (!host) { return; }
+    host.innerHTML = '';
+    for (var i = 0; i < ICONS.length; i++) {
+      (function (ic) {
+        var b = el('button', ic === pickedIcon ? 'on' : '', ic);
+        b.type = 'button';
+        b.setAttribute('aria-label', 'えらぶ えもじ');
+        b.addEventListener('click', function () { pickedIcon = ic; paintIcons(); playTap(); });
+        host.appendChild(b);
+      })(ICONS[i]);
+    }
+  }
+
+  function renderPl() {
+    var host = $('plList');
+    if (!host) { return; }
+    host.innerHTML = '';
+    if (!PLAYERS.length) {
+      host.appendChild(el('p', 'pllead', 'まだ だれも いないよ。したの わくに なまえを かいてね'));
+    }
+    for (var i = 0; i < PLAYERS.length; i++) {
+      (function (p) {
+        var row = el('div', 'pl-row' + (CUR && CUR.id === p.id ? ' on' : ''));
+        row.appendChild(el('span', 'plemo', p.icon || ICONS[0]));
+        var mid = el('span', 'plmid');
+        mid.appendChild(el('span', 'plname', p.name));
+        mid.appendChild(el('span', 'plnum', 'できた ' + clearCountOf(p.id) + ' / 162'));
+        row.appendChild(mid);
+        if (CUR && CUR.id === p.id) {
+          row.appendChild(el('span', 'now', 'いま'));
+        } else {
+          var b = el('button', '', 'えらぶ');
+          b.type = 'button';
+          b.addEventListener('click', function () { playTap(); usePlayer(p); });
+          row.appendChild(b);
+        }
+        host.appendChild(row);
+      })(PLAYERS[i]);
+    }
+    paintIcons();
+  }
+
+  function openPl() {
+    renderPl();
+    var err = $('plErr');
+    if (err) { err.textContent = ''; }
+    var ov = $('plOverlay');
+    if (ov) { ov.classList.add('open'); }
+    if (!PLAYERS.length) { var inp = $('plName'); if (inp && inp.focus) { try { inp.focus(); } catch (e) {} } }
+  }
+
+  function closePl() {
+    var ov = $('plOverlay');
+    if (ov) { ov.classList.remove('open'); }
+  }
+
+  function usePlayer(p) {
+    if (!p || !p.id) { return; }
+    if (CUR && CUR.id === p.id) { closePl(); return; }
+    saveStore();
+    session = null;
+    CUR = p;
+    writeLS(CKEY, p.id);
+    if (window.WakuwakuPark) { window.WakuwakuPark.setCurrent(p.name, p.icon); }
+    adoptLegacy();
+    loadStore();
+    renderHome();
+    paintChip();
+    closePl();
+  }
+
+  function addPlayer() {
+    var input = $('plName');
+    var name = toHira((input && input.value) || '').replace(/[\s\u3000]+/g, '').slice(0, 10);
+    var err = $('plErr');
+    if (!name) { if (err) { err.textContent = 'なまえを ひらがなで いれてね'; } return; }
+    if (PLAYERS.length >= PLAYER_MAX) { if (err) { err.textContent = 'プレイヤーは ' + PLAYER_MAX + 'にんまで だよ'; } return; }
+    saveStore();
+    var p = { id: 's' + String(new Date().getTime().toString(36)) + String(PLAYERS.length), name: name, icon: pickedIcon };
+    var first = PLAYERS.length === 0;
+    PLAYERS.push(p);
+    savePlayers();
+    session = null;
+    CUR = p;
+    writeLS(CKEY, p.id);
+    if (first) { adoptLegacy(); }
+    if (window.WakuwakuPark) { window.WakuwakuPark.setCurrent(p.name, p.icon); }
+    if (input) { input.value = ''; }
+    if (err) { err.textContent = ''; }
+    loadStore();
+    renderHome();
+    paintChip();
+    closePl();
+    playTap();
+  }
+
   function loadStore() {
     store = blankStore();
     try {
-      var raw = window.localStorage.getItem(STORE_KEY);
+      var raw = window.localStorage.getItem(storeKey());
       if (!raw) { return; }
       var data = JSON.parse(raw);
       if (!data || typeof data !== 'object') { return; }
@@ -714,7 +1146,7 @@
   }
 
   function saveStore() {
-    try { window.localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (e) {}
+    try { window.localStorage.setItem(storeKey(), JSON.stringify(store)); } catch (e) {}
   }
 
   function loadPref() {
@@ -1763,8 +2195,23 @@
   }
 
   function init() {
+    loadPlayers();
+    adoptLegacy();
     loadStore();
     muted = loadPref();
+
+    bind('plChip', openPl);
+    bind('plClose', closePl);
+    bind('plAdd', addPlayer);
+    var plIn = $('plName');
+    if (plIn && plIn.addEventListener) {
+      plIn.addEventListener('keydown', function (ev) { if (ev && ev.key === 'Enter') { addPlayer(); } });
+    }
+    var plOv = $('plOverlay');
+    if (plOv && plOv.addEventListener) {
+      plOv.addEventListener('click', function (ev) { if (ev.target === plOv) { closePl(); } });
+    }
+    paintChip();
 
     var muteBtn = $('btnMute');
     if (muteBtn) {
@@ -1880,7 +2327,13 @@
     current: function () { return (session && session.list[session.i]) ? session.list[session.i].entry : null; },
     render: renderHome,
     hintOn: function () { return hintOn; },
-    muted: function () { return muted; }
+    muted: function () { return muted; },
+    playersOf: function () { return PLAYERS.slice(); },
+    currentPlayer: function () { return CUR; },
+    storeKeyOf: storeKeyOf,
+    usePlayer: usePlayer,
+    addPlayer: addPlayer,
+    openPl: openPl
   };
 })();
 </script>

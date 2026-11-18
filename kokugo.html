@@ -223,6 +223,18 @@
 
   .choices{display:flex;flex-direction:column;gap:10px}
   .choices.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  /* よんでから おしてね（すぐ れんだん できないように） */
+  .choice:disabled{cursor:default}
+  .choice.guard{opacity:.5;filter:saturate(.5);box-shadow:0 4px 0 #EDE4D6;transform:none}
+  .read-hint{
+    display:none;align-self:center;margin:0 auto 2px;
+    padding:7px 16px;border-radius:999px;
+    background:#FFF6D6;border:2px solid #F3DFA0;box-shadow:0 3px 0 #F0E0B8;
+    color:#7A4A00;font-size:15px;font-weight:800;letter-spacing:.04em;
+  }
+  .read-hint.show{display:inline-flex;align-items:center;gap:6px;animation:readPop .28s ease both}
+  @keyframes readPop{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+  .dot.star{background:#FFF6D6;box-shadow:0 0 0 2px #F3DFA0}
   .choice{
     display:flex;align-items:center;gap:11px;
     width:100%;padding:16px 16px;
@@ -554,6 +566,203 @@
     .q-prompt{font-size:16.5px}
   }
 </style>
+<script>
+/* ===== わくわく パーク 共通プレイヤー =====
+   トップで えらんだ なまえを、この アプリでも そのまま つかう。
+   ほかの アプリの なまえも まとめて、はじめての ときは ひきつぐ。 */
+(function () {
+  'use strict';
+  var SH_P = 'wakuwaku-park:players';
+  var SH_C = 'wakuwaku-park:current';
+  var CFG = {"kind": "array", "listKey": "kotoba-quiz-v2:players", "curKey": "kotoba-quiz-v2:current"};
+
+  function g(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+  function s(k, v) { try { window.localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+  function rm(k) { try { window.localStorage.removeItem(k); } catch (e) {} }
+  function j(k) { var r = g(k); if (r == null) { return null; } try { return JSON.parse(r); } catch (e) { return null; } }
+  function isArr(x) { return Object.prototype.toString.call(x) === '[object Array]'; }
+
+  /* カタカナ → ひらがな（しりとりロボが なまえを ひらがなに するため） */
+  function toHira(str) {
+    var out = '', i, c;
+    str = String(str == null ? '' : str);
+    for (i = 0; i < str.length; i++) {
+      c = str.charCodeAt(i);
+      if (c >= 0x30A1 && c <= 0x30F6) { out += String.fromCharCode(c - 0x60); }
+      else { out += str.charAt(i); }
+    }
+    return out;
+  }
+  function nrm(str) { return toHira(str).replace(/[\s\u3000]+/g, ''); }
+
+  /* おなじ なまえ か（8もじで きられる アプリが あるので、みじかい ほうが まえに つく なら おなじ） */
+  function sameName(a, b) {
+    var x = nrm(a), y = nrm(b), L;
+    if (!x || !y) { return false; }
+    if (x === y) { return true; }
+    L = Math.min(x.length, y.length);
+    if (L < 3) { return false; }
+    return x.slice(0, L) === y.slice(0, L);
+  }
+
+  function clean(list) {
+    var out = [], i, p;
+    if (!isArr(list)) { return out; }
+    for (i = 0; i < list.length; i++) {
+      p = list[i];
+      if (p && p.id && p.name) {
+        out.push({ id: String(p.id), name: String(p.name).slice(0, 10), icon: String(p.icon || '🐰') });
+      }
+    }
+    return out;
+  }
+  function byId(list, id) {
+    for (var i = 0; i < list.length; i++) { if (String(list[i].id) === String(id)) { return list[i]; } }
+    return null;
+  }
+  function byName(list, name) {
+    for (var i = 0; i < list.length; i++) { if (sameName(list[i].name, name)) { return list[i]; } }
+    return null;
+  }
+
+  /* ---- この アプリの ほぞん ---- */
+  function readListOf(kind, key) {
+    if (kind === 'array') { return clean(j(key)); }
+    var o = j(key) || {};
+    return clean(o.players);
+  }
+  function ownList() { return readListOf(CFG.kind, CFG.listKey); }
+  function ownWrite(list) {
+    if (CFG.kind === 'array') { s(CFG.listKey, JSON.stringify(list)); return; }
+    var o = j(CFG.listKey) || {};
+    o.players = list;
+    s(CFG.listKey, JSON.stringify(o));
+  }
+  function ownCur() {
+    if (CFG.kind === 'array') { return g(CFG.curKey) || ''; }
+    var o = j(CFG.listKey) || {};
+    return o[CFG.curField || 'cur'] || '';
+  }
+  function ownCurWrite(id) {
+    if (CFG.kind === 'array') {
+      if (id) { s(CFG.curKey, String(id)); } else { rm(CFG.curKey); }
+      return;
+    }
+    var o = j(CFG.listKey) || {};
+    o[CFG.curField || 'cur'] = id || null;
+    s(CFG.listKey, JSON.stringify(o));
+  }
+
+  /* ---- まとめるときに みる アプリ ---- */
+  var SOURCES = [
+    { kind: 'array', listKey: 'kotoba-quiz-v2:players' },
+    { kind: 'obj', listKey: 'shiritori-robot-v3:meta' },
+    { kind: 'array', listKey: 'hyakunin-isshu-v2:players' },
+    { kind: 'obj', listKey: 'todofuken-sugoroku-v2' },
+    { kind: 'array', listKey: 'kokki-flashcard-v2:players' },
+    { kind: 'array', listKey: 'sansu-board-v2:players' }
+  ];
+
+  function readShared() { return clean(j(SH_P)); }
+  function writeShared(list) { s(SH_P, JSON.stringify(list)); }
+
+  function ensure(list, p) {
+    var hit = byId(list, p.id) || byName(list, p.name);
+    if (hit) { return hit; }
+    list.push({ id: String(p.id), name: String(p.name).slice(0, 10), icon: String(p.icon || '🐰') });
+    return list[list.length - 1];
+  }
+
+  function newId() {
+    return 'w' + String(new Date().getTime().toString(36)) + String(Math.floor(Math.random() * 900) + 100);
+  }
+
+  /* ほかの アプリで つかっている なまえを まとめる */
+  function gather(shared) {
+    var changed = false, i, k, list, before;
+    for (i = 0; i < SOURCES.length; i++) {
+      list = readListOf(SOURCES[i].kind, SOURCES[i].listKey);
+      for (k = 0; k < list.length; k++) {
+        before = shared.length;
+        ensure(shared, list[k]);
+        if (shared.length !== before) { changed = true; }
+      }
+    }
+    return changed;
+  }
+
+  /* アプリを ひらいた ときの つなぎこみ。
+     トップで えらんだ なまえが あれば、その なまえで すぐ はじめる。 */
+  function sync() {
+    var shared = readShared(), own = ownList(), changed = false, i, before, curId, curP, op;
+
+    changed = gather(shared);
+    for (i = 0; i < own.length; i++) {
+      before = shared.length;
+      ensure(shared, own[i]);
+      if (shared.length !== before) { changed = true; }
+    }
+
+    curId = g(SH_C) || '';
+    curP = byId(shared, curId);
+    if (!curP) {
+      var oc = ownCur(), ocp = byId(own, oc);
+      curP = byId(shared, oc) || (ocp ? byName(shared, ocp.name) : null) || (own[0] ? byName(shared, own[0].name) : null) || shared[0] || null;
+    }
+    if (curP) {
+      if (String(curId) !== String(curP.id)) { s(SH_C, curP.id); }
+      if (!byId(shared, curP.id)) { shared.push(curP); changed = true; }
+    }
+    if (changed) { writeShared(shared); }
+    if (!curP) { return null; }
+
+    op = byName(own, curP.name) || byId(own, curP.id);
+    if (!op) {
+      op = { id: curP.id, name: curP.name, icon: curP.icon };
+      own.push(op);
+      changed = true;
+    }
+    /* ほかの きょうだいも すぐ えらべるように、なまえを そろえておく */
+    for (i = 0; i < shared.length; i++) {
+      if (!byName(own, shared[i].name) && !byId(own, shared[i].id)) {
+        own.push({ id: shared[i].id, name: shared[i].name, icon: shared[i].icon });
+        changed = true;
+      }
+    }
+    if (changed) { ownWrite(own); }
+    ownCurWrite(op.id);
+    return { own: op, shared: curP };
+  }
+
+  /* アプリの なかで なまえを かえた とき（トップと そろえる） */
+  function setCurrent(name, icon) {
+    var nm = String(name == null ? '' : name).replace(/[\s\u3000]+/g, '').slice(0, 10);
+    if (!nm) { return null; }
+    var shared = readShared(), p = byName(shared, nm);
+    if (!p) {
+      p = { id: newId(), name: nm, icon: String(icon || '🐰') };
+      shared.push(p);
+    } else if (icon && p.icon !== icon) {
+      p.icon = String(icon);
+    }
+    writeShared(shared);
+    s(SH_C, p.id);
+    return p;
+  }
+
+  window.WakuwakuPark = {
+    players: function () { return readShared(); },
+    current: function () { return g(SH_C) || ''; },
+    currentPlayer: function () { return byId(readShared(), g(SH_C) || ''); },
+    setCurrent: setCurrent,
+    nameOf: function (id) { var p = byId(readShared(), id); return p ? p.name : ''; },
+    sameName: sameName,
+    sync: sync
+  };
+
+  sync();
+})();
+</script>
 </head>
 <body>
 <div class="app" id="app">
@@ -592,6 +801,7 @@
         <span class="meta">📚 ぜんぶで 999もん</span>
         <span class="meta">🎴 カード 333しゅるい</span>
       </div>
+      <p class="hard-legend">⭐ 3つ で ガチャ！ よんでから こたえると ⭐が ふえるよ</p>
       <p class="hard-legend">🔥 は むずかしい もんだいだよ</p>
     </div>
     <div class="start-actions">
@@ -619,6 +829,7 @@
       <span class="q-kind" id="qKind">ひらがな</span>
       <div id="qBody"></div>
     </div>
+    <div class="read-hint" id="readHint">👀 よく よんでね！</div>
     <div class="choices" id="choices"></div>
   </section>
 
@@ -626,7 +837,7 @@
   <section class="screen" id="screen-clear">
     <div class="clear-wrap">
       <div class="clear-emoji">🎉</div>
-      <h2 class="clear-title">3もん クリア！</h2>
+      <h2 class="clear-title" id="clearTitle">⭐ 3つ あつめた！</h2>
       <p class="clear-sub" id="clearSub">ガチャが まわせるよ！</p>
       <div class="clear-panel">
         <p class="clear-stat" id="clearStats">よう がんばったね！</p>
@@ -831,7 +1042,7 @@
       } catch (e) { list = []; }
     }
     var out = [];
-    for (var i = 0; i < list.length && out.length < PLAYER_MAX; i++) {
+    for (var i = 0; i < list.length && out.length < 12; i++) {
       var p = list[i];
       if (p && p.id && p.name) {
         out.push({ id: String(p.id), name: String(p.name), icon: String(p.icon || ICONS[0]) });
@@ -858,6 +1069,8 @@
   function usePlayer(p) {
     CUR = (p && p.id) ? p : null;
     if (CUR) { writeLS(CUR_KEY, CUR.id); } else { dropLS(CUR_KEY); }
+    /* トップの 「だれが あそぶ？」と そろえる */
+    if (CUR && window.WakuwakuPark) { window.WakuwakuPark.setCurrent(CUR.name, CUR.icon); }
     session = null;
     loadStore();
     paintPlayer();
@@ -1315,12 +1528,12 @@
   }
 
   function updateDots() {
+    /* ⭐ の かずを 3つの まるで みせる（はじめに せいかい したときだけ ふえる） */
+    var stars = (session && session.stars) || 0;
     for (var i = 0; i < 3; i++) {
       var dot = $('dot' + i);
       if (!dot || !dot.classList) { continue; }
-      dot.className = 'dot';
-      if (i < session.i) { dot.classList.add('on'); }
-      else if (i === session.i) { dot.classList.add('now'); }
+      dot.className = 'dot' + (i < stars ? ' on star' : '');
     }
   }
 
@@ -1337,17 +1550,39 @@
   }
 
   function startMission() {
-    session = { list: pickQuestions(), i: 0, combo: 0, best: 0, hardClear: 0, locked: false };
+    session = {
+      list: pickQuestions(), i: 0, combo: 0, best: 0, hardClear: 0, locked: false,
+      stars: 0, wrongThis: false, used: {}, guardToken: 0
+    };
+    for (var i = 0; i < session.list.length; i++) { session.used[session.list[i].i] = 1; }
     updateCombo();
     hideStamp();
     renderQuestion();
     showScreen('screen-quiz');
   }
 
+  /* セッションの あいだに まだ だしていない もんだいを 1つ */
+  function questionForSession() {
+    var pool = [], i;
+    if (!session) { return null; }
+    for (i = 0; i < QUESTIONS.length; i++) {
+      if (!session.used[QUESTIONS[i].i]) { pool.push(QUESTIONS[i]); }
+    }
+    if (!pool.length) {
+      session.used = {};
+      pool = QUESTIONS.slice();
+    }
+    var q = pool[Math.floor(Math.random() * pool.length)];
+    session.used[q.i] = 1;
+    return q;
+  }
+
   function renderQuestion() {
     var q = session.list[session.i];
     if (!q) { return; }
     session.locked = false;
+    session.wrongThis = false;
+    session.used[q.i] = 1;
 
     var kindNode = $('qKind');
     kindNode.textContent = q.g || '';
@@ -1434,7 +1669,34 @@
       })(opts[i]);
     }
 
+    setReadGuard(choicesEl);
     updateDots();
+  }
+
+  /* もんだいが でてから しばらくは おせない（よんでから えらぶ） */
+  var READ_GUARD_MS = 950;
+  var guardSeq = 0;
+  function setReadGuard(host) {
+    if (!host) { return; }
+    var btns = host.querySelectorAll('.choice');
+    var hint = $('readHint');
+    var tok = ++guardSeq;
+    if (session) { session.readGuard = true; }
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].disabled = true;
+      btns[i].classList.add('guard');
+    }
+    if (hint) { hint.classList.add('show'); }
+    setTimeout(function () {
+      if (tok !== guardSeq) { return; }
+      if (session) { session.readGuard = false; }
+      for (var j = 0; j < btns.length; j++) {
+        if (btns[j].classList.contains('done')) { continue; }
+        btns[j].disabled = false;
+        btns[j].classList.remove('guard');
+      }
+      if (hint) { hint.classList.remove('show'); }
+    }, READ_GUARD_MS);
   }
 
   function markSeen(id) {
@@ -1445,36 +1707,50 @@
   }
 
   function choose(btn, ok) {
-    if (!session || session.locked) { return; }
+    if (!session || session.locked || session.readGuard) { return; }
     if (btn.classList.contains('done') || btn.classList.contains('correct')) { return; }
     var q = session.list[session.i];
 
     if (ok) {
       session.locked = true;
       btn.classList.add('correct', 'done');
-      session.combo += 1;
-      if (session.combo > session.best) { session.best = session.combo; }
+      var firstTry = !session.wrongThis;
+      if (firstTry) {
+        session.combo += 1;
+        if (session.combo > session.best) { session.best = session.combo; }
+        session.stars += 1;
+      } else {
+        session.combo = 0;
+      }
       updateCombo();
+      updateDots();
       markSeen(q.i);
 
       if (q.lv === 'hard') {
         session.hardClear += 1;
         playHardClear();
         superCelebrate();
-        stamp('ok', 'すごい！', 'むずかしいの クリア！', 1850, 'hard');
+        stamp('ok', 'すごい！', firstTry ? 'むずかしいの クリア！⭐ ゲット！' : 'むずかしいの クリア！（⭐は おあずけ）', 1850, 'hard');
       } else {
         playCorrect();
         celebrate();
-        stamp('ok', 'せいかい！', q.pr, 1500);
+        if (firstTry) {
+          stamp('ok', 'せいかい！', q.pr, 1500);
+        } else {
+          stamp('ok', 'せいかい！', 'つぎは よく よんで ⭐を とろうね', 1600);
+        }
       }
 
       var sess = session;
+      var reached = session.stars >= 3;
       setTimeout(function () {
-        if (session === sess) { nextQuestion(); }
+        if (session !== sess) { return; }
+        if (reached) { showClear(); } else { nextQuestion(); }
       }, (q.lv === 'hard') ? 1950 : 1650);
     } else {
       btn.classList.add('wrong', 'done');
       btn.disabled = true;
+      session.wrongThis = true;
       session.combo = 0;
       updateCombo();
       playWrong();
@@ -1486,17 +1762,22 @@
   function nextQuestion() {
     if (!session) { return; }
     hideStamp();
+    if (session.stars >= 3) { showClear(); return; }
     session.i += 1;
+    if (session.i >= session.list.length) {
+      var nq = questionForSession();
+      if (nq) { session.list.push(nq); }
+    }
     if (session.i >= session.list.length) { showClear(); return; }
     renderQuestion();
   }
 
   function showClear() {
     var stats = $('clearStats');
-    var txt = '';
-    if (session.best >= 3) { txt = '<b>3もん</b> れんぞく せいかい！パーフェクト！'; }
-    else if (session.best === 2) { txt = '<b>2れんぞく</b> せいかい！よく がんばったね'; }
-    else { txt = '3もん クリア！よく がんばったね'; }
+    var txt = 'よく よんで ⭐を <b>3つ</b> あつめたね！';
+    if (session.best >= 2) {
+      txt += '<br>🔥 ' + session.best + 'もん れんぞく で せいかい！';
+    }
     if (session.hardClear > 0) {
       txt += '<br>🔥 むずかしいの <b>' + session.hardClear + 'もん</b> クリア！';
     }

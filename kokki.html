@@ -741,6 +741,203 @@
   }
 
 </style>
+<script>
+/* ===== わくわく パーク 共通プレイヤー =====
+   トップで えらんだ なまえを、この アプリでも そのまま つかう。
+   ほかの アプリの なまえも まとめて、はじめての ときは ひきつぐ。 */
+(function () {
+  'use strict';
+  var SH_P = 'wakuwaku-park:players';
+  var SH_C = 'wakuwaku-park:current';
+  var CFG = {"kind": "array", "listKey": "kokki-flashcard-v2:players", "curKey": "kokki-flashcard-v2:current"};
+
+  function g(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+  function s(k, v) { try { window.localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+  function rm(k) { try { window.localStorage.removeItem(k); } catch (e) {} }
+  function j(k) { var r = g(k); if (r == null) { return null; } try { return JSON.parse(r); } catch (e) { return null; } }
+  function isArr(x) { return Object.prototype.toString.call(x) === '[object Array]'; }
+
+  /* カタカナ → ひらがな（しりとりロボが なまえを ひらがなに するため） */
+  function toHira(str) {
+    var out = '', i, c;
+    str = String(str == null ? '' : str);
+    for (i = 0; i < str.length; i++) {
+      c = str.charCodeAt(i);
+      if (c >= 0x30A1 && c <= 0x30F6) { out += String.fromCharCode(c - 0x60); }
+      else { out += str.charAt(i); }
+    }
+    return out;
+  }
+  function nrm(str) { return toHira(str).replace(/[\s\u3000]+/g, ''); }
+
+  /* おなじ なまえ か（8もじで きられる アプリが あるので、みじかい ほうが まえに つく なら おなじ） */
+  function sameName(a, b) {
+    var x = nrm(a), y = nrm(b), L;
+    if (!x || !y) { return false; }
+    if (x === y) { return true; }
+    L = Math.min(x.length, y.length);
+    if (L < 3) { return false; }
+    return x.slice(0, L) === y.slice(0, L);
+  }
+
+  function clean(list) {
+    var out = [], i, p;
+    if (!isArr(list)) { return out; }
+    for (i = 0; i < list.length; i++) {
+      p = list[i];
+      if (p && p.id && p.name) {
+        out.push({ id: String(p.id), name: String(p.name).slice(0, 10), icon: String(p.icon || '🐰') });
+      }
+    }
+    return out;
+  }
+  function byId(list, id) {
+    for (var i = 0; i < list.length; i++) { if (String(list[i].id) === String(id)) { return list[i]; } }
+    return null;
+  }
+  function byName(list, name) {
+    for (var i = 0; i < list.length; i++) { if (sameName(list[i].name, name)) { return list[i]; } }
+    return null;
+  }
+
+  /* ---- この アプリの ほぞん ---- */
+  function readListOf(kind, key) {
+    if (kind === 'array') { return clean(j(key)); }
+    var o = j(key) || {};
+    return clean(o.players);
+  }
+  function ownList() { return readListOf(CFG.kind, CFG.listKey); }
+  function ownWrite(list) {
+    if (CFG.kind === 'array') { s(CFG.listKey, JSON.stringify(list)); return; }
+    var o = j(CFG.listKey) || {};
+    o.players = list;
+    s(CFG.listKey, JSON.stringify(o));
+  }
+  function ownCur() {
+    if (CFG.kind === 'array') { return g(CFG.curKey) || ''; }
+    var o = j(CFG.listKey) || {};
+    return o[CFG.curField || 'cur'] || '';
+  }
+  function ownCurWrite(id) {
+    if (CFG.kind === 'array') {
+      if (id) { s(CFG.curKey, String(id)); } else { rm(CFG.curKey); }
+      return;
+    }
+    var o = j(CFG.listKey) || {};
+    o[CFG.curField || 'cur'] = id || null;
+    s(CFG.listKey, JSON.stringify(o));
+  }
+
+  /* ---- まとめるときに みる アプリ ---- */
+  var SOURCES = [
+    { kind: 'array', listKey: 'kotoba-quiz-v2:players' },
+    { kind: 'obj', listKey: 'shiritori-robot-v3:meta' },
+    { kind: 'array', listKey: 'hyakunin-isshu-v2:players' },
+    { kind: 'obj', listKey: 'todofuken-sugoroku-v2' },
+    { kind: 'array', listKey: 'kokki-flashcard-v2:players' },
+    { kind: 'array', listKey: 'sansu-board-v2:players' }
+  ];
+
+  function readShared() { return clean(j(SH_P)); }
+  function writeShared(list) { s(SH_P, JSON.stringify(list)); }
+
+  function ensure(list, p) {
+    var hit = byId(list, p.id) || byName(list, p.name);
+    if (hit) { return hit; }
+    list.push({ id: String(p.id), name: String(p.name).slice(0, 10), icon: String(p.icon || '🐰') });
+    return list[list.length - 1];
+  }
+
+  function newId() {
+    return 'w' + String(new Date().getTime().toString(36)) + String(Math.floor(Math.random() * 900) + 100);
+  }
+
+  /* ほかの アプリで つかっている なまえを まとめる */
+  function gather(shared) {
+    var changed = false, i, k, list, before;
+    for (i = 0; i < SOURCES.length; i++) {
+      list = readListOf(SOURCES[i].kind, SOURCES[i].listKey);
+      for (k = 0; k < list.length; k++) {
+        before = shared.length;
+        ensure(shared, list[k]);
+        if (shared.length !== before) { changed = true; }
+      }
+    }
+    return changed;
+  }
+
+  /* アプリを ひらいた ときの つなぎこみ。
+     トップで えらんだ なまえが あれば、その なまえで すぐ はじめる。 */
+  function sync() {
+    var shared = readShared(), own = ownList(), changed = false, i, before, curId, curP, op;
+
+    changed = gather(shared);
+    for (i = 0; i < own.length; i++) {
+      before = shared.length;
+      ensure(shared, own[i]);
+      if (shared.length !== before) { changed = true; }
+    }
+
+    curId = g(SH_C) || '';
+    curP = byId(shared, curId);
+    if (!curP) {
+      var oc = ownCur(), ocp = byId(own, oc);
+      curP = byId(shared, oc) || (ocp ? byName(shared, ocp.name) : null) || (own[0] ? byName(shared, own[0].name) : null) || shared[0] || null;
+    }
+    if (curP) {
+      if (String(curId) !== String(curP.id)) { s(SH_C, curP.id); }
+      if (!byId(shared, curP.id)) { shared.push(curP); changed = true; }
+    }
+    if (changed) { writeShared(shared); }
+    if (!curP) { return null; }
+
+    op = byName(own, curP.name) || byId(own, curP.id);
+    if (!op) {
+      op = { id: curP.id, name: curP.name, icon: curP.icon };
+      own.push(op);
+      changed = true;
+    }
+    /* ほかの きょうだいも すぐ えらべるように、なまえを そろえておく */
+    for (i = 0; i < shared.length; i++) {
+      if (!byName(own, shared[i].name) && !byId(own, shared[i].id)) {
+        own.push({ id: shared[i].id, name: shared[i].name, icon: shared[i].icon });
+        changed = true;
+      }
+    }
+    if (changed) { ownWrite(own); }
+    ownCurWrite(op.id);
+    return { own: op, shared: curP };
+  }
+
+  /* アプリの なかで なまえを かえた とき（トップと そろえる） */
+  function setCurrent(name, icon) {
+    var nm = String(name == null ? '' : name).replace(/[\s\u3000]+/g, '').slice(0, 10);
+    if (!nm) { return null; }
+    var shared = readShared(), p = byName(shared, nm);
+    if (!p) {
+      p = { id: newId(), name: nm, icon: String(icon || '🐰') };
+      shared.push(p);
+    } else if (icon && p.icon !== icon) {
+      p.icon = String(icon);
+    }
+    writeShared(shared);
+    s(SH_C, p.id);
+    return p;
+  }
+
+  window.WakuwakuPark = {
+    players: function () { return readShared(); },
+    current: function () { return g(SH_C) || ''; },
+    currentPlayer: function () { return byId(readShared(), g(SH_C) || ''); },
+    setCurrent: setCurrent,
+    nameOf: function (id) { var p = byId(readShared(), id); return p ? p.name : ''; },
+    sameName: sameName,
+    sync: sync
+  };
+
+  sync();
+})();
+</script>
 </head>
 <body>
 <div class="app" id="app">
@@ -1884,6 +2081,8 @@ var REGIONS = [
     state = blankState();
     savePlayers();
     saveState();
+    /* トップの 「だれが あそぶ？」と そろえる */
+    if(window.WakuwakuPark){ window.WakuwakuPark.setCurrent(p.name, p.icon); }
     paintSound();
     paintAll();
     playerForced = false;
@@ -1899,6 +2098,8 @@ var REGIONS = [
     saveState();
     curId = id;
     savePlayers();
+    /* トップの 「だれが あそぶ？」と そろえる */
+    if(window.WakuwakuPark){ window.WakuwakuPark.setCurrent(p.name, p.icon); }
     loadState();
     paintSound();
     paintAll();

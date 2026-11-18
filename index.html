@@ -167,6 +167,79 @@
   }
   @keyframes twinkle{0%,100%{opacity:.35;transform:scale(.85) rotate(0)}50%{opacity:1;transform:scale(1.12) rotate(12deg)}}
 
+  /* ===== players ===== */
+  .pp{
+    display:flex;flex-direction:column;gap:6px;
+    padding:8px 10px 9px;border-radius:22px;
+    background:rgba(255,255,255,.78);border:2px solid #FFE3EF;
+    box-shadow:0 6px 16px rgba(180,120,160,.10);
+  }
+  .pp-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .pp-q{
+    font-size:clamp(11px,2.9vw,15px);font-weight:900;letter-spacing:.03em;
+    color:#A02B5C;white-space:nowrap;
+  }
+  .pp-add{
+    flex:0 0 auto;min-height:34px;border:0;border-radius:999px;padding:7px 12px;
+    background:linear-gradient(180deg,#FFD9E8,#FFB9D4);color:#8E2A57;
+    font-family:inherit;font-size:clamp(10.5px,2.6vw,13px);font-weight:900;
+    box-shadow:0 3px 0 #F7A9C8;cursor:pointer;white-space:nowrap;
+  }
+  .pp-add:active{transform:translateY(2px);box-shadow:0 1px 0 #F7A9C8}
+  .pp-pills{
+    display:flex;gap:6px;overflow-x:auto;padding:2px 1px;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  }
+  .pp-pills::-webkit-scrollbar{display:none}
+  .pp-pill{
+    flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;max-width:172px;
+    min-height:38px;padding:6px 13px;border-radius:999px;
+    border:2px solid #F3E2EA;background:#fff;color:#8A6478;
+    font-family:inherit;font-size:clamp(11px,2.8vw,14px);font-weight:900;cursor:pointer;
+  }
+  .pp-pill .em{font-size:1.1em;line-height:1}
+  .pp-pill .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pp-pill.on{
+    border-color:#FF9CC1;background:linear-gradient(180deg,#FFE7F1,#FFD2E5);
+    color:#8E2A57;box-shadow:0 3px 0 #FFB3D2;
+  }
+  .pp-pill:active{transform:translateY(1px)}
+  .pp-empty{font-size:clamp(10.5px,2.7vw,13px);font-weight:800;color:#A9959F}
+
+  /* ===== add player modal ===== */
+  .pp-modal{
+    position:fixed;inset:0;z-index:70;display:none;
+    align-items:center;justify-content:center;padding:16px;
+    background:rgba(76,44,62,.42);
+    -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+  }
+  .pp-modal.open{display:flex}
+  .pp-box{
+    width:100%;max-width:380px;max-height:88vh;max-height:88svh;overflow:auto;
+    background:#FFFDF8;border-radius:26px;padding:18px 16px 16px;
+    border:1px solid #F3E6EC;box-shadow:0 26px 70px rgba(70,40,60,.36);text-align:center;
+  }
+  .pp-box h2{margin:0 0 4px;font-size:clamp(15px,4.2vw,19px);color:#4E2C42}
+  .pp-box .lead{margin:0 0 12px;font-size:clamp(10.5px,2.8vw,12.5px);font-weight:800;color:#9C8494;line-height:1.4}
+  .pp-ics{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-bottom:10px}
+  .pp-ics button{
+    width:40px;height:40px;border-radius:50%;border:2px solid #F3E2EA;background:#fff;
+    font-size:20px;line-height:1;font-family:inherit;cursor:pointer;
+  }
+  .pp-ics button.on{border-color:#FF9CC1;background:#FFF0F6;box-shadow:0 2px 0 #FFC3DC}
+  .pp-input{
+    width:100%;min-height:46px;border-radius:16px;border:2px solid #F0DCE7;background:#fff;
+    padding:11px 14px;font-family:inherit;font-size:16px;font-weight:800;color:#53323F;text-align:center;
+  }
+  .pp-input:focus{outline:3px solid #FFC3DC;outline-offset:1px}
+  .pp-err{margin:6px 0 0;min-height:1.2em;font-size:11.5px;font-weight:800;color:#B03A56}
+  .pp-btns{display:flex;gap:8px;margin-top:6px}
+  .pp-btns button{
+    flex:1;min-height:44px;border-radius:14px;border:1.5px solid #F0DCE7;background:#fff;
+    font-family:inherit;font-weight:900;font-size:14px;color:#7B4E67;cursor:pointer;
+  }
+  .pp-btns button.save{background:linear-gradient(180deg,#FFD9E8,#FFB9D4);border-color:#F7A9C8;color:#8E2A57}
+
   /* progress badge */
   .prog{display:flex;flex-direction:column;align-items:center;gap:2px;width:100%;margin-top:1px}
   .pbar{
@@ -283,6 +356,13 @@
   .pm-confirm .pm-actions{margin-top:2px}
   .pm-warn{margin:8px 0 0;font-size:11.5px;color:#9C8894}
 
+  /* プレイヤーバーの ぶん、たてに すこし つめる（たてが ひくい がめん） */
+  @media (max-height:880px){
+    .pp{padding:6px 9px 7px;gap:5px}
+    a.card{min-height:clamp(120px,17.4vh,206px)}
+    .ico{width:clamp(40px,8.6vh,84px);height:clamp(40px,8.6vh,84px);font-size:clamp(22px,4.9vh,48px)}
+  }
+
   /* wide but short screens (landscape tablet) */
   @media (orientation:landscape) and (max-height:900px){
     .ico{width:clamp(38px,8.6vh,62px);height:clamp(38px,8.6vh,62px);font-size:clamp(21px,4.8vh,34px)}
@@ -297,7 +377,6 @@
     .parent-open{font-size:clamp(9px,1.9vw,11.5px);min-height:30px}
   }
 
-  /* small screens */
   @media (max-width:344px){
     body{padding-left:8px;padding-right:8px}
     .grid{gap:6px}
@@ -337,6 +416,14 @@
     <h1 class="logo"><span class="party" aria-hidden="true">🎉</span>わくわく ゲームパーク</h1>
     <p class="sub">すきな ゲームを タップしてね！</p>
   </header>
+
+  <section class="pp" id="pp" aria-label="だれが あそぶ？">
+    <div class="pp-head">
+      <span class="pp-q"><span aria-hidden="true">👧</span> だれが あそぶ？</span>
+      <button class="pp-add" id="ppAdd" type="button">＋ なまえを ついか</button>
+    </div>
+    <div class="pp-pills" id="ppPills"></div>
+  </section>
 
   <main class="grid">
 
@@ -396,6 +483,21 @@
     <button class="parent-open" id="pmOpen" type="button">📊 おうちのひとへ（きろく・CSV）</button>
   </footer>
 
+</div>
+
+<!-- ===== player modal ===== -->
+<div class="pp-modal" id="ppModal" aria-hidden="true">
+  <div class="pp-box" role="dialog" aria-modal="true" aria-labelledby="ppTitle">
+    <h2 id="ppTitle">なまえを おしえてね</h2>
+    <p class="lead">なまえごとに きろくが のこるよ。<br>つぎからは えらぶだけで あそべるよ</p>
+    <div class="pp-ics" id="ppIcs"></div>
+    <input class="pp-input" id="ppName" type="text" maxlength="10" placeholder="なまえ（ひらがな）" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <p class="pp-err" id="ppErr" role="status" aria-live="polite"></p>
+    <div class="pp-btns">
+      <button class="save" id="ppSave" type="button">これで いく！</button>
+      <button id="ppCancel" type="button">とじる</button>
+    </div>
+  </div>
 </div>
 
 <!-- parent-panel:start -->
@@ -464,8 +566,152 @@
   }
   function pct(n, total) { return total > 0 ? Math.max(0, Math.min(100, Math.round(n / total * 1000) / 10)) : 0; }
 
+  /* ---------------- 共通プレイヤー（トップで いちど えらぶ） ---------------- */
+  var SH_P = 'wakuwaku-park:players';
+  var SH_C = 'wakuwaku-park:current';
+  var P_ICONS = ['🐰', '🌸', '🍡', '🌙', '⭐', '🍓', '🐱', '🐶'];
+  var P_MAX = 8;
+  var SHARED = [];
+  var CUR_ID = '';
+  var pickedIcon = P_ICONS[0];
+
+  function dropRaw(k) { try { if (LS) { LS.removeItem(k); } } catch (e) {} }
+
+  function toHira(s) {
+    var t = String(s == null ? '' : s), out = '', i, c;
+    for (i = 0; i < t.length; i++) {
+      c = t.charCodeAt(i);
+      if (c >= 0x30A1 && c <= 0x30F6) { out += String.fromCharCode(c - 0x60); }
+      else { out += t.charAt(i); }
+    }
+    return out;
+  }
+  function nrmName(s) { return toHira(s).replace(/[\s\u3000]+/g, ''); }
+
+  /* おなじ なまえ か（しりとりロボは 8もじで きるので、みじかい ほうが まえに つく なら おなじ） */
+  function sameName(a, b) {
+    var x = nrmName(a), y = nrmName(b), L;
+    if (!x || !y) { return false; }
+    if (x === y) { return true; }
+    L = Math.min(x.length, y.length);
+    if (L < 3) { return false; }
+    return x.slice(0, L) === y.slice(0, L);
+  }
+
+  function readShared() {
+    var a = readJSON(SH_P), out = [], i, p;
+    if (Object.prototype.toString.call(a) !== '[object Array]') { return out; }
+    for (i = 0; i < a.length; i++) {
+      p = a[i];
+      if (p && p.id && p.name) {
+        out.push({ id: String(p.id), name: String(p.name).slice(0, 10), icon: String(p.icon || '🐰') });
+      }
+    }
+    return out;
+  }
+  function writeShared(list) { setRaw(SH_P, JSON.stringify(list)); }
+  function byIdP(list, id) {
+    for (var i = 0; i < list.length; i++) { if (String(list[i].id) === String(id)) { return list[i]; } }
+    return null;
+  }
+  function byNameP(list, name) {
+    for (var i = 0; i < list.length; i++) { if (sameName(list[i].name, name)) { return list[i]; } }
+    return null;
+  }
+  function curPlayer() { return byIdP(SHARED, CUR_ID) || SHARED[0] || null; }
+  function newPid() { return 'w' + new Date().getTime().toString(36) + String(Math.floor(Math.random() * 900) + 100); }
+
+  function srcList(src) {
+    var d = readJSON(src.k), a = null, out = [], i, p;
+    if (src.kind === 'array') { a = Object.prototype.toString.call(d) === '[object Array]' ? d : null; }
+    else { a = (d && Object.prototype.toString.call(d.players) === '[object Array]') ? d.players : null; }
+    if (!a) { return out; }
+    for (i = 0; i < a.length; i++) {
+      p = a[i];
+      if (p && p.id && p.name) {
+        out.push({ id: String(p.id), name: String(p.name).slice(0, 10), icon: String(p.icon || '🐰') });
+      }
+    }
+    return out;
+  }
+
+  var SRC = [
+    { kind: 'array', k: 'kotoba-quiz-v2:players' },
+    { kind: 'obj', k: 'shiritori-robot-v3:meta' },
+    { kind: 'array', k: 'hyakunin-isshu-v2:players' },
+    { kind: 'obj', k: 'todofuken-sugoroku-v2' },
+    { kind: 'array', k: 'kokki-flashcard-v2:players' },
+    { kind: 'array', k: 'sansu-board-v2:players' }
+  ];
+
+  /* これまで つかっていた なまえを ひろって、だぶりを まとめる */
+  function gatherShared() {
+    var changed = false, i, k, list;
+    for (i = 0; i < SRC.length; i++) {
+      list = srcList(SRC[i]);
+      for (k = 0; k < list.length; k++) {
+        if (byIdP(SHARED, list[k].id) || byNameP(SHARED, list[k].name)) { continue; }
+        SHARED.push(list[k]);
+        changed = true;
+      }
+    }
+    return changed;
+  }
+
+  /* さいごに あそんでいた なまえ（どこかの アプリの 「いまの プレイヤー」） */
+  var CURSRC = [
+    { meta: 'shiritori-robot-v3:meta' },
+    { meta: 'todofuken-sugoroku-v2' },
+    { list: 'kotoba-quiz-v2:players', cur: 'kotoba-quiz-v2:current' },
+    { list: 'hyakunin-isshu-v2:players', cur: 'hyakunin-isshu-v2:current' },
+    { list: 'kokki-flashcard-v2:players', cur: 'kokki-flashcard-v2:current' },
+    { list: 'sansu-board-v2:players', cur: 'sansu-board-v2:current' }
+  ];
+  function guessPlayer() {
+    var i, k, src, m, cid, list, p;
+    for (i = 0; i < CURSRC.length; i++) {
+      src = CURSRC[i];
+      if (src.meta) {
+        m = readJSON(src.meta) || {};
+        cid = m.last || m.cur || '';
+        list = srcList({ kind: 'obj', k: src.meta });
+      } else {
+        cid = getRaw(src.cur) || '';
+        list = srcList({ kind: 'array', k: src.list });
+      }
+      if (!cid) { continue; }
+      p = null;
+      for (k = 0; k < list.length; k++) { if (String(list[k].id) === String(cid)) { p = list[k]; } }
+      if (p) { return byNameP(SHARED, p.name); }
+    }
+    return null;
+  }
+
+  function initShared() {
+    SHARED = readShared();
+    var changed = gatherShared();
+    var p = byIdP(SHARED, getRaw(SH_C) || '');
+    if (!p) { p = guessPlayer() || SHARED[0] || null; }
+    CUR_ID = p ? p.id : '';
+    if (changed) { writeShared(SHARED); }
+    if (CUR_ID) { setRaw(SH_C, CUR_ID); } else { dropRaw(SH_C); }
+  }
+
+  function refreshShared() {
+    SHARED = readShared();
+    if (!byIdP(SHARED, CUR_ID)) {
+      var g = guessPlayer() || SHARED[0] || null;
+      CUR_ID = g ? g.id : '';
+      if (CUR_ID) { setRaw(SH_C, CUR_ID); }
+    }
+    if (gatherShared()) { writeShared(SHARED); }
+    renderPills();
+    renderBadges();
+  }
+
   /* ---------------- storage prefixes ---------------- */
   var PREFIXES = [
+    'wakuwaku-park',
     'kotoba-quiz-v2', 'kotoba-gacha-v2',
     'sansu-board-v2',
     'shiritori-robot-v3',
@@ -485,6 +731,7 @@
   /* ---------------- per app readers ---------------- */
   var TOTAL = { kokugo: 333, sansu: 162, shiritori: 727, hyakunin: 100, todofuken: 47, kokki: 50 };
   var APPNAME = {
+    'wakuwaku-park': 'プレイヤー（ぜんぶの アプリで いっしょ）',
     'kotoba-quiz-v2': 'こくご クイズ', 'kotoba-gacha-v2': 'こくご クイズ',
     'sansu-board-v2': 'さんすう ボード', 'shiritori-robot-v3': 'しりとり ロボ',
     'hyakunin-isshu-v2': 'ひゃくにん いっしゅ', 'todofuken-sugoroku-v2': 'にほんいっしゅう クイズ',
@@ -526,7 +773,31 @@
     return { clear: c, nigate: g, crown: k, rounds: (s && s.rounds) || 0, exist: !!s };
   }
 
+  function sansuPlayer(pid) {
+    var s = readJSON('sansu-board-v2:p:' + pid) || {};
+    var q = (s.q && typeof s.q === 'object') ? s.q : {};
+    var c = 0, g = 0, k = 0;
+    for (var key in q) {
+      if (!Object.prototype.hasOwnProperty.call(q, key)) { continue; }
+      var v = q[key] || {};
+      if (v.c) { c++; }
+      if (v.n) { g++; }
+      if (v.p) { k++; }
+    }
+    return { clear: c, nigate: g, crown: k, rounds: s.rounds || 0 };
+  }
+
   function sansuRows() {
+    var pl = asPlayers('sansu-board-v2:players'), out = [], i;
+    for (i = 0; i < pl.length; i++) {
+      var st = sansuPlayer(pl[i].id);
+      out.push({
+        icon: pl[i].icon || '🔢', who: pl[i].name, n: st.clear,
+        memo: 'クリア ' + st.clear + ' / 162・にがて ' + st.nigate + '・👑 ' + st.crown +
+              (st.rounds ? '・' + st.rounds + '回プレイ' : '')
+      });
+    }
+    if (out.length) { return out; }
     var s = sansuStats();
     if (!s.exist) { return []; }
     return [{
@@ -567,10 +838,21 @@
   }
 
   function todofukenRows() {
-    var s = readJSON('todofuken-puzzle-v1');
-    if (!s) { return []; }
-    var n = Array.isArray(s.found) ? s.found.length : 0;
-    return [{ icon: '🚄', who: 'きろく', n: n, memo: 'みつけた ' + n + ' / 47' }];
+    var app = readJSON('todofuken-sugoroku-v2') || {};
+    var pl = Array.isArray(app.players) ? app.players : [];
+    var out = [], i;
+    for (i = 0; i < pl.length; i++) {
+      if (!pl[i] || !pl[i].id) { continue; }
+      var s = readJSON('todofuken-sugoroku-v2:p:' + pl[i].id) || {};
+      var n = Array.isArray(s.done) ? s.done.length : 0;
+      var cr = Array.isArray(s.crowns) ? s.crowns.length : 0;
+      out.push({ icon: pl[i].icon || '🚄', who: pl[i].name, n: n, memo: 'めいぶつ ' + n + ' / 47' + (cr ? '・👑 ' + cr : '') });
+    }
+    if (out.length) { return out; }
+    var s1 = readJSON('todofuken-puzzle-v1');
+    if (!s1) { return []; }
+    var n1 = Array.isArray(s1.found) ? s1.found.length : 0;
+    return [{ icon: '🚄', who: 'きろく', n: n1, memo: 'みつけた ' + n1 + ' / 47' }];
   }
 
   /* こっき v2: hits（せいかい かいすう）1いじょう か learned を「おみやげ」と して かぞえる */
@@ -615,13 +897,16 @@
   var APP_LIST = ['kokugo', 'sansu', 'shiritori', 'hyakunin', 'todofuken', 'kokki'];
 
   function collect() {
-    var data = {}, i;
+    var data = {}, i, j, me = curPlayer(), mn = me ? me.name : '';
     for (i = 0; i < APP_LIST.length; i++) {
       var id = APP_LIST[i], rows = [];
       try { rows = READERS[id]() || []; } catch (e) { rows = []; }
-      var best = 0;
-      for (var j = 0; j < rows.length; j++) { if (rows[j].n > best) { best = rows[j].n; } }
-      data[id] = { rows: rows, best: best, total: TOTAL[id], people: rows.length };
+      var best = 0, mine = 0;
+      for (j = 0; j < rows.length; j++) {
+        if (rows[j].n > best) { best = rows[j].n; }
+        if (mn && sameName(rows[j].who, mn) && rows[j].n > mine) { mine = rows[j].n; }
+      }
+      data[id] = { rows: rows, best: best, mine: mine, total: TOTAL[id], people: rows.length };
     }
     return data;
   }
@@ -636,14 +921,12 @@
       if (!d) { continue; }
       var txt = nodes[i].querySelector('.ptxt');
       var fill = nodes[i].querySelector('.pbar i');
-      if (d.best > 0) {
-        txt.textContent = '⭐ ' + d.best + ' / ' + d.total + (d.people > 1 ? '・' + d.people + 'にん' : '');
-      } else if (d.people > 0) {
-        txt.textContent = 'これから！';
+      if (d.mine > 0) {
+        txt.textContent = '⭐ ' + d.mine + ' / ' + d.total;
       } else {
         txt.textContent = 'これから！';
       }
-      fill.style.width = pct(d.best, d.total) + '%';
+      fill.style.width = pct(d.mine, d.total) + '%';
     }
   }
 
@@ -659,6 +942,19 @@
     var box = document.getElementById('pmList');
     if (!box) { return; }
     var html = '';
+    html += '<section class="pm-app"><h3><span aria-hidden="true">👧</span>だれが あそぶ？（ぜんぶの アプリ）' +
+            '<span class="pm-tot">' + SHARED.length + 'にん</span></h3>';
+    if (!SHARED.length) {
+      html += '<p class="pm-empty">まだ なまえが ありません</p>';
+    } else {
+      html += '<ul class="pm-ul">';
+      for (var s = 0; s < SHARED.length; s++) {
+        html += '<li><b><span aria-hidden="true">' + esc(SHARED[s].icon) + '</span> ' + esc(SHARED[s].name) +
+                '</b><span>' + (SHARED[s].id === CUR_ID ? '← いま えらんでいる' : '') + '</span></li>';
+      }
+      html += '</ul>';
+    }
+    html += '</section>';
     for (var i = 0; i < APP_LIST.length; i++) {
       var id = APP_LIST[i], d = data[id];
       html += '<section class="pm-app"><h3><span aria-hidden="true">' + EMOJI[id] + '</span>' + LABEL[id] +
@@ -712,8 +1008,26 @@
         who = 'きろく'; memo = '';
       }
     } else if (p === 'sansu-board-v2') {
-      var st = sansuStats();
-      who = 'きろく'; memo = 'クリア ' + st.clear + ' / 162・にがて ' + st.nigate + '・👑 ' + st.crown + '・' + st.rounds + '回プレイ';
+      if (k === 'sansu-board-v2:players') {
+        who = 'プレイヤー一覧'; memo = (Array.isArray(d) ? d.length : 0) + '人';
+      } else if (k === 'sansu-board-v2:current') {
+        who = 'いまのプレイヤー'; memo = 'ID: ' + raw;
+      } else if (k.indexOf(':p:') > 0) {
+        id = k.slice(k.indexOf(':p:') + 3);
+        var sp = sansuPlayer(id);
+        who = 'プレイヤー「' + playerName('sansu-board-v2:players', id) + '」';
+        memo = 'クリア ' + sp.clear + ' / 162・にがて ' + sp.nigate + '・👑 ' + sp.crown;
+      } else {
+        var st = sansuStats();
+        who = 'きろく（プレイヤー まえ）'; memo = 'クリア ' + st.clear + ' / 162・にがて ' + st.nigate + '・👑 ' + st.crown + '・' + st.rounds + '回プレイ';
+      }
+    } else if (p === 'wakuwaku-park') {
+      if (k === 'wakuwaku-park:players') {
+        who = 'プレイヤー一覧（ぜんぶの アプリ）'; memo = (Array.isArray(d) ? d.length : 0) + '人';
+      } else if (k === 'wakuwaku-park:current') {
+        who = 'いまのプレイヤー（ぜんぶの アプリ）';
+        memo = '「' + playerName('wakuwaku-park:players', raw) + '」';
+      } else { who = 'きろく'; memo = ''; }
     } else if (p === 'shiritori-robot-v3') {
       if (k === 'shiritori-robot-v3:meta') {
         who = '設定：プレイヤー・こえ';
@@ -737,8 +1051,17 @@
         memo = 'おぼえた ' + Object.keys(set).length + ' / 100';
       } else { who = 'きろく'; memo = ''; }
     } else if (p === 'todofuken-sugoroku-v2' || p === 'todofuken-puzzle-v1') {
-      who = 'きろく';
-      memo = 'みつけた ' + (d && Array.isArray(d.found) ? d.found.length : 0) + ' / 47';
+      if (k === 'todofuken-sugoroku-v2') {
+        who = 'プレイヤー一覧・設定';
+        memo = (d && Array.isArray(d.players) ? d.players.length : 0) + '人・おと' + (d && d.sound === false ? 'なし' : 'あり');
+      } else if (k.indexOf(':p:') > 0) {
+        id = k.slice(k.indexOf(':p:') + 3);
+        who = 'プレイヤー「' + playerName('todofuken-sugoroku-v2:players', id) + '」';
+        memo = 'めいぶつ ' + (d && Array.isArray(d.done) ? d.done.length : 0) + ' / 47';
+      } else {
+        who = 'きろく';
+        memo = 'みつけた ' + (d && Array.isArray(d.found) ? d.found.length : 0) + ' / 47';
+      }
     } else if (p === 'kokki-flashcard-v2') {
       if (k === 'kokki-flashcard-v2:players') {
         who = 'プレイヤー一覧'; memo = (Array.isArray(d) ? d.length : 0) + '人';
@@ -767,6 +1090,7 @@
   function appRank(k) {
     var p = prefixOf(k), order = ['kokugo', 'sansu', 'shiritori', 'hyakunin', 'todofuken', 'kokki'];
     var map = {
+      'wakuwaku-park': -1,
       'kotoba-quiz-v2': 0, 'kotoba-gacha-v2': 0, 'sansu-board-v2': 1,
       'shiritori-robot-v3': 2, 'hyakunin-isshu-v2': 3,
       'todofuken-sugoroku-v2': 4, 'todofuken-puzzle-v1': 4,
@@ -1028,25 +1352,168 @@
     pending = null;
     confirmBox.hidden = true;
     fileInput.value = '';
+    refreshShared();
     renderSummary();
     renderBadges();
     say(n + '件のきろくを ふっかつ しました！');
   });
 
+  /* ---------------- だれが あそぶ？（トップの プレイヤー） ---------------- */
+  function renderPills() {
+    var host = document.getElementById('ppPills');
+    if (!host) { return; }
+    host.innerHTML = '';
+    if (!SHARED.length) {
+      var e = document.createElement('span');
+      e.className = 'pp-empty';
+      e.textContent = 'まだ なまえが ないよ。ボタンから つくってね';
+      host.appendChild(e);
+    }
+    for (var i = 0; i < SHARED.length; i++) {
+      (function (p) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'pp-pill' + (p.id === CUR_ID ? ' on' : '');
+        b.setAttribute('aria-pressed', p.id === CUR_ID ? 'true' : 'false');
+        b.setAttribute('data-pid', p.id);
+        var em = document.createElement('span');
+        em.className = 'em';
+        em.textContent = p.icon;
+        var nm = document.createElement('span');
+        nm.className = 'nm';
+        nm.textContent = p.name;
+        b.appendChild(em);
+        b.appendChild(nm);
+        b.addEventListener('click', function () { selectPlayer(p.id); });
+        host.appendChild(b);
+      })(SHARED[i]);
+    }
+    var add = document.getElementById('ppAdd');
+    if (add) { add.style.display = SHARED.length >= P_MAX ? 'none' : ''; }
+  }
+
+  function selectPlayer(id) {
+    if (!id) { return; }
+    CUR_ID = id;
+    setRaw(SH_C, id);
+    renderPills();
+    renderBadges();
+    renderSummary();
+  }
+
+  function paintPIcons() {
+    var host = document.getElementById('ppIcs');
+    if (!host) { return; }
+    host.innerHTML = '';
+    for (var i = 0; i < P_ICONS.length; i++) {
+      (function (ic) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = ic;
+        b.className = (ic === pickedIcon ? 'on' : '');
+        b.setAttribute('aria-label', 'えらぶ えもじ');
+        b.addEventListener('click', function () { pickedIcon = ic; paintPIcons(); });
+        host.appendChild(b);
+      })(P_ICONS[i]);
+    }
+  }
+
+  function pErr(text) {
+    var e = document.getElementById('ppErr');
+    if (e) { e.textContent = text || ''; }
+  }
+
+  function openAdd() {
+    var modal = document.getElementById('ppModal');
+    var input = document.getElementById('ppName');
+    if (!modal) { return; }
+    if (!SHARED.length) { pickedIcon = P_ICONS[0]; }
+    paintPIcons();
+    pErr('');
+    if (input && !SHARED.length) { input.value = ''; }
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('lock');
+    var t = document.getElementById('ppTitle');
+    if (t) { t.textContent = SHARED.length ? 'なまえを ついか' : 'なまえを おしえてね'; }
+    setTimeout(function () { try { if (input) { input.focus(); } } catch (e) {} }, 60);
+  }
+
+  function closeAdd() {
+    var modal = document.getElementById('ppModal');
+    if (!modal) { return; }
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    var pmOpen = document.getElementById('pm');
+    if (!pmOpen || !pmOpen.classList.contains('open')) { document.body.classList.remove('lock'); }
+  }
+
+  function saveAdd() {
+    var input = document.getElementById('ppName');
+    var name = nrmName((input && input.value) || '').slice(0, 10);
+    if (!name) { pErr('なまえを ひらがなで いれてね'); return; }
+    if (SHARED.length >= P_MAX) { pErr('なまえは ' + P_MAX + 'にんまで だよ'); return; }
+    if (byNameP(SHARED, name)) { pErr('おなじ なまえが あるよ'); return; }
+    var p = { id: newPid(), name: name, icon: pickedIcon };
+    SHARED.push(p);
+    writeShared(SHARED);
+    if (input) { input.value = ''; }
+    pErr('');
+    closeAdd();
+    selectPlayer(p.id);
+  }
+
+  (function wirePlayers() {
+    var add = document.getElementById('ppAdd');
+    var save = document.getElementById('ppSave');
+    var cancel = document.getElementById('ppCancel');
+    var modal = document.getElementById('ppModal');
+    var input = document.getElementById('ppName');
+    if (add) { add.addEventListener('click', openAdd); }
+    if (save) { save.addEventListener('click', saveAdd); }
+    if (cancel) { cancel.addEventListener('click', function () { pErr(''); closeAdd(); }); }
+    if (modal) {
+      modal.addEventListener('click', function (ev) { if (ev.target === modal) { pErr(''); closeAdd(); } });
+    }
+    if (input) {
+      input.addEventListener('keydown', function (ev) { if (ev && ev.key === 'Enter') { saveAdd(); } });
+    }
+    document.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Escape' && modal && modal.classList.contains('open')) { pErr(''); closeAdd(); }
+    });
+  })();
+
   /* keep badges fresh */
+  initShared();
+  renderPills();
   renderBadges();
-  window.addEventListener('storage', renderBadges);
+  window.addEventListener('storage', refreshShared);
   document.addEventListener('visibilitychange', function () {
-    if (!document.hidden) { renderBadges(); }
+    if (!document.hidden) { refreshShared(); }
   });
-  window.addEventListener('focus', renderBadges);
+  window.addEventListener('focus', refreshShared);
+
+  if (!SHARED.length) { setTimeout(openAdd, 400); }
 
   /* test hook */
   window.__gp = {
     collect: collect, buildCsv: buildCsv, parseCsv: parseCsv,
     planImport: planImport, applyImport: applyImport, renderBadges: renderBadges,
     renderSummary: renderSummary, describe: describe, collectKeys: collectKeys,
-    downloadCsv: downloadCsv, prefixes: PREFIXES.slice()
+    downloadCsv: downloadCsv, prefixes: PREFIXES.slice(),
+    players: function () { return SHARED.slice(); },
+    currentId: function () { return CUR_ID; },
+    currentName: function () { var p = curPlayer(); return p ? p.name : ''; },
+    selectPlayer: selectPlayer,
+    addPlayer: function (name, icon) {
+      var n = nrmName(name).slice(0, 10);
+      if (!n || byNameP(SHARED, n) || SHARED.length >= P_MAX) { return null; }
+      var p = { id: newPid(), name: n, icon: icon || P_ICONS[0] };
+      SHARED.push(p); writeShared(SHARED); selectPlayer(p.id); return p;
+    },
+    initShared: function () { initShared(); renderPills(); renderBadges(); },
+    renderPills: renderPills,
+    sameName: sameName
   };
 })();
 </script>
