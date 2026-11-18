@@ -360,7 +360,7 @@
       <span class="tw" aria-hidden="true">✨</span>
       <span class="ico" aria-hidden="true">🤖</span>
       <span class="name"><span class="w">しりとり</span> <span class="w">ロボ</span></span>
-      <span class="desc"><span class="w">うんち💩も</span> <span class="w">でる！ロボと</span> <span class="w">バトル！</span></span>
+      <span class="desc"><span class="w">かわいい</span> <span class="w">ロボと</span> <span class="w">ことばバトル！</span></span>
       <span class="prog" data-app="shiritori" aria-hidden="true"><span class="pbar"><i></i></span><span class="ptxt">これから！</span></span>
     </a>
 
@@ -384,7 +384,7 @@
       <span class="tw" aria-hidden="true">✨</span>
       <span class="ico" aria-hidden="true">🏳️</span>
       <span class="name"><span class="w">せかいの</span> <span class="w">こっき</span></span>
-      <span class="desc"><span class="w">めくって</span> <span class="w">おぼえる</span> <span class="w">50かこく！</span></span>
+      <span class="desc"><span class="w">こっきクイズで</span> <span class="w">おみやげ</span> <span class="w">あつめ！</span></span>
       <span class="prog" data-app="kokki" aria-hidden="true"><span class="pbar"><i></i></span><span class="ptxt">これから！</span></span>
     </a>
 
@@ -471,7 +471,7 @@
     'shiritori-robot-v3',
     'hyakunin-isshu-v2',
     'todofuken-sugoroku-v2', 'todofuken-puzzle-v1',
-    'kokki-flashcard-v1'
+    'kokki-flashcard-v2', 'kokki-flashcard-v1'
   ];
 
   function prefixOf(k) {
@@ -488,7 +488,8 @@
     'kotoba-quiz-v2': 'こくご クイズ', 'kotoba-gacha-v2': 'こくご クイズ',
     'sansu-board-v2': 'さんすう ボード', 'shiritori-robot-v3': 'しりとり ロボ',
     'hyakunin-isshu-v2': 'ひゃくにん いっしゅ', 'todofuken-sugoroku-v2': 'にほんいっしゅう クイズ',
-    'todofuken-puzzle-v1': 'にほんいっしゅう クイズ', 'kokki-flashcard-v1': 'せかいの こっき'
+    'todofuken-puzzle-v1': 'にほんいっしゅう クイズ',
+    'kokki-flashcard-v2': 'せかいの こっき', 'kokki-flashcard-v1': 'せかいの こっき'
   };
 
   function kokugoRows() {
@@ -572,11 +573,39 @@
     return [{ icon: '🚄', who: 'きろく', n: n, memo: 'みつけた ' + n + ' / 47' }];
   }
 
+  /* こっき v2: hits（せいかい かいすう）1いじょう か learned を「おみやげ」と して かぞえる */
+  function kokkiDone(s) {
+    var set = {}, h = (s && s.hits) || {}, l = (s && s.learned) || {}, k;
+    for (k in h) { if (h.hasOwnProperty(k) && Number(h[k]) >= 1) { set[k] = 1; } }
+    for (k in l) { if (l.hasOwnProperty(k) && l[k]) { set[k] = 1; } }
+    return Object.keys(set).length;
+  }
+  function kokkiMaster(s) {
+    var h = (s && s.hits) || {}, n = 0, k;
+    for (k in h) { if (h.hasOwnProperty(k) && Number(h[k]) >= 3) { n++; } }
+    return n;
+  }
   function kokkiRows() {
-    var s = readJSON('kokki-flashcard-v1');
-    if (!s) { return []; }
-    var n = keysOf(s.learned).length;
-    return [{ icon: '🏳️', who: 'きろく', n: n, memo: 'おぼえた ' + n + ' / 50' }];
+    var out = [], i, pl = asPlayers('kokki-flashcard-v2:players');
+    for (i = 0; i < pl.length; i++) {
+      var s = readJSON('kokki-flashcard-v2:p:' + pl[i].id) || {};
+      var n = kokkiDone(s), m = kokkiMaster(s);
+      out.push({
+        icon: pl[i].icon || '🏳️', who: pl[i].name, n: n,
+        memo: 'おみやげ ' + n + ' / 50' + (m ? '・👑 ' + m : '')
+      });
+    }
+    /* まえの ばん（v1）しか きろくが ない ときは、そちらも よむ */
+    if (!out.length) {
+      var s1 = readJSON('kokki-flashcard-v1');
+      if (s1) {
+        var n1 = kokkiDone(s1);
+        if (n1 > 0) {
+          out.push({ icon: '🏳️', who: 'きろく（まえの ばん）', n: n1, memo: 'おみやげ ' + n1 + ' / 50' });
+        }
+      }
+    }
+    return out;
   }
 
   var READERS = {
@@ -710,6 +739,16 @@
     } else if (p === 'todofuken-sugoroku-v2' || p === 'todofuken-puzzle-v1') {
       who = 'きろく';
       memo = 'みつけた ' + (d && Array.isArray(d.found) ? d.found.length : 0) + ' / 47';
+    } else if (p === 'kokki-flashcard-v2') {
+      if (k === 'kokki-flashcard-v2:players') {
+        who = 'プレイヤー一覧'; memo = (Array.isArray(d) ? d.length : 0) + '人';
+      } else if (k === 'kokki-flashcard-v2:current') {
+        who = 'いまのプレイヤー'; memo = 'ID: ' + raw;
+      } else if (k.indexOf(':p:') > 0) {
+        id = k.slice(k.indexOf(':p:') + 3);
+        who = 'プレイヤー「' + playerName('kokki-flashcard-v2:players', id) + '」';
+        memo = 'おみやげ ' + kokkiDone(d) + ' / 50・👑 ' + kokkiMaster(d) + '・' + (d && typeof d.plays === 'number' ? d.plays : 0) + '回プレイ';
+      } else { who = 'きろく'; memo = ''; }
     } else if (p === 'kokki-flashcard-v1') {
       who = 'きろく'; memo = 'おぼえた ' + keysOf(d && d.learned).length + ' / 50';
     } else {
@@ -730,14 +769,16 @@
     var map = {
       'kotoba-quiz-v2': 0, 'kotoba-gacha-v2': 0, 'sansu-board-v2': 1,
       'shiritori-robot-v3': 2, 'hyakunin-isshu-v2': 3,
-      'todofuken-sugoroku-v2': 4, 'todofuken-puzzle-v1': 4, 'kokki-flashcard-v1': 5
+      'todofuken-sugoroku-v2': 4, 'todofuken-puzzle-v1': 4,
+      'kokki-flashcard-v2': 5, 'kokki-flashcard-v1': 5
     };
     return (p && map[p] != null) ? map[p] : order.length + 1;
   }
 
   function playerIndex(p, id) {
     var listKey = (p === 'kotoba-quiz-v2') ? 'kotoba-quiz-v2:players'
-                : (p === 'hyakunin-isshu-v2') ? 'hyakunin-isshu-v2:players' : null;
+                : (p === 'hyakunin-isshu-v2') ? 'hyakunin-isshu-v2:players'
+                : (p === 'kokki-flashcard-v2') ? 'kokki-flashcard-v2:players' : null;
     var list = [];
     if (listKey) {
       list = asPlayers(listKey);
