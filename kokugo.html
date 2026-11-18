@@ -6,8 +6,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#FDFAF4">
-<meta name="description" content="6さいからの ことばクイズ 999もん。3もん クリアで カードが もらえるよ。">
-<title>ことばミッション999｜きょうの ことばガチャ</title>
+<meta name="description" content="6さいからの こくごクイズ。ぜんぶで 999もん、3もん クリアで カードが もらえるよ。">
+<title>こくごクイズ｜まなびランド</title>
 <style>
   :root{
     --ivory:#FDFAF4;
@@ -253,7 +253,7 @@
   /* ---------- stamp ---------- */
   .stamp{
     position:fixed;left:50%;top:38%;z-index:75;pointer-events:none;
-    transform:translate(-50%,-50%) scale(.7) rotate(-6deg);opacity:0;
+    transform:translate(-50%,-50%) scale(.7);opacity:0;
     display:flex;flex-direction:column;align-items:center;gap:6px;
     padding:18px 24px 20px;border-radius:32px;
     width:max-content;max-width:min(320px,84vw);
@@ -268,13 +268,13 @@
   .stamp-big{font-size:26px;font-weight:700;letter-spacing:.06em;color:var(--mint-ink);white-space:nowrap}
   .stamp.no .stamp-big{color:#B4637A}
   .stamp.hard .stamp-big{color:#A97615;font-size:29px}
-  .stamp-small{font-size:13.5px;font-weight:700;line-height:1.6;color:var(--ink2);text-wrap:balance}
+  .stamp-small{font-size:13.5px;font-weight:700;line-height:1.6;color:var(--ink2);text-wrap:balance;white-space:pre-line}
   .stamp.hard .stamp-small{color:#8C6220;font-size:15px}
   @keyframes stampPop{
-    0%{opacity:0;transform:translate(-50%,-50%) scale(.55) rotate(-9deg)}
-    100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(-3deg)}
+    0%{opacity:0;transform:translate(-50%,-50%) scale(.55)}
+    100%{opacity:1;transform:translate(-50%,-50%) scale(1)}
   }
-  @keyframes stampOut{to{opacity:0;transform:translate(-50%,-50%) scale(.94) rotate(-3deg)}}
+  @keyframes stampOut{to{opacity:0;transform:translate(-50%,-50%) scale(.94)}}
 
   /* ---------- clear ---------- */
   .clear-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;text-align:center}
@@ -441,9 +441,9 @@
   .kemoji{font-size:58px;line-height:1;filter:drop-shadow(0 6px 10px rgba(120,101,90,.14));animation:bump 1.6s ease-in-out infinite}
   .kcard.popIn{animation:cardIn .62s cubic-bezier(.2,1.4,.45,1) both}
   @keyframes cardIn{
-    0%{opacity:0;transform:scale(.55) rotate(-8deg)}
-    70%{opacity:1;transform:scale(1.04) rotate(1.5deg)}
-    100%{opacity:1;transform:scale(1) rotate(0)}
+    0%{opacity:0;transform:scale(.55)}
+    70%{opacity:1;transform:scale(1.04)}
+    100%{opacity:1;transform:scale(1)}
   }
   .kname{font-size:19px;font-weight:700;letter-spacing:.06em;text-align:center}
   .kpraise{
@@ -469,6 +469,75 @@
   /* ---------- confetti ---------- */
   #fx{position:fixed;inset:0;z-index:90;pointer-events:none;width:100%;height:100%}
 
+  /* ---------- まなびランドへ もどる ---------- */
+  .home-back{
+    display:inline-flex;align-items:center;justify-content:center;gap:5px;
+    width:fit-content;align-self:flex-start;
+    padding:6px 13px;border-radius:999px;
+    background:#FFFFFF;border:2px solid var(--line,#F0E7D9);
+    box-shadow:0 4px 12px rgba(120,101,90,.14);
+    color:var(--ink2,#7A6E67);font-family:inherit;
+    font-size:12.5px;font-weight:800;letter-spacing:.06em;line-height:1.15;
+    text-decoration:none;white-space:nowrap;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .12s ease,box-shadow .12s ease;
+  }
+  .home-back:active{transform:scale(.95);box-shadow:0 2px 6px rgba(120,101,90,.16)}
+
+  /* ---------- プレイヤー ---------- */
+  .start-top{gap:8px}
+  .pl-chip{
+    display:inline-flex;align-items:center;gap:5px;flex:0 0 auto;
+    border:2px solid #fff;background:#fff;border-radius:999px;padding:5px 11px 5px 7px;
+    font-family:inherit;font-size:12.5px;font-weight:700;color:var(--ink);
+    box-shadow:0 5px 14px rgba(120,101,90,.12);cursor:pointer;max-width:164px;
+  }
+  .pl-chip:active{transform:scale(.96)}
+  .pl-chip-ico{font-size:16px;line-height:1}
+  #plChipName{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pl-panel{gap:9px}
+  .pl-badge{
+    font-size:10.5px;font-weight:700;letter-spacing:.16em;color:#8C6220;
+    background:linear-gradient(180deg,#FCEFC4,#F8E3A4);padding:4px 12px;border-radius:999px;
+    box-shadow:0 2px 8px rgba(220,184,100,.25);
+  }
+  .pl-title{margin:0;font-size:19px;font-weight:700;letter-spacing:.06em;color:var(--mint-ink);text-align:center}
+  .pl-list{display:flex;flex-direction:column;gap:7px;width:100%;max-height:36vh;overflow-y:auto;padding:2px}
+  .pl-card{
+    display:flex;align-items:center;gap:9px;width:100%;
+    background:#fff;border:2px solid var(--line);border-radius:18px;padding:8px 10px;
+    font-family:inherit;font-size:15.5px;font-weight:700;color:var(--ink);cursor:pointer;
+    box-shadow:0 4px 0 var(--line);text-align:left;
+  }
+  .pl-card:active{transform:translateY(2px);box-shadow:0 2px 0 var(--line)}
+  .pl-card.on{border-color:var(--pink);background:#FFF6F9;box-shadow:0 4px 0 #F3C7D4}
+  .pl-ico{
+    width:36px;height:36px;flex:0 0 36px;border-radius:12px;background:var(--mustard-l);
+    display:flex;align-items:center;justify-content:center;font-size:19px;
+  }
+  .pl-mid{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+  .pl-nm{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pl-num{font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.02em}
+  .pl-del{border:0;background:none;font-family:inherit;font-size:12px;font-weight:700;color:#C9BAB0;padding:6px 4px;cursor:pointer}
+  .pl-del.yes{color:var(--rose-2)}
+  .pl-form{display:none;width:100%;flex-direction:column;gap:8px}
+  .pl-form.open{display:flex}
+  .pl-input{
+    width:100%;font-family:inherit;font-size:16.5px;font-weight:700;color:var(--ink);
+    padding:12px 14px;border-radius:16px;border:2px solid var(--line);background:#fff;
+    text-align:center;outline:none;letter-spacing:.04em;
+  }
+  .pl-input:focus{border-color:var(--pink);box-shadow:0 0 0 4px rgba(239,169,184,.18)}
+  .pl-icons{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;width:100%}
+  .pl-ic{
+    aspect-ratio:1;border-radius:12px;border:2px solid var(--line);background:#fff;
+    font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;
+  }
+  .pl-ic.on{border-color:var(--pink);background:#FFF1F6;transform:scale(1.04)}
+  .pl-note{margin:0;font-size:10.5px;font-weight:700;color:var(--ink3);letter-spacing:.02em;text-align:center}
+  .pl-err{margin:0;font-size:12px;font-weight:700;color:var(--rose-2);text-align:center}
+  .pl-err:empty{display:none}
+
   @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
   }
@@ -484,21 +553,6 @@
     .choice{padding:13px 14px;font-size:21px}
     .q-prompt{font-size:16.5px}
   }
-
-  /* ---------- まなびランドへ もどる ---------- */
-  .home-back{
-    display:inline-flex;align-items:center;justify-content:center;gap:6px;
-    width:fit-content;align-self:flex-start;
-    min-height:38px;padding:8px 15px;border-radius:999px;
-    background:#FFFFFF;border:2px solid var(--line,#F0E7D9);
-    box-shadow:0 4px 12px rgba(120,101,90,.14);
-    color:var(--ink2,#7A6E67);font-family:inherit;
-    font-size:13.5px;font-weight:800;letter-spacing:.06em;line-height:1.15;
-    text-decoration:none;white-space:nowrap;cursor:pointer;
-    -webkit-tap-highlight-color:transparent;
-    transition:transform .12s ease,box-shadow .12s ease;
-  }
-  .home-back:active{transform:scale(.95);box-shadow:0 2px 6px rgba(120,101,90,.16)}
 </style>
 </head>
 <body>
@@ -512,8 +566,9 @@
 
     <div class="start-top">
       <span class="kick">きょうの</span>
+      <button class="pl-chip" id="plChip" type="button" aria-label="プレイヤーを かえる"><span class="pl-chip-ico" id="plChipIcon">🎈</span><span id="plChipName">なまえ</span></button>
     </div>
-    <h1 class="start-title">ことば<br><em>ミッション！</em></h1>
+    <h1 class="start-title">こくご<br><em>クイズ！</em></h1>
     <p class="start-sub">3もん クリアで<br>ガチャが まわせるよ！</p>
     <div class="hero-mid">
       <div class="hero-art">
@@ -532,7 +587,7 @@
         </svg>
         <span class="hero-star">⭐</span>
       </div>
-      <p class="hero-caption">きょうは なにが でるかな？</p>
+      <p class="hero-caption" id="heroCaption">きょうは なにが でるかな？</p>
       <div class="meta-row">
         <span class="meta">📚 ぜんぶで 999もん</span>
         <span class="meta">🎴 カード 333しゅるい</span>
@@ -572,7 +627,7 @@
     <div class="clear-wrap">
       <div class="clear-emoji">🎉</div>
       <h2 class="clear-title">3もん クリア！</h2>
-      <p class="clear-sub">ガチャが まわせるよ！</p>
+      <p class="clear-sub" id="clearSub">ガチャが まわせるよ！</p>
       <div class="clear-panel">
         <p class="clear-stat" id="clearStats">よう がんばったね！</p>
         <p class="clear-stat" id="clearLeft"></p>
@@ -591,7 +646,7 @@
       <h2 class="zukan-title">マイずかん</h2>
       <span class="chip" id="zukanCount">0 / 333</span>
     </div>
-    <p class="zukan-hint">カードを タップすると くわしく みれるよ</p>
+    <p class="zukan-hint" id="zukanHint">カードを タップすると くわしく みれるよ</p>
     <div class="zukan-filters" id="zukanFilters"></div>
     <div class="zukan-scroll" id="zukanScroll">
       <div id="zukanGrid"></div>
@@ -634,11 +689,29 @@
 <!-- ===== confirm ===== -->
 <div class="overlay" id="confirmOverlay">
   <div class="confirm-box">
-    <p>ずかんの カードを<br>ぜんぶ けしても いい？</p>
+    <p id="resetMsg">ずかんの カードを<br>ぜんぶ けしても いい？</p>
     <div class="confirm-actions">
       <button class="btn btn-ghost btn-small" id="btnCancelReset">やめる</button>
       <button class="btn btn-primary btn-small" id="btnDoReset">リセット</button>
     </div>
+  </div>
+</div>
+
+<!-- ===== player ===== -->
+<div class="overlay" id="playerOverlay">
+  <div class="gacha-panel pl-panel">
+    <button class="overlay-close" id="btnClosePlayers" aria-label="とじる">✕</button>
+    <span class="pl-badge">プレイヤー</span>
+    <h2 class="pl-title" id="plTitle">だれが あそぶ？</h2>
+    <div class="pl-list" id="plList"></div>
+    <div class="pl-form" id="plForm">
+      <input class="pl-input" id="plName" type="text" maxlength="10" placeholder="なまえを ひらがなで" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <div class="pl-icons" id="plIcons"></div>
+      <p class="pl-err" id="plErr"></p>
+      <button class="btn btn-primary btn-small" id="plSave" type="button">これで いく！</button>
+    </div>
+    <button class="btn btn-ghost btn-small" id="plNew" type="button">＋ あたらしい プレイヤー</button>
+    <p class="pl-note">プレイヤーごとに カードと きろくが べつべつに のこるよ</p>
   </div>
 </div>
 
@@ -687,44 +760,294 @@
   }
 
   /* =========================================================
-     ほぞん (localStorage)
+     プレイヤーと ほぞん (localStorage)
      ========================================================= */
 
-  var STORE_KEY = 'kotoba-gacha-v2';
+  var LEGACY_KEY = 'kotoba-gacha-v2';            /* まえの ばんの きろく（みんな いっしょ） */
+  var PLAYERS_KEY = 'kotoba-quiz-v2:players';
+  var CUR_KEY = 'kotoba-quiz-v2:current';
   var PREF_KEY = 'kotoba-gacha-v2-muted';
+  var PLAYER_MAX = 6;
+  var ICONS = ['🐰', '🌸', '🍡', '🌙', '⭐', '🍓', '🐱', '🐶', '🐼', '🦊', '🍀', '💧'];
+
+  var PLAYERS = [];
+  var CUR = null;
+  var pickedIcon = ICONS[0];
+  var idSeq = 0;
   var store = { owned: {}, pulls: 0, seen: [] };
   var muted = false;
 
+  function readLS(key) {
+    try { return window.localStorage.getItem(key); } catch (e) { return null; }
+  }
+
+  function writeLS(key, val) {
+    try { window.localStorage.setItem(key, val); } catch (e) {}
+  }
+
+  function dropLS(key) {
+    try { window.localStorage.removeItem(key); } catch (e) {}
+  }
+
+  function storeKeyOf(pid) { return pid ? 'kotoba-quiz-v2:p:' + pid : LEGACY_KEY; }
+
+  function curKey() { return storeKeyOf(CUR && CUR.id); }
+
   function freshStore() { return { owned: {}, pulls: 0, seen: [] }; }
 
-  function loadStore() {
-    store = freshStore();
-    try {
-      var raw = window.localStorage.getItem(STORE_KEY);
-      if (raw) {
-        var data = JSON.parse(raw);
-        if (data && data.owned && typeof data.owned === 'object') { store.owned = data.owned; }
-        if (data && typeof data.pulls === 'number') { store.pulls = data.pulls; }
-        if (data && Object.prototype.toString.call(data.seen) === '[object Array]') {
-          store.seen = data.seen.slice();
-        }
-      }
-    } catch (e) { store = freshStore(); }
+  function parseStore(raw) {
+    var out = freshStore();
+    if (!raw) { return out; }
+    var data = null;
+    try { data = JSON.parse(raw); } catch (e) { return out; }
+    if (!data || typeof data !== 'object') { return out; }
+    if (data.owned && typeof data.owned === 'object') { out.owned = data.owned; }
+    if (typeof data.pulls === 'number') { out.pulls = data.pulls; }
+    if (Object.prototype.toString.call(data.seen) === '[object Array]') {
+      out.seen = data.seen.slice();
+    }
+    return out;
   }
 
-  function saveStore() {
-    try { window.localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (e) {}
-  }
+  function loadStore() { store = parseStore(readLS(curKey())); }
+
+  function saveStore() { writeLS(curKey(), JSON.stringify(store)); }
 
   function loadPref() {
     try { return window.localStorage.getItem(PREF_KEY) === '1'; } catch (e) { return false; }
   }
 
-  function savePref() {
-    try { window.localStorage.setItem(PREF_KEY, muted ? '1' : '0'); } catch (e) {}
-  }
+  function savePref() { writeLS(PREF_KEY, muted ? '1' : '0'); }
 
   function ownedCount() { return Object.keys(store.owned).length; }
+
+  function loadPlayers() {
+    var list = [];
+    var raw = readLS(PLAYERS_KEY);
+    if (raw) {
+      try {
+        var a = JSON.parse(raw);
+        if (Object.prototype.toString.call(a) === '[object Array]') { list = a; }
+      } catch (e) { list = []; }
+    }
+    var out = [];
+    for (var i = 0; i < list.length && out.length < PLAYER_MAX; i++) {
+      var p = list[i];
+      if (p && p.id && p.name) {
+        out.push({ id: String(p.id), name: String(p.name), icon: String(p.icon || ICONS[0]) });
+      }
+    }
+    return out;
+  }
+
+  function savePlayers() { writeLS(PLAYERS_KEY, JSON.stringify(PLAYERS)); }
+
+  function findPlayer(pid) {
+    for (var i = 0; i < PLAYERS.length; i++) {
+      if (PLAYERS[i].id === pid) { return PLAYERS[i]; }
+    }
+    return null;
+  }
+
+  /* プレイヤーの なまえ（ずかんで だれの カードか わかるように つかう） */
+  function playerName() {
+    if (!CUR) { return ''; }
+    return String(CUR.name).replace(/\s+/g, '');
+  }
+
+  function usePlayer(p) {
+    CUR = (p && p.id) ? p : null;
+    if (CUR) { writeLS(CUR_KEY, CUR.id); } else { dropLS(CUR_KEY); }
+    session = null;
+    loadStore();
+    paintPlayer();
+    updateCounts();
+    renderPlayers();
+  }
+
+  /* ---- プレイヤーの がめん ---- */
+
+  function setPlErr(msg) {
+    var node = $('plErr');
+    if (node) { node.textContent = msg || ''; }
+  }
+
+  function focusName() {
+    var input = $('plName');
+    if (input && input.focus) { try { input.focus(); } catch (e) {} }
+  }
+
+  function paintIcons() {
+    var host = $('plIcons');
+    if (!host) { return; }
+    host.innerHTML = '';
+    for (var i = 0; i < ICONS.length; i++) {
+      (function (ic) {
+        var b = el('button', 'pl-ic' + (ic === pickedIcon ? ' on' : ''), ic);
+        b.type = 'button';
+        b.addEventListener('click', function () {
+          pickedIcon = ic;
+          paintIcons();
+          playTap();
+        });
+        host.appendChild(b);
+      })(ICONS[i]);
+    }
+  }
+
+  function paintPlayer() {
+    var ico = $('plChipIcon');
+    var nameNode = $('plChipName');
+    if (ico) { ico.textContent = CUR ? (CUR.icon || ICONS[0]) : '🎈'; }
+    if (nameNode) { nameNode.textContent = CUR ? CUR.name : 'なまえ'; }
+    var cap = $('heroCaption');
+    if (cap) {
+      cap.textContent = 'きょうは なにが でるかな？';
+    }
+    var hint = $('zukanHint');
+    if (hint) {
+      hint.textContent = CUR
+        ? CUR.name + 'の カード：タップすると くわしく みれるよ'
+        : 'カードを タップすると くわしく みれるよ';
+    }
+  }
+
+  function renderPlayers() {
+    var host = $('plList');
+    if (!host) { return; }
+    host.innerHTML = '';
+
+    for (var i = 0; i < PLAYERS.length; i++) {
+      (function (p) {
+        var own = parseStore(readLS(storeKeyOf(p.id)));
+        var card = el('div', 'pl-card' + (CUR && CUR.id === p.id ? ' on' : ''));
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('data-pid', p.id);
+        card.appendChild(el('span', 'pl-ico', p.icon || ICONS[0]));
+        var mid = el('span', 'pl-mid');
+        mid.appendChild(el('span', 'pl-nm', p.name));
+        mid.appendChild(el('span', 'pl-num', Object.keys(own.owned).length + ' / ' + CARDS.length + ' まい'));
+        card.appendChild(mid);
+        var del = el('button', 'pl-del', 'けす');
+        del.type = 'button';
+        del.addEventListener('click', function (ev) {
+          if (ev && ev.stopPropagation) { ev.stopPropagation(); }
+          askDeletePlayer(p.id, del);
+        });
+        card.appendChild(del);
+        card.addEventListener('click', function () {
+          usePlayer(p);
+          closePlayers();
+          playTap();
+        });
+        host.appendChild(card);
+      })(PLAYERS[i]);
+    }
+
+    var form = $('plForm');
+    var newBtn = $('plNew');
+    var title = $('plTitle');
+    var closeBtn = $('btnClosePlayers');
+    var has = PLAYERS.length > 0;
+
+    if (newBtn) { newBtn.style.display = (has && PLAYERS.length < PLAYER_MAX) ? '' : 'none'; }
+    if (form) {
+      if (has) { form.classList.remove('open'); } else { form.classList.add('open'); }
+    }
+    if (title) {
+      title.textContent = has ? (CUR ? 'だれが あそぶ？' : 'プレイヤーを えらんでね') : 'なまえを とうろくしてね';
+    }
+    if (closeBtn) { closeBtn.style.display = CUR ? '' : 'none'; }
+    paintIcons();
+  }
+
+  function openPlayers() {
+    setPlErr('');
+    renderPlayers();
+    var ov = $('playerOverlay');
+    if (ov) { ov.classList.add('open'); }
+    if (!CUR) { focusName(); }
+  }
+
+  function closePlayers() {
+    var ov = $('playerOverlay');
+    if (ov) { ov.classList.remove('open'); }
+    setPlErr('');
+  }
+
+  function toggleForm() {
+    var form = $('plForm');
+    if (!form) { return; }
+    form.classList.toggle('open');
+    if (form.classList.contains('open')) { focusName(); }
+  }
+
+  function newId() {
+    idSeq += 1;
+    return 'p' + String(new Date().getTime().toString(36)) + String(idSeq);
+  }
+
+  function addPlayer() {
+    var input = $('plName');
+    var name = (input && input.value) ? String(input.value) : '';
+    name = name.replace(/\s+/g, '').slice(0, 10);
+    if (!name) { setPlErr('なまえを ひらがなで いれてね'); return null; }
+    if (PLAYERS.length >= PLAYER_MAX) { setPlErr('プレイヤーは ' + PLAYER_MAX + 'にんまで だよ'); return null; }
+
+    var p = { id: newId(), name: name, icon: pickedIcon };
+    var first = PLAYERS.length === 0;
+    PLAYERS.push(p);
+    savePlayers();
+    if (first) { migrateLegacy(p); }
+    usePlayer(p);
+    if (input) { input.value = ''; }
+    var form = $('plForm');
+    if (form) { form.classList.remove('open'); }
+    setPlErr('');
+    closePlayers();
+    playTap();
+    return p;
+  }
+
+  /* まえの ばんの きろくを、はじめての プレイヤーに ひきつぐ */
+  function migrateLegacy(p) {
+    if (!p || !p.id) { return; }
+    var mine = readLS(storeKeyOf(p.id));
+    if (mine) { return; }
+    var old = readLS(LEGACY_KEY);
+    if (!old) { return; }
+    writeLS(storeKeyOf(p.id), old);
+    dropLS(LEGACY_KEY);
+  }
+
+  function askDeletePlayer(pid, node) {
+    if (!node) { return; }
+    if (node.classList.contains('yes')) {
+      deletePlayer(pid);
+      return;
+    }
+    node.classList.add('yes');
+    node.textContent = 'ほんとに？';
+    if (node._t) { clearTimeout(node._t); }
+    node._t = setTimeout(function () {
+      node.classList.remove('yes');
+      node.textContent = 'けす';
+    }, 2600);
+  }
+
+  function deletePlayer(pid) {
+    var keep = [];
+    for (var i = 0; i < PLAYERS.length; i++) {
+      if (PLAYERS[i].id !== pid) { keep.push(PLAYERS[i]); }
+    }
+    PLAYERS = keep;
+    savePlayers();
+    dropLS(storeKeyOf(pid));
+    if (CUR && CUR.id === pid) { usePlayer(PLAYERS[0] || null); }
+    renderPlayers();
+    playTap();
+  }
 
   /* =========================================================
      おと (Web Audio API)
@@ -1179,6 +1502,9 @@
     }
     stats.innerHTML = txt;
 
+    var sub = $('clearSub');
+    if (sub) { sub.textContent = 'ガチャが まわせるよ！'; }
+
     var left = QUESTIONS.length - store.seen.length;
     $('clearLeft').innerHTML = left > 0
       ? 'まだ <b>' + left + 'もん</b> のこってるよ'
@@ -1448,6 +1774,10 @@
   }
 
   function askReset() {
+    var msg = $('resetMsg');
+    if (msg) {
+      msg.textContent = (CUR ? CUR.name + 'の ' : '') + 'カードを ぜんぶ けしても いい？';
+    }
     $('confirmOverlay').classList.add('open');
   }
 
@@ -1478,8 +1808,11 @@
   }
 
   function init() {
-    loadStore();
     muted = loadPref();
+
+    PLAYERS = loadPlayers();
+    var lastId = readLS(CUR_KEY) || '';
+    usePlayer(findPlayer(lastId) || PLAYERS[0] || null);
 
     var muteBtn = $('btnMute');
     if (muteBtn) {
@@ -1503,6 +1836,17 @@
     bind('btnDoReset', doReset);
     bind('btnMute', toggleMute);
 
+    bind('plChip', openPlayers);
+    bind('btnClosePlayers', closePlayers);
+    bind('plNew', toggleForm);
+    bind('plSave', addPlayer);
+    var nameInput = $('plName');
+    if (nameInput && nameInput.addEventListener) {
+      nameInput.addEventListener('keydown', function (ev) {
+        if (ev && ev.key === 'Enter') { addPlayer(); }
+      });
+    }
+
     var cardOverlay = $('cardOverlay');
     if (cardOverlay && cardOverlay.addEventListener) {
       cardOverlay.addEventListener('click', function (ev) {
@@ -1520,7 +1864,9 @@
     }
 
     updateCounts();
+    paintPlayer();
     showScreen('screen-start');
+    if (!PLAYERS.length) { openPlayers(); }
   }
 
   if (document.readyState === 'loading') {
@@ -1542,6 +1888,14 @@
     index: function () { return session ? session.i : -1; },
     sessionOf: function () { return session; },
     isMuted: function () { return muted; },
+    playersOf: function () { return PLAYERS; },
+    currentPlayer: function () { return CUR; },
+    storeKey: function () { return curKey(); },
+    addPlayer: addPlayer,
+    deletePlayer: deletePlayer,
+    openPlayers: openPlayers,
+    closePlayers: closePlayers,
+    nameOf: playerName,
     cardById: function (id) {
       for (var i = 0; i < CARDS.length; i++) { if (CARDS[i].id === id) { return CARDS[i]; } }
       return null;
