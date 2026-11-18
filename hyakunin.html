@@ -400,11 +400,12 @@
     padding:13px 16px 14px;
     box-shadow:0 18px 44px rgba(140,110,50,.26),0 0 0 6px rgba(255,241,169,.35);
     opacity:0;transform:scale(.86) translateY(-10px);pointer-events:none;
+    visibility:hidden;
     transform-origin:50% 0;
-    transition:opacity .18s ease,transform .3s cubic-bezier(.2,1.6,.4,1);
+    transition:opacity .18s ease,transform .3s cubic-bezier(.2,1.6,.4,1),visibility 0s linear .3s;
     max-height:min(38vh,280px);overflow:auto;text-align:left;
   }
-  .imi-box.open{opacity:1;transform:scale(1) translateY(0);pointer-events:auto}
+  .imi-box.open{opacity:1;transform:scale(1) translateY(0);pointer-events:auto;visibility:visible;transition:opacity .18s ease,transform .3s cubic-bezier(.2,1.6,.4,1),visibility 0s}
   .imi-box.pop{animation:imiPop .42s cubic-bezier(.2,1.6,.4,1)}
   @keyframes imiPop{0%{transform:scale(.86) translateY(-10px)}55%{transform:scale(1.035) translateY(2px)}100%{transform:scale(1) translateY(0)}}
   .imi-box::before{
@@ -1939,6 +1940,7 @@ function paintImi(){
   $("imiIco").textContent = "💡";
   $("imiBtnTx").textContent = imiOpen ? "いみを とじる" : "いみを みる！";
   box.classList.toggle("open", imiOpen);
+  box.setAttribute("aria-hidden", imiOpen ? "false" : "true");
 }
 function closeImi(silent){
   const was = imiOpen;
