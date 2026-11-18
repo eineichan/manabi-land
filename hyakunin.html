@@ -953,7 +953,7 @@
         <button data-rate="0.8" type="button"><b>0.8x</b><i>ゆっくり</i></button>
         <button data-rate="1" type="button"><b>1.0x</b><i>ふつう</i></button>
         <button data-rate="1.3" type="button"><b>1.3x</b><i>はやい</i></button>
-        <button data-rate="1.6" type="button"><b>1.6x</b><i>ちょっぱや</i></button>
+        <button data-rate="1.8" type="button"><b>1.8x</b><i>ちょっぱや</i></button>
       </div>
     </div>
 
@@ -1366,7 +1366,7 @@ function loadState(pid){
         ok: raw.ok || {},
         ng: raw.ng || {},
         sound: raw.sound !== false,
-        rate: [0.8,1,1.3,1.6].indexOf(Number(raw.rate)) >= 0 ? Number(raw.rate) : 1,
+        rate: [0.8,1,1.3,1.8].indexOf(Number(raw.rate)) >= 0 ? Number(raw.rate) : 1,
         stage: [0,1,2].indexOf(Number(raw.stage)) >= 0 ? Number(raw.stage) : 0
       };
     }
@@ -1430,7 +1430,7 @@ function setMood(m, hold){
 /* =========================================================
    こえ
    ========================================================= */
-const RATES = [0.8, 1, 1.3, 1.6];
+const RATES = [0.8, 1, 1.3, 1.8];
 function rateText(r){ return Number(r).toFixed(1) + "x"; }
 let voiceWarned = false;
 function hasJaVoice(){
