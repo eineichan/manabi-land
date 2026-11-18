@@ -1526,6 +1526,7 @@
 
   function speakYomi(text, rate) {
     if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance !== 'function') { return null; }
+    if (muted) { return null; }
     try {
       if (!jaVoice && !voiceTried) { jaVoice = pickJaVoice(); voiceTried = true; }
       var u = new window.SpeechSynthesisUtterance(String(text));
