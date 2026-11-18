@@ -559,6 +559,154 @@
   .pl-name{width:100%;min-height:44px;border-radius:14px;border:2px solid #F0E7D9;background:#FFFDF9;padding:10px 12px;font-family:inherit;font-size:16px;font-weight:800;color:var(--ink)}
   .pl-err{margin:6px 0 0;font-size:11.5px;font-weight:800;color:#B03A56;min-height:1.2em}
   .pl-close{margin-top:10px;width:100%;border:0;border-radius:18px;padding:12px;background:#F6F1E8;color:var(--ink2);font-family:inherit;font-size:14px;font-weight:800;cursor:pointer}
+
+  /* =========================================================
+     v3: あたらしい きのう
+     ========================================================= */
+
+  /* ---------- 10こ いりの はこ（たしざん） ---------- */
+  .tf-wrap{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;max-width:100%}
+  .tf{
+    display:grid;grid-template-columns:repeat(5,var(--tfc,19px));
+    grid-template-rows:repeat(2,var(--tfc,19px));gap:3px;padding:5px;
+    border-radius:12px;background:#FFFDF8;border:2px solid #E6D9C6;
+    box-shadow:inset 0 0 0 1.5px #FBF4E8;
+  }
+  .tf.tf-2{border-color:#EFD5C0;background:#FFFBF6}
+  .tf-c{width:var(--tfc,19px);height:var(--tfc,19px);border-radius:5px;border:1.5px dashed #E9DCCA;background:#FFFDF9}
+  .tf-c.blue{background:linear-gradient(180deg,#A9D2EE,#86BEE8);border:1.5px solid #6FABD6;box-shadow:0 1px 0 rgba(111,171,214,.5)}
+  .tf-c.red{background:linear-gradient(180deg,#F6BCCA,#F092A5);border:1.5px solid #DE7E93;box-shadow:0 1px 0 rgba(222,126,147,.5)}
+  .tf-plus{font-size:13px;font-weight:800;color:var(--ink2);line-height:1}
+  .q-caption.tf-cap{font-size:13.5px;color:#9E4359;letter-spacing:.04em}
+
+  /* ---------- ごほうび スタンプ ---------- */
+  .chipbtn{position:relative}
+  .cb-medal{position:absolute;top:-8px;right:-5px;font-size:15px;line-height:1;filter:drop-shadow(0 1px 2px rgba(120,101,90,.28))}
+  .dc-stamp{position:absolute;top:-8px;right:-4px;font-size:13px;line-height:1;filter:drop-shadow(0 1px 2px rgba(120,101,90,.3))}
+  .dan-crown{display:flex;align-items:center;justify-content:center;gap:7px}
+  .dan-stamp{font-size:21px;line-height:1;animation:medalPop .65s cubic-bezier(.2,1.5,.5,1)}
+  .done-cheer{display:flex;justify-content:center}
+  .done-medals{display:flex;justify-content:center;gap:7px;padding:0 0 4px}
+  .dmedal{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:46px;height:46px;border-radius:50%;font-size:26px;line-height:1;
+    background:linear-gradient(180deg,#FFFDF4,#FBEBC6);border:2px solid #E9C46A;
+    box-shadow:0 4px 12px rgba(201,156,60,.26);
+    animation:medalPop .7s cubic-bezier(.2,1.5,.5,1);
+  }
+  @keyframes medalPop{
+    0%{transform:scale(.35) rotate(-14deg);opacity:0}
+    60%{transform:scale(1.16) rotate(5deg);opacity:1}
+    100%{transform:scale(1) rotate(0);opacity:1}
+  }
+
+  /* ---------- おうえん フクロウ ---------- */
+  .cheer{
+    display:flex;align-items:center;gap:7px;width:100%;
+    background:linear-gradient(180deg,#FFFDF8,#FFF6F8);
+    border:1.5px solid var(--line);border-radius:16px;padding:4px 9px 4px 5px;
+  }
+  .cheer .owl{width:36px;height:36px;flex:0 0 36px}
+  .cheer .cheer-b{font-size:11.5px;font-weight:800;color:var(--ink2);line-height:1.4;letter-spacing:.01em}
+  .cheer.cheer-done{max-width:330px;margin:0 auto;justify-content:center;background:linear-gradient(180deg,#FFFDF8,#F7F4FF);border-color:#DDD3F0}
+  .cheer.cheer-done .owl{width:32px;height:32px;flex:0 0 32px}
+  .cheer.cheer-done .cheer-b{font-size:12px;color:var(--lav-ink)}
+
+  /* ---------- カラオケ ---------- */
+  #screen-karaoke{gap:8px}
+  .kara-top{display:flex;align-items:center;gap:9px;padding-right:52px;padding-left:1px}
+  .kara-title{
+    margin:0;font-size:16.5px;font-weight:800;color:var(--lav-ink);
+    letter-spacing:.02em;white-space:nowrap;
+  }
+  .kara-body{
+    flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
+    display:flex;flex-direction:column;gap:8px;padding:1px 1px 3px;
+  }
+  .kara-stage{
+    flex:1 1 auto;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    min-height:clamp(112px,20vh,150px);padding:12px 12px 10px;border-radius:24px;
+    background:linear-gradient(180deg,#FFFDF8 0%,#FBF3F7 100%);
+    border:2px solid var(--line);box-shadow:var(--shadow);
+    transition:box-shadow .2s ease,border-color .2s ease;
+  }
+  .kara-stage.on{border-color:#D9CFF2;box-shadow:0 10px 26px rgba(120,101,190,.16)}
+  .kara-eq{font-size:clamp(17px,5vw,20px);font-weight:800;color:var(--ink2);font-variant-numeric:tabular-nums;letter-spacing:.02em;line-height:1.2}
+  .kara-sub{
+    font-size:clamp(20px,6.6vw,27px);font-weight:800;color:#9E4359;line-height:1.28;
+    text-align:center;word-break:keep-all;overflow-wrap:anywhere;max-width:100%;
+    text-wrap:balance;min-height:1.28em;
+  }
+  .kara-stage.pre .kara-sub{color:var(--ink3);font-size:clamp(17px,5.2vw,21px)}
+  .kara-prog{font-size:10.5px;font-weight:800;color:var(--ink3);letter-spacing:.1em;font-variant-numeric:tabular-nums}
+  .kara-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .kcard{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+    padding:7px 3px 6px;border-radius:14px;border:2px solid var(--line);background:#fff;
+    font-weight:800;color:var(--ink2);transition:transform .16s ease,background .16s ease,border-color .16s ease;
+    overflow:hidden;
+  }
+  .kcard .kc-eq{font-size:13.5px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:.01em}
+  .kcard .kc-r{font-size:8.5px;font-weight:800;color:var(--ink3);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;letter-spacing:0}
+  .kcard.sung{border-color:var(--mint);background:var(--mint-l);color:var(--mint-ink)}
+  .kcard.sung .kc-r{color:var(--mint-ink);opacity:.85}
+  .kcard.now{
+    background:linear-gradient(180deg,#F8F5FE,#E4DDF7);border-color:var(--lav);color:var(--lav-ink);
+    box-shadow:0 8px 18px rgba(120,101,190,.22);z-index:2;
+    animation:kpop .62s cubic-bezier(.2,1.5,.45,1) both;
+  }
+  .kcard.now .kc-r{color:var(--lav-ink)}
+  @keyframes kpop{
+    0%{transform:scale(1) translateY(0)}
+    28%{transform:scale(1.17) translateY(-7px)}
+    58%{transform:scale(1.01) translateY(1px)}
+    80%{transform:scale(1.09) translateY(0)}
+    100%{transform:scale(1.06) translateY(0)}
+  }
+  .kara-speeds{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+  .spd{
+    display:flex;flex-direction:column;align-items:center;gap:1px;
+    padding:6px 1px 5px;border-radius:14px;border:2px solid var(--line);background:#fff;
+    font-family:inherit;font-weight:800;font-size:10px;color:var(--ink2);cursor:pointer;
+    box-shadow:0 3px 0 var(--line);
+  }
+  .spd b{font-size:13px;line-height:1.1;font-variant-numeric:tabular-nums}
+  .spd.on{background:var(--lav-l);border-color:var(--lav);box-shadow:0 3px 0 var(--lav);color:var(--lav-ink)}
+  .spd:active{transform:translateY(2px)}
+  .kara-hide{
+    display:flex;align-items:center;justify-content:center;gap:9px;width:100%;
+    padding:8px 10px;border-radius:15px;border:2px solid var(--line);background:#fff;
+    font-family:inherit;font-weight:800;font-size:12.5px;color:var(--ink2);cursor:pointer;
+  }
+  .kara-hide .knob{position:relative;width:34px;height:19px;border-radius:99px;background:#E7DFD3;transition:background .16s ease;flex:0 0 34px}
+  .kara-hide .knob::after{content:"";position:absolute;top:2.5px;left:2.5px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(90,70,60,.28);transition:transform .16s ease}
+  .kara-hide.on{border-color:var(--lav);background:var(--lav-l);color:var(--lav-ink)}
+  .kara-hide.on .knob{background:var(--lav)}
+  .kara-hide.on .knob::after{transform:translateX(15px)}
+  .kara-note{margin:0;text-align:center;font-size:10.5px;font-weight:800;color:var(--ink2);line-height:1.45;padding:0 4px}
+  .kara-open{
+    display:flex;align-items:center;justify-content:center;gap:7px;width:100%;
+    padding:10px 10px;border-radius:16px;border:2px solid var(--lav);
+    background:linear-gradient(180deg,#F8F5FE,#EDE8FA);color:var(--lav-ink);
+    font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 3px 0 var(--lav);
+    letter-spacing:.02em;
+  }
+  .kara-open .ko-ico{font-size:17px;line-height:1}
+  .kara-open .ko-n{font-size:11px;opacity:.75}
+  .kara-open:active{transform:translateY(2px);box-shadow:0 1px 0 var(--lav)}
+  .dr-kara{
+    width:20px;height:20px;flex:0 0 20px;border-radius:50%;padding:0;
+    border:1.5px solid var(--lav);background:var(--lav-l);color:var(--lav-ink);
+    font-family:inherit;font-size:10px;line-height:1;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .dr-kara:active{transform:scale(.9)}
+  @media (max-height:700px){
+    .kara-stage{min-height:100px;padding:9px 10px 8px}
+    .kcard{padding:5px 2px 4px}
+    .kara-note{display:none}
+  }
 </style>
 <script>
 /* ===== わくわく パーク 共通プレイヤー =====
@@ -821,12 +969,34 @@
       <div class="done-cells" id="doneCells"></div>
       <div class="done-list" id="doneList"></div>
       <div class="crown" id="crownBanner"></div>
+      <div class="done-cheer" id="doneCheer"></div>
       <div class="done-prog" id="doneProg"></div>
       <div class="done-actions">
         <button class="btn btn-mint" id="btnToBoard">ボードを みる</button>
         <button class="btn btn-ghost btn-small" id="btnAgain">もう 3もん やる</button>
       </div>
     </div>
+  </section>
+
+  <!-- ===== karaoke ===== -->
+  <section class="screen" id="screen-karaoke">
+    <div class="kara-top">
+      <button class="icon-btn" id="karaBack" type="button" aria-label="くくの ボードへ もどる">✕</button>
+      <h2 class="kara-title">🎧 うたって おぼえる</h2>
+    </div>
+    <div class="danstrip" id="karaDans"></div>
+    <div class="kara-body">
+      <div class="kara-stage" id="karaStage">
+        <div class="kara-eq" id="karaEq">1の だん</div>
+        <div class="kara-sub" id="karaSub" aria-live="polite">うたって おぼえよう</div>
+        <div class="kara-prog" id="karaProg">ぜんぶで 9しき</div>
+      </div>
+      <div class="kara-cards" id="karaCards"></div>
+      <div class="kara-speeds" id="karaSpeeds"></div>
+      <button class="kara-hide" id="karaHide" type="button"><span class="knob"></span><span>こたえを かくす</span></button>
+      <p class="kara-note" id="karaNote">1の だんを 9しき うたうよ</p>
+    </div>
+    <button class="btn btn-primary" id="karaPlay" type="button">▶ うたう</button>
   </section>
 
 </div>
@@ -1200,6 +1370,452 @@
   function totalNigate() { return modeStats('tashi').nigate + modeStats('kuku').nigate; }
 
   /* =========================================================
+     v3: くく カラオケ（うたって おぼえる）
+     ========================================================= */
+
+  /* 九九の よみかた（1の だん 〜 9の だん・ぜんぶで 81しき） */
+  var YOMI = {
+    'k1,1': 'いんいち が いち', 'k1,2': 'いんに が に', 'k1,3': 'いんさん が さん',
+    'k1,4': 'いんし が し', 'k1,5': 'いんご が ご', 'k1,6': 'いんろく が ろく',
+    'k1,7': 'いんしち が しち', 'k1,8': 'いんはち が はち', 'k1,9': 'いんく が く',
+    'k2,1': 'にいち が に', 'k2,2': 'ににん が し', 'k2,3': 'にさん が ろく',
+    'k2,4': 'にし が はち', 'k2,5': 'にご じゅう', 'k2,6': 'にろく じゅうに',
+    'k2,7': 'にしち じゅうし', 'k2,8': 'にはち じゅうろく', 'k2,9': 'にく じゅうはち',
+    'k3,1': 'さんいち が さん', 'k3,2': 'さんに が ろく', 'k3,3': 'さざん が く',
+    'k3,4': 'さんし じゅうに', 'k3,5': 'さんご じゅうご', 'k3,6': 'さぶろく じゅうはち',
+    'k3,7': 'さんしち にじゅういち', 'k3,8': 'さんぱ にじゅうし', 'k3,9': 'さんく にじゅうしち',
+    'k4,1': 'しいち が し', 'k4,2': 'しに が はち', 'k4,3': 'しさん じゅうに',
+    'k4,4': 'しし じゅうろく', 'k4,5': 'しご にじゅう', 'k4,6': 'しろく にじゅうし',
+    'k4,7': 'ししち にじゅうはち', 'k4,8': 'しは さんじゅうに', 'k4,9': 'しく さんじゅうろく',
+    'k5,1': 'ごいち が ご', 'k5,2': 'ごに じゅう', 'k5,3': 'ごさん じゅうご',
+    'k5,4': 'ごし にじゅう', 'k5,5': 'ごご にじゅうご', 'k5,6': 'ごろく さんじゅう',
+    'k5,7': 'ごしち さんじゅうご', 'k5,8': 'ごは しじゅう', 'k5,9': 'ごっく しじゅうご',
+    'k6,1': 'ろくいち が ろく', 'k6,2': 'ろくに じゅうに', 'k6,3': 'ろくさん じゅうはち',
+    'k6,4': 'ろくし にじゅうし', 'k6,5': 'ろくご さんじゅう', 'k6,6': 'ろくろく さんじゅうろく',
+    'k6,7': 'ろくしち しじゅうに', 'k6,8': 'ろくは しじゅうはち', 'k6,9': 'ろっく ごじゅうし',
+    'k7,1': 'しちいち が しち', 'k7,2': 'しちに じゅうし', 'k7,3': 'しちさん にじゅういち',
+    'k7,4': 'しちし にじゅうはち', 'k7,5': 'しちご さんじゅうご', 'k7,6': 'しちろく しじゅうに',
+    'k7,7': 'しちしち しじゅうく', 'k7,8': 'しちは ごじゅうろく', 'k7,9': 'しちく ろくじゅうさん',
+    'k8,1': 'はちいち が はち', 'k8,2': 'はちに じゅうろく', 'k8,3': 'はちさん にじゅうし',
+    'k8,4': 'はちし さんじゅうに', 'k8,5': 'はちご しじゅう', 'k8,6': 'はちろく しじゅうはち',
+    'k8,7': 'はちしち ごじゅうろく', 'k8,8': 'はっぱ ろくじゅうし', 'k8,9': 'はっく しちじゅうに',
+    'k9,1': 'くいち が く', 'k9,2': 'くに じゅうはち', 'k9,3': 'くさん にじゅうしち',
+    'k9,4': 'くし さんじゅうろく', 'k9,5': 'くご しじゅうご', 'k9,6': 'くろく ごじゅうし',
+    'k9,7': 'くしち ろくじゅうさん', 'k9,8': 'くは しちじゅうに', 'k9,9': 'くく はちじゅういち'
+  };
+
+  /* ごほうび スタンプ（だん・まとまりを ぜんぶ クリアしたら もらえるよ） */
+  var STAMPS = {
+    d1: '🐣', d2: '🐿️', d3: '🐰', d4: '🦊', d5: '🐼', d6: '🐸', d7: '🐥', d8: '🦉', d9: '⭐',
+    g10: '🌸', g11: '🍀', all: '🏆'
+  };
+
+  /* おうえん キャラ（けいさんフクロウ） */
+  var OWL_SVG = '<svg class="owl" viewBox="0 0 64 64" aria-hidden="true" focusable="false">'
+    + '<ellipse cx="32" cy="58" rx="14" ry="3.2" fill="rgba(74,66,62,.1)"/>'
+    + '<path d="M15 23 L12.5 10.5 L25 16 Z" fill="#AD9AD6"/>'
+    + '<path d="M49 23 L51.5 10.5 L39 16 Z" fill="#AD9AD6"/>'
+    + '<ellipse cx="32" cy="34" rx="20" ry="19.5" fill="#C9B7E6"/>'
+    + '<ellipse cx="32" cy="41" rx="12.5" ry="11.5" fill="#F7F2FF"/>'
+    + '<circle cx="23.5" cy="30" r="7.4" fill="#FFFFFF"/>'
+    + '<circle cx="40.5" cy="30" r="7.4" fill="#FFFFFF"/>'
+    + '<circle cx="24.2" cy="30.8" r="3.7" fill="#4A423E"/>'
+    + '<circle cx="39.8" cy="30.8" r="3.7" fill="#4A423E"/>'
+    + '<circle cx="25.5" cy="29.4" r="1.3" fill="#FFFFFF"/>'
+    + '<circle cx="41.1" cy="29.4" r="1.3" fill="#FFFFFF"/>'
+    + '<path d="M32 34.5 L27.9 39.2 L36.1 39.2 Z" fill="#E9C46A"/>'
+    + '<path d="M11.5 34 q-3.6 6.2 1.2 10.4" stroke="#AD9AD6" stroke-width="3" fill="none" stroke-linecap="round"/>'
+    + '<path d="M52.5 34 q3.6 6.2 -1.2 10.4" stroke="#AD9AD6" stroke-width="3" fill="none" stroke-linecap="round"/>'
+    + '<circle cx="18.5" cy="41.5" r="2.3" fill="#EFA9B8" opacity=".8"/>'
+    + '<circle cx="45.5" cy="41.5" r="2.3" fill="#EFA9B8" opacity=".8"/>'
+    + '</svg>';
+
+  function buildCheer(text, cls) {
+    var d = el('div', 'cheer' + (cls ? ' ' + cls : ''));
+    d.innerHTML = OWL_SVG;
+    d.appendChild(el('span', 'cheer-b', text));
+    return d;
+  }
+
+  function cheerText() {
+    var left;
+    if (view.mode === 'kuku') {
+      if (view.mix) {
+        var mk = modeStats('kuku');
+        left = 81 - mk.clear;
+        if (!left) { return 'くく ぜんぶ できたね！ すごい！'; }
+        return 'そのちょうし！ くく あと ' + left + 'もん！';
+      }
+      var ds = danStats(view.dan);
+      if (ds.clear === 9) { return 'そのちょうし！ ' + view.dan + 'の だん ぜんぶ できたね！'; }
+      return 'あと ' + (9 - ds.clear) + 'もん！ そのちょうし！';
+    }
+    if (view.tashiAll) {
+      var mt = modeStats('tashi');
+      left = 81 - mt.clear;
+      if (!left) { return 'たしざん ぜんぶ できたね！ すごい！'; }
+      return 'そのちょうし！ あと ' + left + 'もん！';
+    }
+    var gs = groupStats(view.grp);
+    left = gs.total - gs.clear;
+    if (!left) { return 'そのちょうし！ ぜんぶ できたね！'; }
+    return 'あと ' + left + 'もん！ そのちょうし！';
+  }
+
+  /* ---------- よみかた ヘルパ ---------- */
+
+  function yomiOf(q) { return YOMI['k' + q.a + ',' + q.b] || (q.a + 'かける ' + q.b); }
+
+  function splitYomi(s) {
+    var t = String(s == null ? '' : s);
+    var i = t.lastIndexOf(' ');
+    if (i < 0) { return { front: t, back: '' }; }
+    return { front: t.slice(0, i), back: t.slice(i + 1) };
+  }
+
+  /* ---------- カラオケの しくみ ---------- */
+
+  var KARA_SPEEDS = [
+    { v: 0.8, label: 'ゆっくり', rate: 0.75 },
+    { v: 1.0, label: 'ふつう', rate: 0.92 },
+    { v: 1.3, label: 'はやい', rate: 1.18 },
+    { v: 1.6, label: 'ちょっぱや', rate: 1.45 }
+  ];
+  var KARA_TOTAL = 9;
+  var kara = { dan: 1, speed: 1.0, hide: false, playing: false, i: -1, timer: null, token: 0 };
+
+  function karaSpeedItem(v) {
+    for (var i = 0; i < KARA_SPEEDS.length; i++) {
+      if (Math.abs(KARA_SPEEDS[i].v - v) < 0.001) { return KARA_SPEEDS[i]; }
+    }
+    return KARA_SPEEDS[1];
+  }
+
+  function karaRate() { return karaSpeedItem(kara.speed).rate; }
+
+  function karaQ(i) { return BY_KEY['k' + kara.dan + ',' + (i + 1)]; }
+
+  function karaStepMs(text, speed) {
+    var n = String(text).replace(/[\s\u3000]+/g, '').length;
+    var base = 720 + n * 145;
+    return Math.max(520, Math.round(base / speed));
+  }
+
+  function karaPrefLoad() {
+    try {
+      var sp = parseFloat(window.localStorage.getItem('sansu-v3:kara-speed'));
+      if (sp && karaSpeedItem(sp)) { kara.speed = karaSpeedItem(sp).v; }
+      kara.hide = window.localStorage.getItem('sansu-v3:kara-hide') === '1';
+    } catch (e) {}
+  }
+
+  /* こえ（Web Speech）。ない ブラウザでも しきは すすむ */
+  var jaVoice = null;
+  var voiceTried = false;
+
+  function pickJaVoice() {
+    try {
+      if (!window.speechSynthesis) { return null; }
+      var vs = window.speechSynthesis.getVoices() || [];
+      for (var i = 0; i < vs.length; i++) {
+        if (/ja[-_]?JP/i.test(vs[i].lang)) { return vs[i]; }
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  function speakYomi(text, rate) {
+    if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance !== 'function') { return null; }
+    try {
+      if (!jaVoice && !voiceTried) { jaVoice = pickJaVoice(); voiceTried = true; }
+      var u = new window.SpeechSynthesisUtterance(String(text));
+      u.lang = 'ja-JP';
+      u.rate = rate;
+      u.pitch = 1.15;
+      u.volume = 1;
+      if (jaVoice) { u.voice = jaVoice; }
+      window.speechSynthesis.speak(u);
+      return u;
+    } catch (e) { return null; }
+  }
+
+  function karaSilence() {
+    try { if (window.speechSynthesis) { window.speechSynthesis.cancel(); } } catch (e) {}
+  }
+
+  /* 手拍子（ポン・ポン♪）。ミュートの ときは ならない */
+  function playBeat(i) {
+    var hi = (i % 2 === 0);
+    tone(hi ? 1046 : 784, 0, 0.09, { vol: 0.11, type: 'triangle' });
+    tone(hi ? 2093 : 1568, 0.004, 0.05, { vol: 0.035, type: 'sine' });
+    tone(hi ? 523 : 392, 0, 0.11, { vol: 0.05, type: 'sine' });
+  }
+
+  function paintKaraPlay() {
+    var b = $('karaPlay');
+    if (!b) { return; }
+    b.textContent = kara.playing ? '■ とめる' : '▶ うたう';
+    b.className = 'btn ' + (kara.playing ? 'btn-mint' : 'btn-primary');
+  }
+
+  function karaShow(i) {
+    var stage = $('karaStage'), eq = $('karaEq'), sub = $('karaSub'), pr = $('karaProg');
+    var cards = $('karaCards');
+    if (cards) {
+      var ns = cards.children;
+      for (var c = 0; c < ns.length; c++) {
+        ns[c].classList.toggle('now', c === i);
+        ns[c].classList.toggle('sung', i >= 0 && c < i);
+      }
+    }
+    if (!stage) { return; }
+    if (i < 0) {
+      stage.classList.add('pre');
+      stage.classList.remove('on');
+      if (eq) { eq.textContent = kara.dan + 'の だん'; }
+      if (sub) { sub.textContent = 'うたって おぼえよう'; }
+      if (pr) { pr.textContent = 'ぜんぶで 9しき'; }
+      return;
+    }
+    var q = karaQ(i);
+    if (!q) { return; }
+    var y = yomiOf(q);
+    var p = splitYomi(y);
+    stage.classList.remove('pre');
+    if (eq) { eq.textContent = q.a + '×' + q.b + '＝' + (kara.hide ? '?' : q.ans); }
+    if (sub) { sub.textContent = kara.hide ? (p.front + ' ？') : y; }
+    if (pr) { pr.textContent = (i + 1) + ' / ' + KARA_TOTAL; }
+  }
+
+  function renderKaraoke() {
+    var host = $('karaDans');
+    if (host) {
+      host.innerHTML = '';
+      for (var d = 1; d <= 9; d++) {
+        (function (dd) {
+          var ds = danStats(dd);
+          var btn = el('button', 'danchip' + (kara.dan === dd ? ' on' : '') + (ds.clear === 9 ? ' done' : ''));
+          btn.type = 'button';
+          btn.setAttribute('aria-label', dd + 'の だん ' + ds.clear + ' / 9');
+          btn.appendChild(el('span', 'dc-num', String(dd)));
+          var bar = el('span', 'dc-bar'), fill = el('i');
+          fill.style.width = (ds.clear / 9 * 100) + '%';
+          if (ds.clear === 9) { fill.className = 'full'; }
+          bar.appendChild(fill);
+          btn.appendChild(bar);
+          if (ds.clear === 9) { btn.appendChild(el('span', 'dc-stamp', STAMPS['d' + dd])); }
+          btn.addEventListener('click', function () {
+            if (kara.dan === dd) { return; }
+            karaStop();
+            kara.dan = dd;
+            playTap();
+            renderKaraoke();
+          });
+          host.appendChild(btn);
+        })(d);
+      }
+    }
+
+    var ch = $('karaCards');
+    if (ch) {
+      ch.innerHTML = '';
+      for (var b = 1; b <= 9; b++) {
+        var q = BY_KEY['k' + kara.dan + ',' + b];
+        var card = el('div', 'kcard');
+        card.setAttribute('data-i', String(b - 1));
+        card.appendChild(el('span', 'kc-eq', q.a + '×' + q.b + '＝' + (kara.hide ? '?' : q.ans)));
+        card.appendChild(el('span', 'kc-r', yomiOf(q)));
+        ch.appendChild(card);
+      }
+    }
+
+    var sh = $('karaSpeeds');
+    if (sh) {
+      sh.innerHTML = '';
+      for (var s = 0; s < KARA_SPEEDS.length; s++) {
+        (function (sp) {
+          var on = Math.abs(sp.v - kara.speed) < 0.001;
+          var btn = el('button', 'spd' + (on ? ' on' : ''));
+          btn.type = 'button';
+          btn.appendChild(el('b', '', sp.v.toFixed(1) + 'x'));
+          btn.appendChild(el('span', '', sp.label));
+          btn.setAttribute('aria-label', sp.label + ' ' + sp.v + 'ばい');
+          btn.addEventListener('click', function () { setKaraSpeed(sp.v); });
+          sh.appendChild(btn);
+        })(KARA_SPEEDS[s]);
+      }
+    }
+
+    var hb = $('karaHide');
+    if (hb) {
+      hb.classList.toggle('on', kara.hide);
+      hb.setAttribute('aria-pressed', kara.hide ? 'true' : 'false');
+      var lbl = hb.lastElementChild;
+      if (lbl) { lbl.textContent = kara.hide ? 'こたえを かくす（ON）' : 'こたえを かくす'; }
+    }
+    var note = $('karaNote');
+    if (note) {
+      note.textContent = kara.hide
+        ? kara.dan + 'の だん・こたえを かくして 9しき うたうよ'
+        : kara.dan + 'の だんを 9しき うたうよ';
+    }
+    karaShow(kara.i);
+    paintKaraPlay();
+  }
+
+  function openKaraoke(d) {
+    karaStop();
+    kara.dan = d || 1;
+    renderKaraoke();
+    showScreen('screen-karaoke');
+    playTap();
+  }
+
+  function setKaraSpeed(v) {
+    var it = karaSpeedItem(v);
+    if (!it) { return; }
+    var was = kara.playing;
+    if (was) { karaStop(); }
+    kara.speed = it.v;
+    try { window.localStorage.setItem('sansu-v3:kara-speed', String(it.v)); } catch (e) {}
+    renderKaraoke();
+    if (was) { karaStart(); } else { playTap(); }
+  }
+
+  function toggleKaraHide() {
+    var was = kara.playing;
+    kara.hide = !kara.hide;
+    try { window.localStorage.setItem('sansu-v3:kara-hide', kara.hide ? '1' : '0'); } catch (e) {}
+    if (was) { karaStop(); }
+    renderKaraoke();
+    playTap();
+  }
+
+  function karaStop() {
+    kara.playing = false;
+    kara.token += 1;
+    if (kara.timer) { clearTimeout(kara.timer); kara.timer = null; }
+    karaSilence();
+    kara.i = -1;
+    var stage = $('karaStage');
+    if (stage) { stage.classList.remove('on'); }
+    if ($('karaStage')) { karaShow(-1); }
+    paintKaraPlay();
+  }
+
+  function karaStart() {
+    if (kara.playing) { karaStop(); return; }
+    if (!$('karaCards') || !$('karaCards').children.length) { renderKaraoke(); }
+    ensureAudio();
+    kara.token += 1;
+    kara.playing = true;
+    kara.i = 0;
+    var stage = $('karaStage');
+    if (stage) { stage.classList.add('on'); }
+    paintKaraPlay();
+    karaStep();
+  }
+
+  function karaStep() {
+    if (!kara.playing) { return; }
+    var tok = kara.token;
+    var q = karaQ(kara.i);
+    if (!q) { karaFinish(); return; }
+    var y = yomiOf(q);
+    var parts = splitYomi(y);
+    var spoken = kara.hide ? parts.front : y;
+    karaShow(kara.i);
+    playBeat(kara.i);
+    var ms = karaStepMs(spoken, kara.speed) + (kara.hide ? 900 : 0);
+    var t0 = Date.now();
+    var u = speakYomi(spoken, karaRate());
+    var moved = false;
+
+    function advance() {
+      if (moved) { return; }
+      moved = true;
+      if (!kara.playing || kara.token !== tok) { return; }
+      karaSilence();
+      kara.i += 1;
+      if (kara.i >= KARA_TOTAL) { karaFinish(); return; }
+      karaStep();
+    }
+
+    kara.timer = setTimeout(advance, ms + 1200);
+    if (u) {
+      u.onend = function () {
+        if (moved) { return; }
+        var left = ms - (Date.now() - t0);
+        if (kara.timer) { clearTimeout(kara.timer); }
+        kara.timer = setTimeout(advance, Math.max(180, left + 160));
+      };
+    }
+  }
+
+  function karaFinish() {
+    kara.playing = false;
+    kara.token += 1;
+    if (kara.timer) { clearTimeout(kara.timer); kara.timer = null; }
+    karaSilence();
+    kara.i = -1;
+    var cards = $('karaCards');
+    if (cards) {
+      for (var c = 0; c < cards.children.length; c++) {
+        cards.children[c].classList.remove('now');
+        cards.children[c].classList.add('sung');
+      }
+    }
+    var stage = $('karaStage');
+    if (stage) {
+      stage.classList.remove('on');
+      stage.classList.add('pre');
+    }
+    if ($('karaEq')) { $('karaEq').textContent = kara.dan + 'の だん'; }
+    if ($('karaSub')) { $('karaSub').textContent = 'ぜんぶ うたえたね！'; }
+    if ($('karaProg')) { $('karaProg').textContent = '9 / 9'; }
+    if ($('karaNote')) { $('karaNote').textContent = '🎉 ' + kara.dan + 'の だん ぜんぶ うたえたよ。もう いちど も できるよ'; }
+    paintKaraPlay();
+    playFanfare();
+    celebrate();
+    stamp('ok', 'ぜんぶ うたえた！', kara.dan + 'の だん 9しき うたったよ', 1800);
+  }
+
+  /* =========================================================
+     v3: たしざん 10の まとまり（10フレーム）
+     ========================================================= */
+
+  function tenFrame(q) {
+    var a = q.a, b = q.b, ans = a + b;
+    var wrap = el('div', 'tf-wrap');
+    var f1 = el('div', 'tf');
+    for (var i = 0; i < 10; i++) {
+      var c = el('span', 'tf-c');
+      if (i < a) { c.classList.add('blue'); }
+      else if (i < ans) { c.classList.add('red'); }
+      f1.appendChild(c);
+    }
+    wrap.appendChild(f1);
+    if (ans > 10) {
+      wrap.appendChild(el('span', 'tf-plus', 'と'));
+      var f2 = el('div', 'tf tf-2');
+      for (var j = 0; j < 10; j++) {
+        var d = el('span', 'tf-c');
+        if (j < ans - 10) { d.classList.add('red'); }
+        f2.appendChild(d);
+      }
+      wrap.appendChild(f2);
+    }
+    return wrap;
+  }
+
+  function tfCaption(q) {
+    var ans = q.a + q.b;
+    if (ans > 10) { return '10 と ' + (ans - 10) + ' で ' + ans + '！'; }
+    if (ans === 10) { return 'ぴったり 10！'; }
+    return 'あわせて ' + ans;
+  }
+
+  /* =========================================================
      audio (Web Audio API)
      ========================================================= */
 
@@ -1370,7 +1986,7 @@
      screens / stamp
      ========================================================= */
 
-  var SCREENS = ['screen-home', 'screen-quiz', 'screen-done'];
+  var SCREENS = ['screen-home', 'screen-quiz', 'screen-done', 'screen-karaoke'];
 
   function showScreen(id) {
     for (var i = 0; i < SCREENS.length; i++) {
@@ -1485,6 +2101,8 @@
   }
 
   function buildTashi(area) {
+    area.appendChild(buildCheer(cheerText(), 'board-cheer'));
+
     var chips = el('div', 'chips three');
     var allClear = modeStats('tashi').clear;
     var opts = [
@@ -1499,6 +2117,8 @@
         btn.type = 'button';
         btn.appendChild(el('span', 'cb-label', o.label));
         btn.appendChild(el('span', 'cb-num', o.num));
+        var gs0 = o.id === 'all' ? { clear: allClear, total: 81 } : groupStats(o.id);
+        if (gs0.clear === gs0.total) { btn.appendChild(el('span', 'cb-medal', STAMPS[o.id])); }
         btn.addEventListener('click', function () {
           if (on) { return; }
           if (o.id === 'all') { view.tashiAll = true; }
@@ -1539,8 +2159,19 @@
     area.appendChild(pb);
 
     if (ds.clear === 9) {
-      area.appendChild(el('div', 'dan-crown', '👑 この だんは コンプリート！'));
+      var dc = el('div', 'dan-crown');
+      dc.appendChild(el('span', 'dan-stamp', STAMPS['d' + d]));
+      dc.appendChild(el('span', '', 'この だんは コンプリート！'));
+      area.appendChild(dc);
     }
+
+    var kb = el('button', 'kara-open');
+    kb.type = 'button';
+    kb.appendChild(el('span', 'ko-ico', '🎧'));
+    kb.appendChild(el('span', 'ko-t', 'うたって おぼえる（カラオケ）'));
+    kb.appendChild(el('span', 'ko-n', '♪'));
+    kb.addEventListener('click', function () { openKaraoke(d); });
+    area.appendChild(kb);
 
     var grid = el('div', 'kgrid');
     for (var b = 1; b <= 9; b++) {
@@ -1561,7 +2192,12 @@
       if (ds.clear === 9) { rbf.className = 'full'; }
       rb.appendChild(rbf);
       head.appendChild(rb);
-      head.appendChild(el('span', 'dr-r', ds.clear + ' / 9' + (ds.clear === 9 ? ' 👑' : '')));
+      head.appendChild(el('span', 'dr-r', ds.clear + ' / 9' + (ds.clear === 9 ? ' ' + STAMPS['d' + d] : '')));
+      var kbtn = el('button', 'dr-kara', '🎧');
+      kbtn.type = 'button';
+      kbtn.setAttribute('aria-label', d + 'の だんを うたう');
+      kbtn.addEventListener('click', function () { openKaraoke(d); });
+      head.appendChild(kbtn);
       row.appendChild(head);
       var cells = el('div', 'dr-cells');
       for (var b = 1; b <= 9; b++) {
@@ -1573,6 +2209,8 @@
   }
 
   function buildKuku(area) {
+    area.appendChild(buildCheer(cheerText(), 'board-cheer'));
+
     var strip = el('div', 'danstrip');
     for (var a = 1; a <= 9; a++) {
       (function (d) {
@@ -1588,7 +2226,7 @@
         if (ds.clear === 9) { fill.className = 'full'; }
         bar.appendChild(fill);
         btn.appendChild(bar);
-        if (ds.clear === 9) { btn.appendChild(el('span', 'dc-crown', '👑')); }
+        if (ds.clear === 9) { btn.appendChild(el('span', 'dc-stamp', STAMPS['d' + d])); }
         btn.addEventListener('click', function () {
           if (!view.mix && view.dan === d) { return; }
           view.dan = d;
@@ -1635,6 +2273,7 @@
     var area = $('boardArea');
     area.innerHTML = '';
     if (view.mode === 'tashi') { buildTashi(area); } else { buildKuku(area); }
+    area.scrollTop = 0;
 
     centerBoard();
     var ms = modeStats(view.mode);
@@ -1758,17 +2397,17 @@
     if (q.kind === 'kuku') {
       if (danStats(q.a).clear === 9 && !store.done['d' + q.a]) {
         store.done['d' + q.a] = 1;
-        out.push({ label: q.a + 'の だん' });
+        out.push({ key: 'd' + q.a, label: q.a + 'の だん' });
       }
     } else {
       if (groupStats(q.grp).clear === GROUPS[q.grp].total && !store.done[q.grp]) {
         store.done[q.grp] = 1;
-        out.push({ label: GROUPS[q.grp].label + ' の ボード' });
+        out.push({ key: q.grp, label: GROUPS[q.grp].label + ' の ボード' });
       }
     }
     if (totalClear() === 162 && !store.done.all) {
       store.done.all = 1;
-      out.push({ label: 'ぜんぶの ボード' });
+      out.push({ key: 'all', label: 'ぜんぶの ボード' });
     }
     return out;
   }
@@ -1935,8 +2574,13 @@
     body.appendChild(buildEq(q));
 
     var hint = el('div', 'q-hint' + (hintOn ? '' : ' off'));
-    hint.appendChild(q.kind === 'kuku' ? dotsKuku(q) : dotsTashi(q));
-    hint.appendChild(el('span', 'q-caption', captionOf(q)));
+    if (q.kind === 'kuku') {
+      hint.appendChild(dotsKuku(q));
+      hint.appendChild(el('span', 'q-caption', captionOf(q)));
+    } else {
+      hint.appendChild(tenFrame(q));
+      hint.appendChild(el('span', 'q-caption' + (q.a + q.b > 10 ? ' tf-cap' : ''), tfCaption(q)));
+    }
     body.appendChild(hint);
 
     var choicesEl = $('choices');
@@ -2081,11 +2725,23 @@
 
     var crown = $('crownBanner');
     crown.className = 'crown';
-    crown.textContent = '';
+    crown.innerHTML = '';
+    var dcBox = $('doneCheer');
+    if (dcBox) { dcBox.innerHTML = ''; }
     if (session.completed.length) {
-      var labels = [];
-      for (i = 0; i < session.completed.length; i++) { labels.push(session.completed[i].label); }
-      crown.textContent = '👑 ' + labels.join(' と ') + ' コンプリート！';
+      var labels = [], medalRow = el('div', 'done-medals');
+      for (i = 0; i < session.completed.length; i++) {
+        labels.push(session.completed[i].label);
+        medalRow.appendChild(el('span', 'dmedal', STAMPS[session.completed[i].key] || '🏅'));
+      }
+      crown.appendChild(medalRow);
+      crown.appendChild(el('span', 'crown-t', '👑 ' + labels.join(' と ') + ' コンプリート！'));
+    }
+    if (dcBox) {
+      dcBox.appendChild(buildCheer(
+        session.completed.length ? 'そのちょうし！ ごほうび スタンプ げっと！' : 'いい ちょうしだね！ つぎも いけるよ',
+        'cheer-done'
+      ));
     }
 
     var mt = modeStats('tashi'), mk = modeStats('kuku');
@@ -2199,6 +2855,7 @@
     adoptLegacy();
     loadStore();
     muted = loadPref();
+    karaPrefLoad();
 
     bind('plChip', openPl);
     bind('plClose', closePl);
@@ -2265,6 +2922,21 @@
       var sc = currentScope();
       startRound(pickEntries(sc, 3), sc, false);
     });
+
+    bind('karaBack', function () {
+      karaStop();
+      playTap();
+      showScreen('screen-home');
+      renderHome();
+    });
+    bind('karaPlay', karaStart);
+    bind('karaHide', toggleKaraHide);
+
+    if (window.speechSynthesis && window.speechSynthesis.addEventListener) {
+      window.speechSynthesis.addEventListener('voiceschanged', function () {
+        jaVoice = pickJaVoice();
+      });
+    }
 
     bind('btnReset', askReset);
     bind('btnCancelReset', function () {
@@ -2333,7 +3005,38 @@
     storeKeyOf: storeKeyOf,
     usePlayer: usePlayer,
     addPlayer: addPlayer,
-    openPl: openPl
+    openPl: openPl,
+    /* ---- v3 ---- */
+    yomi: function () { return YOMI; },
+    yomiOf: function (key) { return yomiOf(BY_KEY[key]); },
+    stamps: function () { return STAMPS; },
+    openKaraoke: openKaraoke,
+    karaoke: {
+      open: openKaraoke,
+      start: karaStart,
+      stop: function () { karaStop(); },
+      back: function () { karaStop(); showScreen('screen-home'); renderHome(); },
+      state: function () {
+        return { dan: kara.dan, i: kara.i, playing: kara.playing, speed: kara.speed, hide: kara.hide };
+      },
+      setSpeed: setKaraSpeed,
+      toggleHide: toggleKaraHide,
+      stepMs: karaStepMs,
+      nowCard: function () {
+        var n = document.querySelector('#karaCards .kcard.now');
+        return n ? n.getAttribute('data-i') : null;
+      },
+      sub: function () { var n = $('karaSub'); return n ? n.textContent : ''; },
+      eq: function () { var n = $('karaEq'); return n ? n.textContent : ''; },
+      cards: function () {
+        var out = [], n = $('karaCards');
+        if (!n) { return out; }
+        for (var c = 0; c < n.children.length; c++) {
+          out.push({ eq: n.children[c].children[0].textContent, now: n.children[c].classList.contains('now'), sung: n.children[c].classList.contains('sung') });
+        }
+        return out;
+      }
+    }
   };
 })();
 </script>
