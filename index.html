@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#FDFAF4">
+<meta name="format-detection" content="telephone=no">
+<meta name="description" content="6つの まなびアプリの メニュー。こくご、さんすう、こっき、ひゃくにんいっしゅ、しりとり、にほんちず。">
+<meta name="apple-mobile-web-app-title" content="まなびランド">
+<title>まなびランド｜6つの まなび</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23EFA9B8'/%3E%3Ccircle cx='36' cy='42' r='6' fill='%23fff'/%3E%3Ccircle cx='64' cy='42' r='6' fill='%23fff'/%3E%3Cpath d='M36 60 Q50 74 64 60' stroke='%23fff' stroke-width='6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --ivory:#FDFAF4;
+    --ivory2:#FBF6EC;
+    --card:#FFFFFF;
+    --ink:#544B46;
+    --ink2:#7A6E67;
+    --ink3:#96887E;
+    --pink:#EFA9B8;
+    --pink-d:#D98A9B;
+    --pink-dd:#B45566;
+    --pink-l:#FDF0F3;
+    --rose:#D97C8E;
+    --mint:#9BD3C0;
+    --mint-d:#7CBCA6;
+    --mint-dd:#3E8571;
+    --mint-l:#EAF7F2;
+    --mustard:#E9C46A;
+    --mustard-d:#C99C3C;
+    --mustard-l:#FCF4DE;
+    --lav:#C9BEE8;
+    --lav-d:#A99BD6;
+    --lav-l:#EFEBF9;
+    --sky:#A8CFE0;
+    --sky-d:#7FAEC3;
+    --sky-l:#EDF6FB;
+    --peach:#F3C7A8;
+    --peach-d:#D9A47D;
+    --peach-l:#FDF1E8;
+    --line:#F0E7D9;
+    --shadow:0 10px 26px rgba(120,101,90,.10);
+    --shadow-lg:0 18px 40px rgba(120,101,90,.16);
+  }
+  *,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{min-height:100%}
+  body{
+    margin:0;background:var(--ivory);color:var(--ink);
+    font-family:"Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic","Noto Sans JP",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(239,169,184,.28), transparent 42%),
+      radial-gradient(circle at 88% 4%, rgba(155,211,192,.26), transparent 40%),
+      radial-gradient(circle at 50% 100%, rgba(233,196,106,.20), transparent 46%);
+    background-attachment:fixed;
+    padding:calc(18px + env(safe-area-inset-top)) 16px calc(30px + env(safe-area-inset-bottom));
+  }
+  .wrap{max-width:920px;margin:0 auto}
+
+  /* ---- header ---- */
+  header{text-align:center;margin:6px 0 26px}
+  .logo{
+    display:inline-flex;align-items:center;justify-content:center;gap:10px;
+    font-size:clamp(28px,6.2vw,44px);font-weight:800;letter-spacing:.06em;
+    color:#4A423E;
+  }
+  .logo .mark{
+    width:1.15em;height:1.15em;border-radius:50%;
+    background:linear-gradient(160deg,var(--pink),#F7C9CF);
+    display:inline-block;position:relative;box-shadow:0 6px 16px rgba(217,138,155,.35);
+    flex:0 0 auto;
+  }
+  .logo .mark::before,.logo .mark::after{
+    content:"";position:absolute;top:34%;width:14%;height:14%;border-radius:50%;background:#fff;
+  }
+  .logo .mark::before{left:24%}
+  .logo .mark::after{right:24%}
+  .logo .mark i{
+    position:absolute;left:50%;bottom:24%;width:40%;height:16%;
+    transform:translateX(-50%);
+    border-bottom:3px solid #fff;border-radius:0 0 40% 40%;
+  }
+  .sub{
+    margin:10px 0 0;font-size:clamp(14px,3.6vw,17px);color:var(--ink2);letter-spacing:.04em;
+  }
+
+  /* ---- grid ---- */
+  .grid{
+    display:grid;gap:16px;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  @media (min-width:760px){
+    .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+  }
+  @media (max-width:400px){
+    .grid{grid-template-columns:1fr}
+  }
+
+  a.card{
+    position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:10px;text-align:center;text-decoration:none;color:inherit;
+    padding:24px 14px 22px;border-radius:26px;
+    background:var(--card);
+    border:1.5px solid var(--line);
+    box-shadow:var(--shadow);
+    min-height:168px;
+    transition:transform .16s ease, box-shadow .16s ease;
+    overflow:hidden;
+    -webkit-user-select:none;user-select:none;
+  }
+  a.card::after{
+    content:"";position:absolute;inset:0;border-radius:26px;pointer-events:none;
+    box-shadow:inset 0 -6px 0 rgba(120,101,90,.05);
+  }
+  a.card:active{
+    transform:translateY(2px) scale(.985);
+    box-shadow:0 6px 16px rgba(120,101,90,.14);
+  }
+  @media (hover:hover){
+    a.card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+  }
+  .icon{
+    width:76px;height:76px;border-radius:24px;display:grid;place-items:center;
+    font-size:38px;line-height:1;flex:0 0 auto;
+    box-shadow:inset 0 -4px 0 rgba(255,255,255,.55);
+  }
+  .title{font-size:clamp(18px,4.4vw,22px);font-weight:800;letter-spacing:.03em;line-height:1.25}
+  .desc{font-size:clamp(12.5px,3.2vw,14px);color:var(--ink3);letter-spacing:.02em;line-height:1.5}
+  .go{
+    margin-top:2px;font-size:12.5px;font-weight:800;color:#fff;letter-spacing:.08em;
+    padding:5px 14px;border-radius:999px;
+  }
+
+  /* per-app colors */
+  .c-kokugo .icon{background:var(--pink-l);color:var(--pink-dd)}
+  .c-kokugo .go{background:var(--pink-d)}
+  .c-kokugo{border-color:#F7DEE4}
+
+  .c-sansu .icon{background:var(--lav-l);color:#5E4FA0}
+  .c-sansu .go{background:var(--lav-d)}
+  .c-sansu{border-color:#E4DEF4}
+
+  .c-kokki .icon{background:var(--sky-l);color:var(--sky-d)}
+  .c-kokki .go{background:var(--sky-d)}
+  .c-kokki{border-color:#DCEBF3}
+
+  .c-hyakunin .icon{background:var(--mustard-l);color:var(--mustard-d)}
+  .c-hyakunin .go{background:var(--mustard-d)}
+  .c-hyakunin{border-color:#F6E9CB}
+
+  .c-shiritori .icon{background:var(--mint-l);color:var(--mint-dd)}
+  .c-shiritori .go{background:var(--mint-d)}
+  .c-shiritori{border-color:#D9EDE5}
+
+  .c-todofuken .icon{background:var(--peach-l);color:var(--peach-d)}
+  .c-todofuken .go{background:var(--peach-d)}
+  .c-todofuken{border-color:#F6E3D5}
+
+  footer{
+    margin:30px 0 4px;text-align:center;font-size:12.5px;color:var(--ink3);letter-spacing:.04em;
+  }
+  footer .dot{display:inline-block;margin:0 8px;color:#DCCFBF}
+  .home-note{
+    display:inline-flex;align-items:center;gap:8px;margin-top:14px;
+    padding:9px 16px;border-radius:999px;background:rgba(255,255,255,.75);
+    border:1.5px dashed #E9DFD0;color:var(--ink2);font-size:12.5px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo"><span class="mark"><i></i></span>まなびランド</div>
+    <p class="sub">きょうは なにで あそぶ？</p>
+  </header>
+
+  <main class="grid">
+
+    <a class="card c-kokugo" href="kokugo.html">
+      <span class="icon" aria-hidden="true">📖</span>
+      <span class="title">こくご 999もん</span>
+      <span class="desc">ことばの クイズで<br>カードを あつめよう</span>
+      <span class="go">やってみる</span>
+    </a>
+
+    <a class="card c-sansu" href="sansu.html">
+      <span class="icon" aria-hidden="true">🔢</span>
+      <span class="title">さんすう ボード</span>
+      <span class="desc">たしざんと かけざんで<br>ボードを うめよう</span>
+      <span class="go">やってみる</span>
+    </a>
+
+    <a class="card c-kokki" href="kokki.html">
+      <span class="icon" aria-hidden="true">🌍</span>
+      <span class="title">こっき ずかん</span>
+      <span class="desc">せかいの こっきを<br>めくって おぼえよう</span>
+      <span class="go">やってみる</span>
+    </a>
+
+    <a class="card c-hyakunin" href="hyakunin.html">
+      <span class="icon" aria-hidden="true">🌸</span>
+      <span class="title">ひゃくにん いっしゅ</span>
+      <span class="desc">うさぎひめと<br>かるたを おぼえよう</span>
+      <span class="go">やってみる</span>
+    </a>
+
+    <a class="card c-shiritori" href="shiritori.html">
+      <span class="icon" aria-hidden="true">🤖</span>
+      <span class="title">しりとり ロボ</span>
+      <span class="desc">ロボットと<br>ことばの バトル</span>
+      <span class="go">やってみる</span>
+    </a>
+
+    <a class="card c-todofuken" href="todofuken.html">
+      <span class="icon" aria-hidden="true">🗾</span>
+      <span class="title">にほんちず パズル</span>
+      <span class="desc">47の とどうふけんを<br>パズルで おぼえよう</span>
+      <span class="go">やってみる</span>
+    </a>
+
+  </main>
+
+  <footer>
+    ぜんぶ で 6つの まなび<span class="dot">・</span>ひらがなで よめるよ
+    <br>
+    <span class="home-note">📲 ホームがめんに ついかすると すぐ ひらけるよ</span>
+  </footer>
+
+</div>
+</body>
+</html>

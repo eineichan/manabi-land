@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#FDFAF4">
+<meta name="description" content="うさぎひめと おぼえる ひゃくにんいっしゅ。かるたの もじで みて、げんだいの こえで きいて、はやさも かえられる。">
+<title>ひゃくにんいっしゅ｜うさぎひめと おぼえよう</title>
+<style>
+  :root{
+    --ivory:#FDFAF4;
+    --card:#FFFFFF;
+    --ink:#544B46;
+    --ink2:#7A6E67;
+    --ink3:#A2938A;
+    --line:#F0E7D9;
+    --cream:#FBF5EA;
+    --rose:#EFA9B8;
+    --rose-d:#D4738A;
+    --rose-dd:#B85A73;
+    --mint:#9BD3C0;
+    --mint-d:#7CBCA6;
+    --mint-ink:#3E8571;
+    --mustard:#E9C46A;
+    --mustard-l:#FCF1D6;
+    --gold:#D9A93C;
+    --shadow:0 10px 26px rgba(120,101,90,.09);
+    --shadow-lg:0 18px 44px rgba(120,101,90,.16);
+    --c-momo:#F2AABA;   --c-momo-d:#CC6E88;  --c-momo-l:#FDEDF1;
+    --c-mizu:#A9CFE6;   --c-mizu-d:#5C92B4;  --c-mizu-l:#EBF5FB;
+    --c-kiiro:#F1D783;  --c-kiiro-d:#BC9A32; --c-kiiro-l:#FBF4DC;
+    --c-midori:#ADD8C0; --c-midori-d:#5A9876;--c-midori-l:#EDF7F1;
+    --c-murasaki:#C8B7E3;--c-murasaki-d:#8670B0;--c-murasaki-l:#F2EEFA;
+  }
+  *,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{background:var(--ivory)}
+  body{
+    margin:0;color:var(--ink);
+    font-family:"Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic","Meiryo",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    font-feature-settings:"palt" 1;
+    -webkit-font-smoothing:antialiased;
+    background:var(--ivory);
+    overflow-x:hidden;
+    overscroll-behavior-y:contain;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(circle at 6% 0%,rgba(239,169,184,.20),transparent 40%),
+      radial-gradient(circle at 96% 62%,rgba(155,211,192,.22),transparent 44%),
+      radial-gradient(circle at 82% 4%,rgba(233,196,106,.15),transparent 34%),
+      radial-gradient(circle at 4% 84%,rgba(200,183,227,.18),transparent 40%);
+  }
+
+  /* ---------- shell ---------- */
+  .app{
+    position:relative;z-index:1;
+    max-width:500px;margin:0 auto;width:100%;
+    min-height:100vh;min-height:100dvh;
+    display:flex;flex-direction:column;
+    padding:calc(env(safe-area-inset-top,0px) + 18px) 18px calc(env(safe-area-inset-bottom,0px) + 20px);
+  }
+  .screen{display:none;flex-direction:column;flex:1;min-height:0;gap:11px}
+  .screen.active{display:flex;animation:screenIn .32s ease both}
+  @keyframes screenIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+
+  /* ---------- buttons ---------- */
+  .btn{
+    display:flex;align-items:center;justify-content:center;gap:9px;
+    width:100%;border:0;border-radius:26px;
+    font-family:inherit;font-size:20px;font-weight:700;letter-spacing:.03em;
+    padding:17px 16px;cursor:pointer;
+    transition:transform .12s ease,box-shadow .12s ease,filter .12s ease;
+    user-select:none;
+  }
+  .btn-primary{
+    background:linear-gradient(180deg,#F3B7C4 0%,var(--rose) 100%);color:#fff;
+    box-shadow:0 6px 0 var(--rose-dd),0 14px 26px rgba(206,111,138,.25);
+  }
+  .btn-primary:active{transform:translateY(4px);box-shadow:0 2px 0 var(--rose-dd),0 6px 12px rgba(206,111,138,.2)}
+  .btn-mint{
+    background:linear-gradient(180deg,#BFE6D8 0%,var(--mint) 100%);color:#2F5A4D;
+    box-shadow:0 6px 0 var(--mint-d),0 14px 26px rgba(124,188,166,.24);
+  }
+  .btn-mint:active{transform:translateY(4px);box-shadow:0 2px 0 var(--mint-d),0 6px 12px rgba(124,188,166,.2)}
+  .btn-ghost{
+    background:#fff;color:var(--ink);border:2px solid var(--line);
+    box-shadow:0 5px 0 var(--line);font-size:17px;padding:14px;
+  }
+  .btn-ghost:active{transform:translateY(3px);box-shadow:0 2px 0 var(--line)}
+  .btn-small{font-size:15.5px;padding:13px 8px;border-radius:22px}
+  .btn-gold{
+    background:linear-gradient(180deg,#FBEBBC,#F3D489);color:#7C5A12;
+    box-shadow:0 5px 0 #DCB864,0 12px 22px rgba(220,184,100,.22);font-size:16.5px;padding:14px 10px;border-radius:22px;
+  }
+  .btn-gold:active{transform:translateY(3px);box-shadow:0 2px 0 #DCB864}
+  .chip{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:66px;padding:5px 12px;border-radius:999px;
+    background:var(--mustard-l);color:#8C6220;
+    font-size:14px;font-weight:700;letter-spacing:.02em;white-space:nowrap;
+  }
+  .icon-btn{
+    width:44px;height:44px;flex:0 0 44px;border-radius:50%;border:2px solid #fff;
+    background:rgba(255,255,255,.95);box-shadow:0 6px 16px rgba(120,101,90,.13);
+    color:var(--ink2);font-size:19px;font-family:inherit;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .icon-btn:active{transform:scale(.94)}
+  .mute{
+    position:fixed;z-index:60;
+    top:calc(env(safe-area-inset-top,0px) + 10px);
+    right:max(12px,calc(50vw - 250px + 12px));
+    width:46px;height:46px;font-size:19px;
+  }
+  .mute{border-color:#F1E7D8 !important}
+  .mute.off{opacity:.5}
+
+  /* =========================================================
+     うさぎひめ（SVGキャラクター）
+     ========================================================= */
+  .char-svg{display:block;width:100%;height:auto;overflow:visible}
+  .char-svg .shadow{fill:#E6D9C6;opacity:.55}
+  .char-svg .float{animation:bob 3.8s ease-in-out infinite}
+  .char-svg .jump{animation:none}
+  .char-svg .ear{animation:earWiggle 3.2s ease-in-out infinite}
+  .char-svg .ear-r{animation-delay:.5s}
+  .char-svg .fan{animation:fanFlap 2.6s ease-in-out infinite}
+  .char-svg .eyes{animation:blink 5.2s infinite}
+  .char-svg .sleeve-l{animation:swayL 3.8s ease-in-out infinite}
+  .char-svg .sleeve-r{animation:swayR 3.8s ease-in-out infinite}
+  .char-svg .f-happy,.char-svg .f-cheer{opacity:0}
+  .char-svg .sparkles{opacity:0}
+  .char-svg .notes{opacity:0}
+
+  .char-svg[data-mood="happy"] .f-normal{opacity:0}
+  .char-svg[data-mood="happy"] .f-happy{opacity:1}
+  .char-svg[data-mood="happy"] .sparkles{opacity:1;animation:sparkPop .9s ease-out 3}
+  .char-svg[data-mood="happy"] .jump{animation:happyJump .62s cubic-bezier(.3,1.4,.5,1) 3}
+  .char-svg[data-mood="happy"] .fan{animation:fanFlap .42s ease-in-out infinite}
+  .char-svg[data-mood="happy"] .blush{opacity:.95}
+
+  .char-svg[data-mood="cheer"] .f-normal{opacity:0}
+  .char-svg[data-mood="cheer"] .f-cheer{opacity:1}
+  .char-svg[data-mood="cheer"] .jump{animation:hopSmall .55s ease-out 2}
+  .char-svg[data-mood="cheer"] .head{animation:tilt 1.1s ease-in-out 2}
+
+  .char-svg[data-mood="listen"] .notes{opacity:1}
+  .char-svg[data-mood="listen"] .f-happy{opacity:.0}
+  .char-svg[data-mood="listen"] .mouth{animation:talk .42s ease-in-out infinite}
+  .char-svg[data-mood="listen"] .ear{animation:earWiggle 1.5s ease-in-out infinite}
+
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  @keyframes happyJump{
+    0%{transform:translateY(0) scale(1,1)}
+    22%{transform:translateY(-4px) scale(.97,1.05)}
+    55%{transform:translateY(-22px) scale(1.02,.98)}
+    80%{transform:translateY(0) scale(1.04,.96)}
+    100%{transform:translateY(0) scale(1,1)}
+  }
+  @keyframes hopSmall{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  @keyframes tilt{0%,100%{transform:rotate(0)}50%{transform:rotate(-6deg)}}
+  @keyframes earWiggle{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(3deg)}}
+  @keyframes fanFlap{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(10deg)}}
+  @keyframes swayL{0%,100%{transform:rotate(0)}50%{transform:rotate(2.5deg)}}
+  @keyframes swayR{0%,100%{transform:rotate(0)}50%{transform:rotate(-2.5deg)}}
+  @keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
+  @keyframes talk{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.35)}}
+  @keyframes sparkPop{0%{opacity:0;transform:scale(.4)}40%{opacity:1;transform:scale(1.15)}100%{opacity:0;transform:scale(.9)}}
+
+  /* ---------- ともだち バー ---------- */
+  .sensei{display:flex;align-items:center;gap:9px;min-height:58px}
+  .sensei-bottom{margin-top:auto}
+  .sensei-char{width:58px;flex:0 0 58px}
+  .sensei-say{
+    flex:1;min-width:0;position:relative;background:#fff;border:2px solid var(--line);
+    border-radius:18px;padding:8px 12px;font-size:12.5px;font-weight:700;line-height:1.55;
+    color:var(--ink2);box-shadow:0 4px 12px rgba(120,101,90,.07);text-wrap:balance;
+  }
+  .sensei-say b{color:var(--rose-dd)}
+  .sensei-say::before{
+    content:"";position:absolute;left:-7px;top:50%;margin-top:-6px;width:11px;height:11px;
+    background:#fff;border-left:2px solid var(--line);border-bottom:2px solid var(--line);
+    transform:rotate(45deg);border-radius:0 0 0 3px;
+  }
+
+  /* ---------- home ---------- */
+  .kick{
+    display:inline-flex;align-items:center;gap:7px;align-self:flex-start;
+    background:#fff;border:2px solid var(--line);
+    padding:7px 14px;border-radius:999px;
+    font-size:12.5px;font-weight:700;letter-spacing:.1em;color:var(--ink2);
+  }
+  .kick::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--rose)}
+  .title{
+    margin:2px 0 0;font-size:37px;line-height:1.16;letter-spacing:.06em;font-weight:700;
+    padding-right:52px;
+  }
+  .title em{font-style:normal;color:var(--rose-d)}
+  .sub{margin:0;font-size:14.5px;line-height:1.65;color:var(--ink2);font-weight:700;padding-right:8px}
+
+  .hero{
+    position:relative;overflow:hidden;
+    background:
+      radial-gradient(circle at 88% 18%,rgba(255,246,201,.9),transparent 52%),
+      linear-gradient(158deg,#FFF4F8 0%,#F6FBF8 52%,#FFF9EC 100%);
+    border-radius:28px;padding:10px 12px 10px 4px;
+    display:flex;align-items:flex-end;gap:2px;
+    box-shadow:0 10px 26px rgba(200,160,175,.16);border:2px solid #fff;
+  }
+  .hero-char{width:132px;flex:0 0 132px;margin-bottom:-4px}
+  .hero-say{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px;padding:6px 0 8px}
+  .hero-bub{
+    position:relative;background:#fff;border:2px solid #FBE3EA;border-radius:18px;
+    padding:9px 11px;font-size:12.5px;font-weight:700;line-height:1.55;color:var(--ink2);
+    box-shadow:0 4px 12px rgba(120,101,90,.07);
+  }
+  .hero-bub b{color:var(--rose-dd)}
+  .hero-bub::before{
+    content:"";position:absolute;left:-7px;top:50%;margin-top:-6px;width:11px;height:11px;
+    background:#fff;border-left:2px solid #FBE3EA;border-bottom:2px solid #FBE3EA;
+    transform:rotate(45deg);border-radius:0 0 0 3px;
+  }
+  .hero-go{
+    border:0;background:linear-gradient(180deg,#BFE6D8,#9BD3C0);color:#2F5A4D;
+    font-family:inherit;font-size:13.5px;font-weight:700;letter-spacing:.02em;
+    padding:10px 12px;border-radius:16px;box-shadow:0 4px 0 #7CBCA6;cursor:pointer;
+  }
+  .hero-go:active{transform:translateY(3px);box-shadow:0 1px 0 #7CBCA6}
+  .petal{position:absolute;font-size:13px;opacity:.55;animation:petalFall 8s linear infinite}
+  .petal.p1{left:8%;top:-8%;animation-delay:0s}
+  .petal.p2{left:52%;top:-16%;animation-delay:2.4s;font-size:10px}
+  .petal.p3{left:86%;top:-10%;animation-delay:4.6s}
+  .petal.p4{left:34%;top:-20%;animation-delay:6.2s;font-size:11px}
+  @keyframes petalFall{
+    0%{transform:translateY(-10px) rotate(0);opacity:0}
+    18%{opacity:.6}
+    100%{transform:translateY(260px) rotate(280deg);opacity:0}
+  }
+
+  .total-card{
+    background:#fff;border-radius:24px;padding:14px 16px;
+    box-shadow:var(--shadow);border:2px solid #fff;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .total-num{display:flex;align-items:baseline;gap:2px;font-weight:700;color:var(--ink2);font-size:16px}
+  .total-num b{font-size:32px;color:var(--rose-dd);letter-spacing:.02em;line-height:1}
+  .total-bar{height:12px;border-radius:999px;background:var(--cream);overflow:hidden}
+  .total-bar i{display:block;height:100%;width:0;border-radius:999px;
+    background:linear-gradient(90deg,#F3B7C4,#EFA9B8 40%,#C8B7E3);transition:width .5s ease}
+  .total-cap{font-size:12px;font-weight:700;color:var(--ink3);letter-spacing:.05em}
+
+  .colors{display:flex;flex-direction:column;gap:10px}
+  .crow{
+    display:flex;align-items:center;gap:12px;width:100%;
+    background:#fff;border:2px solid #fff;border-radius:24px;
+    padding:13px 14px;cursor:pointer;font-family:inherit;text-align:left;
+    box-shadow:var(--shadow);transition:transform .12s ease,box-shadow .15s ease;
+  }
+  .crow:active{transform:scale(.985)}
+  .crow .ce{
+    width:46px;height:46px;flex:0 0 46px;border-radius:16px;
+    display:flex;align-items:center;justify-content:center;font-size:24px;
+    background:var(--cr-l);
+  }
+  .crow .cm{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+  .crow .cn{font-size:17.5px;font-weight:700;letter-spacing:.04em;display:flex;align-items:baseline;justify-content:space-between;gap:8px;width:100%}
+  .crow .cn .crown{font-size:15px}
+  .crow .cbar{width:100%;height:8px;border-radius:999px;background:var(--cream);overflow:hidden}
+  .crow .cbar i{display:block;height:100%;width:0;border-radius:999px;background:var(--cr);transition:width .45s ease}
+  .crow .cp{font-size:14px;font-weight:700;color:var(--cr-d);min-width:52px;text-align:right;letter-spacing:.02em}
+  .crow.done{filter:saturate(1.05)}
+  .crow.done .ce{box-shadow:0 0 0 3px var(--cr-l),0 0 0 6px rgba(255,255,255,.7)}
+
+  .board-wrap{background:#fff;border-radius:24px;padding:12px 12px 14px;box-shadow:var(--shadow);border:2px solid #fff}
+  .board-head{display:flex;align-items:center;justify-content:space-between;margin:2px 2px 9px;font-size:12.5px;font-weight:700;color:var(--ink2);letter-spacing:.06em}
+  .board-head .board-hint{color:var(--ink3);font-weight:700;letter-spacing:.02em}
+  .board100{display:grid;grid-template-columns:repeat(10,1fr);gap:3px}
+  .b100{
+    aspect-ratio:1/1;border-radius:7px;border:1.5px solid #EFE6D8;background:#FCF8F1;
+    color:#BCADA1;font-family:inherit;font-size:9.5px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;
+    transition:transform .15s ease,background .2s ease,color .2s ease;
+  }
+  .b100:active{transform:scale(.9)}
+  .b100.on{color:#fff;border-color:transparent;background:var(--bc)}
+  .b100.learnd{color:var(--bc-d);border-color:var(--bc);background:var(--bc-l)}
+  .foot{display:flex;justify-content:center;margin-top:2px}
+  .reset{
+    background:none;border:0;color:#A6978C;font-family:inherit;font-size:11.5px;font-weight:700;
+    letter-spacing:.06em;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:8px;
+  }
+
+  .actions{display:flex;flex-direction:column;gap:8px}
+  .actions .btn{font-size:17.5px;padding:14px}
+
+  /* ---------- bar ---------- */
+  .bar{display:flex;align-items:center;gap:10px;min-height:44px;padding-right:54px}
+  .bar-t{flex:1;font-size:16.5px;font-weight:700;letter-spacing:.04em;text-align:center;white-space:nowrap}
+
+  /* ---------- color screen ---------- */
+  .board20{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:0}
+  .b20{
+    aspect-ratio:1/1.18;border-radius:16px;border:2px solid #fff;
+    background:linear-gradient(180deg,#FFFFFF 40%,var(--bc-l,#FBF7EF));
+    box-shadow:0 5px 14px rgba(120,101,90,.08);
+    font-family:inherit;font-size:16px;font-weight:700;color:var(--bc-d,#C3B4A8);opacity:.62;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
+    cursor:pointer;transition:transform .12s ease,background .2s ease,color .2s ease;
+    position:relative;overflow:hidden;padding:2px;
+  }
+  .b20:active{transform:scale(.95)}
+  .b20 .bem{font-size:17px;line-height:1.1;filter:saturate(.85)}
+  .b20 .bt{font-size:8px;font-weight:700;letter-spacing:0;color:var(--ink3);white-space:nowrap}
+  .b20.learnd{background:var(--bc-l);border-color:var(--bc);color:var(--bc-d);opacity:1}
+  .b20.learnd .bt{color:var(--bc-d)}
+  .b20.on{background:var(--bc);border-color:var(--bc);color:#fff;opacity:1;box-shadow:0 6px 16px rgba(120,101,90,.14)}
+  .b20.on .bem{filter:none;transform:scale(1.12)}
+  .b20.on .bt{color:rgba(255,255,255,.92)}
+  .b20 .star{position:absolute;top:3px;right:4px;font-size:9px;opacity:.9}
+
+  /* ---------- learn ---------- */
+  .poem-card{
+    flex:1;background:#fff;border-radius:28px;padding:14px 14px 12px;border:2px solid #fff;
+    box-shadow:var(--shadow);display:flex;flex-direction:column;justify-content:center;gap:6px;
+    position:relative;overflow:hidden;
+  }
+  .poem-card::after{
+    content:"";position:absolute;inset:auto -30px -40px -30px;height:120px;
+    background:radial-gradient(ellipse at 50% 100%,var(--bc-l,#FBF5EA),transparent 70%);
+    pointer-events:none;
+  }
+  .p-top{display:flex;align-items:center;gap:8px;justify-content:space-between;position:relative;z-index:1}
+  .p-no{
+    display:inline-flex;align-items:baseline;gap:2px;
+    background:var(--bc-l);color:var(--bc-d);
+    padding:5px 13px;border-radius:999px;font-size:12.5px;font-weight:700;
+  }
+  .p-no b{font-size:17px}
+  .p-emoji{
+    font-size:26px;line-height:1;flex:0 0 auto;
+    animation:emoFloat 3.4s ease-in-out infinite;
+    filter:drop-shadow(0 3px 5px rgba(160,130,110,.18));
+  }
+  @keyframes emoFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-4px) rotate(3deg)}}
+  .p-poet{font-size:12px;font-weight:700;color:var(--ink2);letter-spacing:.02em;text-align:right;line-height:1.3;flex:1}
+  .kimari{
+    align-self:flex-start;font-size:12.5px;font-weight:700;color:#8A6410;
+    background:linear-gradient(180deg,#FFF6CE,#FBE8A8);
+    padding:5px 12px;border-radius:999px;letter-spacing:.03em;
+    box-shadow:0 0 0 3px rgba(251,232,168,.45);
+    position:relative;z-index:1;animation:kimariGlow 2.6s ease-in-out infinite;
+  }
+  .kimari b{font-size:14.5px;letter-spacing:.1em}
+  @keyframes kimariGlow{0%,100%{box-shadow:0 0 0 3px rgba(251,232,168,.35)}50%{box-shadow:0 0 0 7px rgba(251,232,168,.55)}}
+  .ku-label{font-size:10.5px;font-weight:700;color:var(--ink3);letter-spacing:.16em;margin-top:2px;display:flex;align-items:center;gap:7px;position:relative;z-index:1}
+  .ku-label .ki-hint{
+    font-size:9.5px;letter-spacing:0;color:#A5721A;background:#FDF3C9;
+    padding:2px 7px;border-radius:999px;
+  }
+  .ku-text{
+    display:flex;flex-wrap:wrap;gap:0 10px;
+    font-size:clamp(20px,6vw,32px);font-weight:700;line-height:1.62;letter-spacing:.02em;color:var(--ink);
+    transition:filter .3s ease,opacity .3s ease;
+    position:relative;z-index:1;
+  }
+  .ku-text .ku{display:inline-block;white-space:nowrap}
+  .ku-text .ki{
+    font-style:normal;color:#A5721A;
+    background:linear-gradient(180deg,transparent 56%,rgba(253,222,140,.98) 56%,rgba(253,222,140,.98) 95%,transparent 95%);
+    animation:kiGlow 2.4s ease-in-out infinite;
+  }
+  @keyframes kiGlow{0%,100%{background-position:0 0;filter:brightness(1)}50%{filter:brightness(1.18)}}
+  .ku-text.blur{filter:blur(8px);opacity:.42;cursor:pointer}
+  .ku-text.peeked{filter:none !important;opacity:1 !important}
+  .peek-hint{
+    position:relative;z-index:1;font-size:10.5px;font-weight:700;color:var(--ink3);
+    letter-spacing:.04em;text-align:right;margin-top:2px;opacity:.9;
+  }
+  .row2{display:flex;gap:8px}
+  .row2 .btn{flex:1}
+  .pnav{display:flex;align-items:center;justify-content:center;gap:14px}
+  .pnav-t{font-size:12.5px;font-weight:700;color:var(--ink2);letter-spacing:.06em;min-width:70px;text-align:center}
+  .pnav .icon-btn{width:40px;height:40px;flex:0 0 40px;font-size:16px}
+
+  /* ---------- seg ---------- */
+  .seg{
+    display:flex;gap:3px;background:#fff;border:2px solid var(--line);border-radius:16px;
+    padding:3px;box-shadow:0 3px 0 var(--line);
+  }
+  .seg button{
+    flex:1;border:0;background:none;font-family:inherit;font-size:12px;font-weight:700;
+    color:var(--ink3);padding:6px 2px;border-radius:12px;cursor:pointer;letter-spacing:.01em;
+    white-space:nowrap;transition:background .18s ease,color .18s ease,transform .1s ease;
+  }
+  .seg button.on{
+    background:linear-gradient(180deg,#FDE7EE,#F9D9E4);color:#B85A73;
+    box-shadow:0 2px 6px rgba(206,111,138,.18);
+  }
+  .seg button:active{transform:scale(.96)}
+  .seg.rate button{padding:5px 1px;line-height:1.15}
+  .seg.rate button b{display:block;font-size:12.5px;font-weight:700;letter-spacing:0}
+  .seg.rate button i{display:block;font-style:normal;font-size:9px;opacity:.85;letter-spacing:0}
+  .seg.rate button.on{background:linear-gradient(180deg,#E9F6EF,#D3ECDF);color:#2F6B57;box-shadow:0 2px 6px rgba(124,188,166,.22)}
+  .rate-row{display:flex;align-items:center;gap:8px}
+  .rate-lb{font-size:10.5px;font-weight:700;color:var(--ink3);letter-spacing:.08em;flex:0 0 auto;writing-mode:vertical-rl;line-height:1;height:32px;display:flex;align-items:center}
+  .rate-row .seg{flex:1}
+
+  /* ---------- quiz ---------- */
+  .dots{display:flex;gap:7px;align-items:center}
+  .dot{width:10px;height:10px;border-radius:50%;background:#EBE1D2;transition:all .25s ease}
+  .dot.on{background:var(--mint);box-shadow:0 0 0 4px rgba(155,211,192,.25)}
+  .dot.ng{background:var(--rose)}
+  .dot.now{background:#fff;box-shadow:0 0 0 2px var(--rose);transform:scale(1.18)}
+  .q-card{
+    flex:0 0 auto;min-height:296px;background:#fff;border-radius:26px;padding:14px 14px 12px;border:2px solid #fff;
+    box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;text-align:center;
+    position:relative;overflow:hidden;
+  }
+  .q-card::after{
+    content:"";position:absolute;inset:auto -30px -50px -30px;height:130px;
+    background:radial-gradient(ellipse at 50% 100%,var(--bc-l,#FBF5EA),transparent 72%);
+    pointer-events:none;
+  }
+  .q-label{font-size:10.5px;font-weight:700;letter-spacing:.14em;color:#3E7A67;background:#EBF5F1;padding:4px 12px;border-radius:999px;position:relative;z-index:1}
+  .q-emoji{font-size:30px;line-height:1;position:relative;z-index:1;animation:emoFloat 3.6s ease-in-out infinite;filter:drop-shadow(0 3px 5px rgba(160,130,110,.18))}
+  .q-kami{
+    display:flex;flex-wrap:wrap;justify-content:center;gap:0 9px;
+    font-size:clamp(20px,5.6vw,30px);font-weight:700;line-height:1.6;letter-spacing:.02em;
+    position:relative;z-index:1;
+  }
+  .q-kami .ku{display:inline-block;white-space:nowrap}
+  .q-kami .ki{
+    font-style:normal;color:#A5721A;
+    background:linear-gradient(180deg,transparent 56%,rgba(253,222,140,.98) 56%,rgba(253,222,140,.98) 95%,transparent 95%);
+  }
+  .q-poet{font-size:11.5px;font-weight:700;color:var(--ink3);letter-spacing:.04em;position:relative;z-index:1}
+  .q-tools{display:flex;gap:7px;position:relative;z-index:1}
+  .mini-speak{
+    border:0;background:#F4F8F6;color:var(--mint-ink);font-family:inherit;font-size:12px;font-weight:700;
+    padding:7px 14px;border-radius:999px;cursor:pointer;letter-spacing:.04em;
+  }
+  .mini-speak:active{transform:scale(.96)}
+  .mini-rate{background:#FDF4DC;color:#8C6220}
+  .choices{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:9px;flex:1;min-height:0}
+  .choice{
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    min-height:80px;padding:10px 9px;
+    background:#fff;border:2.5px solid var(--line);border-radius:22px;
+    box-shadow:0 5px 0 var(--line);
+    font-family:inherit;cursor:pointer;color:var(--ink);
+    transition:transform .1s ease,box-shadow .1s ease,background .15s ease,border-color .15s ease,opacity .25s ease;
+  }
+  .choice:active{transform:translateY(3px);box-shadow:0 2px 0 var(--line)}
+  .choice .ku-text{justify-content:center;gap:0 5px;font-size:clamp(14.5px,3.8vw,22px);line-height:1.55;letter-spacing:0}
+  .choice.correct{background:#EBF5F1;border-color:var(--mint);box-shadow:0 5px 0 var(--mint-d);animation:bump .45s ease}
+  .choice.wrong{background:#FAF6F0;border-color:#EDE4D6;box-shadow:0 5px 0 #EDE4D6;opacity:.42}
+  .choice.wrong .ku-text{filter:grayscale(1)}
+  .choice.gone{opacity:.28;pointer-events:none;box-shadow:none}
+  @keyframes bump{0%{transform:scale(1)}45%{transform:scale(1.04)}100%{transform:scale(1)}}
+  @keyframes shakeX{0%,100%{transform:translateX(0)}18%{transform:translateX(-8px)}38%{transform:translateX(7px)}58%{transform:translateX(-5px)}78%{transform:translateX(3px)}}
+  .shake{animation:shakeX .42s ease}
+  .feedback{
+    min-height:26px;text-align:center;font-size:15.5px;font-weight:700;letter-spacing:.03em;color:var(--rose-dd);
+    opacity:0;transform:translateY(4px);transition:all .2s ease;
+  }
+  .feedback.show{opacity:1;transform:none}
+  .feedback.ok{color:var(--mint-ink)}
+
+  /* ---------- result ---------- */
+  .res-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center}
+  .res-char{width:136px}
+  .res-title{margin:0;font-size:27px;font-weight:700;letter-spacing:.06em}
+  .res-sub{margin:0;font-size:14.5px;font-weight:700;color:var(--ink2);line-height:1.6}
+  .res-actions{width:100%;display:flex;flex-direction:column;gap:9px;margin-top:4px}
+  .stars-row{font-size:27px;letter-spacing:.12em}
+
+  /* ---------- overlays ---------- */
+  .overlay{
+    position:fixed;inset:0;z-index:80;display:none;
+    align-items:center;justify-content:center;padding:22px;
+    background:rgba(84,75,70,.26);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  }
+  .overlay.open{display:flex;animation:fadeIn .22s ease both}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .ov-card{
+    position:relative;width:100%;max-width:340px;
+    background:linear-gradient(180deg,#FFFDF8,#FBF4E9);
+    border-radius:32px;padding:18px 18px 16px;
+    box-shadow:var(--shadow-lg);border:2px solid #fff;
+    display:flex;flex-direction:column;align-items:center;gap:9px;text-align:center;
+    animation:popIn .38s cubic-bezier(.2,1.4,.5,1) both;
+  }
+  @keyframes popIn{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:scale(1)}}
+  .ov-badge{
+    font-size:10.5px;font-weight:700;letter-spacing:.16em;color:#8C6220;
+    background:linear-gradient(180deg,#FCEFC4,#F8E3A4);padding:4px 12px;border-radius:999px;
+    box-shadow:0 2px 8px rgba(220,184,100,.25);
+  }
+  .ov-emoji{
+    font-size:58px;line-height:1;position:relative;
+    filter:drop-shadow(0 6px 10px rgba(160,130,110,.22));
+    animation:emoPop .6s cubic-bezier(.2,1.5,.5,1) both;
+  }
+  .ov-emoji::after{
+    content:"";position:absolute;inset:-22px;z-index:-1;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,240,190,.95),rgba(255,240,190,0) 68%);
+  }
+  @keyframes emoPop{0%{transform:scale(.4) rotate(-14deg);opacity:0}60%{transform:scale(1.16) rotate(4deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+  .ov-title{font-size:21px;font-weight:700;letter-spacing:.06em;color:var(--mint-ink)}
+  .ov-poem{
+    display:flex;flex-direction:column;gap:1px;
+    font-size:14.5px;font-weight:700;line-height:1.6;color:var(--ink);
+    background:#fff;border-radius:16px;padding:8px 10px;width:100%;
+  }
+  .ov-line{display:flex;flex-wrap:wrap;justify-content:center;gap:0 7px}
+  .ov-line + .ov-line{border-top:1px dashed var(--line);padding-top:1px}
+  .ov-poem .ku{display:inline-block;white-space:nowrap}
+  .ov-poem .ki{
+    font-style:normal;color:#A5721A;
+    background:linear-gradient(180deg,transparent 56%,rgba(253,222,140,.98) 56%,rgba(253,222,140,.98) 95%,transparent 95%);
+  }
+  .ov-story{font-size:13.5px;font-weight:700;line-height:1.7;color:#6E6158;text-wrap:balance;word-break:keep-all;overflow-wrap:normal}
+  .ov-card .btn{font-size:17px;padding:13px}
+  .crown-char{width:116px;margin:0 auto 2px}
+  .crown-big{font-size:44px;line-height:1;animation:floaty 2.4s ease-in-out infinite}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+  .confetti{position:fixed;inset:0;z-index:90;pointer-events:none;overflow:hidden}
+  .confetti i{position:absolute;top:-24px;width:9px;height:15px;border-radius:2px;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(108vh) rotate(760deg);opacity:.85}}
+
+  .toast{
+    position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);
+    transform:translateX(-50%) translateY(14px);z-index:95;
+    background:#544B46;color:#FFF8EC;font-size:13px;font-weight:700;line-height:1.5;
+    padding:11px 17px;border-radius:16px;max-width:min(340px,86vw);text-align:center;
+    opacity:0;pointer-events:none;transition:all .26s ease;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%)}
+
+  @media (min-width:600px){
+    .title{font-size:42px}
+    .b100{font-size:10.5px;border-radius:8px}
+    .board100{gap:4px}
+    .hero-char{width:158px;flex:0 0 158px}
+  }
+  @media (max-height:740px){
+    .screen{gap:8px}
+    .sensei{min-height:46px}
+    .sensei-char{width:44px;flex:0 0 44px}
+    .sensei-say{font-size:11px;padding:6px 10px;line-height:1.45}
+    .poem-card{padding:10px 12px 8px;border-radius:24px;gap:4px}
+    .ku-text{font-size:clamp(18px,5.2vw,26px);line-height:1.55}
+    .btn{padding:14px;font-size:18px}
+    .btn-small{font-size:14.5px;padding:11px 6px}
+    .seg button{padding:5px 2px;font-size:11.5px}
+    .seg.rate button b{font-size:11.5px}
+    .seg.rate button i{font-size:8px}
+    .kimari{font-size:11.5px;padding:4px 10px}
+    .kimari b{font-size:13px}
+    .p-emoji{font-size:22px}
+    .peek-hint{display:none}
+    .pnav .icon-btn{width:36px;height:36px;flex:0 0 36px}
+    .q-card{min-height:244px;padding:10px 12px 10px}
+    .q-kami{font-size:clamp(18px,5vw,26px)}
+    .q-emoji{font-size:24px}
+    .choice{min-height:70px}
+    .b20{aspect-ratio:1/1.08}
+    .board20{gap:6px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  }
+
+  /* =========================================================
+     プレイヤー
+     ========================================================= */
+  .home-top{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-right:52px}
+  .pl-chip{
+    display:inline-flex;align-items:center;gap:5px;flex:0 0 auto;
+    border:2px solid #fff;background:#fff;border-radius:999px;padding:5px 11px 5px 7px;
+    font-family:inherit;font-size:12.5px;font-weight:700;color:var(--ink);
+    box-shadow:0 5px 14px rgba(120,101,90,.12);cursor:pointer;max-width:150px;
+  }
+  .pl-chip:active{transform:scale(.96)}
+  .pl-chip-ico{font-size:16px;line-height:1}
+  #plChipName{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ov-players{max-width:352px;gap:9px}
+  .pl-x{
+    position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;
+    border:0;background:#F5EDE3;color:#A2938A;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;
+  }
+  .pl-list{display:flex;flex-direction:column;gap:7px;width:100%;max-height:40vh;overflow:auto;padding:2px}
+  .pl-card{
+    display:flex;align-items:center;gap:9px;width:100%;
+    background:#fff;border:2px solid var(--line);border-radius:18px;padding:8px 10px;
+    font-family:inherit;font-size:15.5px;font-weight:700;color:var(--ink);cursor:pointer;
+    box-shadow:0 4px 0 var(--line);text-align:left;
+  }
+  .pl-card:active{transform:translateY(2px);box-shadow:0 2px 0 var(--line)}
+  .pl-card.on{border-color:var(--rose);background:#FFF6F9;box-shadow:0 4px 0 #F3C7D4}
+  .pl-ico{
+    width:36px;height:36px;flex:0 0 36px;border-radius:12px;background:var(--mustard-l);
+    display:flex;align-items:center;justify-content:center;font-size:19px;
+  }
+  .pl-mid{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+  .pl-nm{font-size:15.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pl-num{font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.02em}
+  .pl-del{border:0;background:none;font-family:inherit;font-size:12px;font-weight:700;color:#C9BAB0;padding:6px 4px;cursor:pointer}
+  .pl-del.yes{color:var(--rose-dd)}
+  .pl-form{display:none;width:100%;flex-direction:column;gap:8px}
+  .pl-form.open{display:flex}
+  .pl-input{
+    width:100%;font-family:inherit;font-size:16.5px;font-weight:700;color:var(--ink);
+    padding:12px 14px;border-radius:16px;border:2px solid var(--line);background:#fff;
+    text-align:center;outline:none;letter-spacing:.04em;
+  }
+  .pl-input:focus{border-color:var(--rose);box-shadow:0 0 0 4px rgba(239,169,184,.18)}
+  .pl-iclist{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;width:100%}
+  .pl-ic{
+    aspect-ratio:1;border-radius:12px;border:2px solid var(--line);background:#fff;
+    font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;
+  }
+  .pl-ic.on{border-color:var(--rose);background:#FFF1F6;transform:scale(1.04)}
+  .pl-note{font-size:10.5px;font-weight:700;color:var(--ink3);letter-spacing:.02em}
+
+  /* ルビ */
+  ruby{ruby-position:over}
+  rt{font-size:max(8px,.32em);font-weight:700;font-style:normal;color:#C08D7E;letter-spacing:0;line-height:1.05}
+  .p-water{
+    position:absolute;right:-16px;bottom:-26px;font-size:104px;line-height:1;
+    opacity:.055;pointer-events:none;transform:rotate(8deg);z-index:0;
+  }
+  .ov-poem rt{font-size:7px}
+  .b20 .bem{filter:saturate(.9)}
+
+</style>
+</head>
+<body>
+<div class="app">
+
+  <button class="icon-btn mute" id="muteBtn" type="button" aria-label="おとを けす">🔊</button>
+
+  <!-- ============ home ============ -->
+  <section class="screen active" id="scr-home">
+    <div class="home-top">
+      <div class="kick">5つの いろで おぼえよう</div>
+      <button class="pl-chip" id="plChip" type="button"><span class="pl-chip-ico" id="plChipIcon">🐰</span><span id="plChipName">なまえ</span></button>
+    </div>
+    <h1 class="title">ひゃくにん<br><em>いっしゅ</em></h1>
+    <p class="sub">うたを きいて、かるたで とろう！</p>
+
+    <div class="hero">
+      <span class="petal p1">🌸</span><span class="petal p2">🌸</span><span class="petal p3">🌸</span><span class="petal p4">🌸</span>
+      <div class="hero-char" id="heroChar"></div>
+      <div class="hero-say">
+        <div class="hero-bub" id="heroBub"><b>うさぎひめ</b>だよ。いっしょに 100まい あつめようね✨</div>
+        <button class="hero-go" id="heroGo" type="button">つぎの うたへ ▶</button>
+      </div>
+    </div>
+
+    <div class="total-card">
+      <div class="total-num"><b id="totalNow">0</b><span>／ 100</span></div>
+      <div class="total-bar"><i id="totalBar"></i></div>
+      <div class="total-cap" id="totalCap">20まい ずつ、5つの いろを あつめよう</div>
+    </div>
+
+    <div class="colors" id="colorList"></div>
+
+    <div class="board-wrap">
+      <div class="board-head"><span>100まいの ボード</span><span class="board-hint">タップで ひらく</span></div>
+      <div class="board100" id="board100"></div>
+    </div>
+
+    <div class="foot"><button class="reset" id="resetBtn" type="button">さいしょから やりなおす</button></div>
+  </section>
+
+  <!-- ============ color ============ -->
+  <section class="screen" id="scr-color">
+    <div class="bar">
+      <button class="icon-btn" id="backHome" type="button" aria-label="もどる">←</button>
+      <div class="bar-t" id="cTitle">ももいろ</div>
+      <div class="chip" id="cProg">0 / 20</div>
+    </div>
+
+    <div class="board20" id="board20"></div>
+
+    <div class="sensei sensei-bottom">
+      <div class="sensei-char" id="cChar"></div>
+      <div class="sensei-say" id="cSay">ふだを タップして、1まいずつ おぼえよう！</div>
+    </div>
+
+    <button class="btn btn-gold" id="goAuto" type="button">▶ 20まい つづけて ながす</button>
+    <div class="actions">
+      <button class="btn btn-mint" id="goLearn" type="button">🔊 きいて あんしょう</button>
+      <button class="btn btn-primary" id="goQuiz" type="button">🃏 かるた クイズ</button>
+    </div>
+  </section>
+
+  <!-- ============ learn ============ -->
+  <section class="screen" id="scr-learn">
+    <div class="bar">
+      <button class="icon-btn" id="backColor1" type="button" aria-label="もどる">←</button>
+      <div class="bar-t">あんしょう</div>
+      <div class="chip" id="lProg">1 / 20</div>
+    </div>
+
+    <div class="sensei">
+      <div class="sensei-char" id="lChar"></div>
+      <div class="sensei-say" id="lSay">うえの くを きいて、したの くを くちに だそう！</div>
+    </div>
+
+    <div class="poem-card" id="learnCard">
+      <span class="p-water" id="lWater">🍁</span>
+      <div class="p-top">
+        <span class="p-no"><b id="lNo">1</b>ばん</span>
+        <span class="p-emoji" id="lEmoji">🍁</span>
+        <span class="p-poet" id="lPoet">てんじ てんのう</span>
+      </div>
+      <div class="kimari" id="lKimari">きまりじ「<b>あきの</b>」</div>
+      <div class="ku-label">うえの く<span class="ki-hint">きいろ ＝ きまりじ</span></div>
+      <div class="ku-text" id="lKami"></div>
+      <div class="ku-label">したの く</div>
+      <div class="ku-text" id="lShimo"></div>
+      <div class="peek-hint" id="peekHint"></div>
+    </div>
+
+    <div class="seg" id="stageSeg">
+      <button data-stage="0" type="button">① ぜんぶ みる</button>
+      <button data-stage="1" type="button">② した を かくす</button>
+      <button data-stage="2" type="button">③ ぜんぶ かくす</button>
+    </div>
+
+    <div class="rate-row">
+      <span class="rate-lb">はやさ</span>
+      <div class="seg rate" id="rateSeg">
+        <button data-rate="0.8" type="button"><b>0.8x</b><i>ゆっくり</i></button>
+        <button data-rate="1" type="button"><b>1.0x</b><i>ふつう</i></button>
+        <button data-rate="1.3" type="button"><b>1.3x</b><i>はやい</i></button>
+        <button data-rate="1.6" type="button"><b>1.6x</b><i>ちょっぱや</i></button>
+      </div>
+    </div>
+
+    <div class="row2">
+      <button class="btn btn-mint btn-small" id="speakBtn" type="button">🔊 よみあげる</button>
+      <button class="btn btn-ghost btn-small" id="autoBtn" type="button">▶ つづけて ながす</button>
+    </div>
+    <button class="btn btn-primary" id="learnedBtn" type="button">おぼえた！⭐</button>
+
+    <div class="pnav">
+      <button class="icon-btn" id="prevPoem" type="button" aria-label="まえの うた">◀</button>
+      <span class="pnav-t" id="lNav">1 / 20</span>
+      <button class="icon-btn" id="nextPoem" type="button" aria-label="つぎの うた">▶</button>
+    </div>
+  </section>
+
+  <!-- ============ quiz ============ -->
+  <section class="screen" id="scr-quiz">
+    <div class="bar">
+      <button class="icon-btn" id="backColor2" type="button" aria-label="もどる">←</button>
+      <div class="bar-t">かるた クイズ</div>
+      <div class="dots" id="qDots"></div>
+    </div>
+
+    <div class="sensei">
+      <div class="sensei-char" id="qChar"></div>
+      <div class="sensei-say" id="qSay">この こえ、どの ふだかな？</div>
+    </div>
+
+    <div class="q-card" id="qCard">
+      <div class="q-label">うえの くを よんで とろう</div>
+      <div class="q-emoji" id="qEmoji">🍁</div>
+      <div class="q-kami" id="qKami"></div>
+      <div class="q-tools">
+        <button class="mini-speak" id="qSpeak" type="button">🔊 もう いちど</button>
+        <button class="mini-speak mini-rate" id="qRate" type="button">1.0x</button>
+      </div>
+    </div>
+
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+  </section>
+
+  <!-- ============ result ============ -->
+  <section class="screen" id="scr-result">
+    <div class="res-wrap">
+      <div class="res-char" id="resChar"></div>
+      <h2 class="res-title" id="resTitle">3もん クリア！</h2>
+      <p class="res-sub" id="resSub">よく できたね！</p>
+      <div class="stars-row" id="resStars">⭐⭐⭐</div>
+      <div class="res-actions">
+        <button class="btn btn-primary" id="resAgain" type="button">もう いちど</button>
+        <button class="btn btn-ghost" id="resBack" type="button">いろの ボードへ</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============ story overlay ============ -->
+<div class="overlay" id="ovStory">
+  <div class="ov-card">
+    <div class="ov-badge">カード ゲット！</div>
+    <div class="ov-emoji" id="ovEmoji">🎉</div>
+    <div class="ov-title" id="ovTitle">せいかい！</div>
+    <div class="ov-poem" id="ovPoem"></div>
+    <div class="ov-story" id="ovStoryText"></div>
+    <button class="btn btn-primary" id="ovNext" type="button">つぎへ</button>
+  </div>
+</div>
+
+<!-- ============ crown overlay ============ -->
+<div class="overlay" id="ovCrown">
+  <div class="ov-card">
+    <div class="crown-big">👑</div>
+    <div class="crown-char" id="crownChar"></div>
+    <div class="ov-title" id="ovCrownTitle">ぜんぶ とれた！</div>
+    <div class="ov-story" id="ovCrownText">20まい ぜんぶ、とれたよ！</div>
+    <button class="btn btn-primary" id="ovCrownOk" type="button">やったー！</button>
+  </div>
+</div>
+
+<!-- ============ reset overlay ============ -->
+<div class="overlay" id="ovReset">
+  <div class="ov-card">
+    <div class="ov-emoji">🧹</div>
+    <div class="ov-title">ほんとに けす？</div>
+    <div class="ov-story">とった かるたと ⭐が ぜんぶ きえちゃうよ。</div>
+    <button class="btn btn-primary" id="resetYes" type="button">けす</button>
+    <button class="btn btn-ghost" id="resetNo" type="button">やめる</button>
+  </div>
+</div>
+
+<!-- ============ player overlay ============ -->
+<div class="overlay" id="ovPlayer">
+  <div class="ov-card ov-players">
+    <button class="pl-x" id="plClose" type="button" aria-label="とじる">✕</button>
+    <div class="ov-badge">プレイヤー</div>
+    <div class="ov-title" id="plTitle">だれが あそぶ？</div>
+    <div class="pl-list" id="plList"></div>
+    <div class="pl-form" id="plForm">
+      <input class="pl-input" id="plName" type="text" maxlength="10" placeholder="なまえを ひらがなで" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <div class="pl-iclist" id="plIcons"></div>
+      <button class="btn btn-primary" id="plSave" type="button">これで いく！</button>
+    </div>
+    <button class="btn btn-ghost" id="plNew" type="button">＋ あたらしい プレイヤー</button>
+    <div class="pl-note">プレイヤーごとに きろくが べつべつに のこるよ</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DATA = [
+{"id":1,"color":"momo","kimari":"あきの","poet":"てんじ てんのう","story":"🍂 あきの たんぼの こやに いるよ。よるの つゆで、そでが びしょびしょ！","kami":["あきのたの","かりほのいほの","とまをあらみ"],"shimo":["わがころもでは","つゆにぬれつつ"],"kamiR":["あきのたの","かりおのいおの","とまをあらみ"],"shimoR":["わがころもでわ","つゆにぬれつつ"],"kamiH":["あきのたの","かり<ruby>ほ<rt>お</rt></ruby>のい<ruby>ほ<rt>お</rt></ruby>の","とまをあらみ"],"shimoH":["わがころもで<ruby>は<rt>わ</rt></ruby>","つゆにぬれつつ"]},
+{"id":2,"color":"momo","kimari":"はるす","poet":"じとう てんのう","story":"👗 はるが おわって なつが きた！かぐやまに、しろい きものを ほしてるよ","kami":["はるすぎて","なつきにけらし","しろたへの"],"shimo":["ころもほすてふ","あまのかぐやま"],"kamiR":["はるすぎて","なつきにけらし","しろたえの"],"shimoR":["ころもほすちょう","あまのかぐやま"],"kamiH":["はるすぎて","なつきにけらし","しろた<ruby>へ<rt>え</rt></ruby>の"],"shimoH":["ころもほす<ruby>てふ<rt>ちょう</rt></ruby>","あまのかぐやま"]},
+{"id":3,"color":"momo","kimari":"あし","poet":"かきのもとの ひとまろ","story":"🌙 とりの おみたいに ながい、ながい よる。ひとりで ねるのは さみしいなあ","kami":["あしびきの","やまどりのをの","しだりをの"],"shimo":["ながながしよを","ひとりかもねむ"],"kamiR":["あしびきの","やまどりのおの","しだりおの"],"shimoR":["ながながしよを","ひとりかもねん"],"kamiH":["あしびきの","やまどりの<ruby>を<rt>お</rt></ruby>の","しだり<ruby>を<rt>お</rt></ruby>の"],"shimoH":["ながながしよを","ひとりかもね<ruby>む<rt>ん</rt></ruby>"]},
+{"id":4,"color":"momo","kimari":"たご","poet":"やまべの あかひと","story":"🗻 うみべに でたら、ふじさんが みえた！ゆきが ふって まっしろだよ","kami":["たごのうらに","うちいでてみれば","しろたへの"],"shimo":["ふじのたかねに","ゆきはふりつつ"],"kamiR":["たごのうらに","うちいでてみれば","しろたえの"],"shimoR":["ふじのたかねに","ゆきわふりつつ"],"kamiH":["たごのうらに","うちいでてみれば","しろた<ruby>へ<rt>え</rt></ruby>の"],"shimoH":["ふじのたかねに","ゆき<ruby>は<rt>わ</rt></ruby>ふりつつ"]},
+{"id":5,"color":"momo","kimari":"おく","poet":"さるまる だゆう","story":"🍁 おくの やまの もみじを ふみながら、しかが ないてる。あきって さみしいね","kami":["おくやまに","もみぢふみわけ","なくしかの"],"shimo":["こゑきくときぞ","あきはかなしき"],"kamiR":["おくやまに","もみじふみわけ","なくしかの"],"shimoR":["こえきくときぞ","あきわかなしき"],"kamiH":["おくやまに","もみ<ruby>ぢ<rt>じ</rt></ruby>ふみわけ","なくしかの"],"shimoH":["こ<ruby>ゑ<rt>え</rt></ruby>きくときぞ","あき<ruby>は<rt>わ</rt></ruby>かなしき"]},
+{"id":6,"color":"momo","kimari":"かさ","poet":"ちゅうなごん やかもち","story":"✨ よるの そらから はしが おりてきた？しろい しもが ひかってるよ。もう よるおそいね","kami":["かささぎの","わたせるはしに","おくしもの"],"shimo":["しろきをみれば","よぞふけにける"],"kamiR":["かささぎの","わたせるはしに","おくしもの"],"shimoR":["しろきをみれば","よぞふけにける"],"kamiH":["かささぎの","わたせるはしに","おくしもの"],"shimoH":["しろきをみれば","よぞふけにける"]},
+{"id":7,"color":"momo","kimari":"あまの","poet":"あべの なかまろ","story":"🌕 ふるさとの そらを おもいだすよ。みかさやまに でてた おつきさまと おなじ かおだ","kami":["あまのはら","ふりさけみれば","かすがなる"],"shimo":["みかさのやまに","いでしつきかも"],"kamiR":["あまのはら","ふりさけみれば","かすがなる"],"shimoR":["みかさのやまに","いでしつきかも"],"kamiH":["あまのはら","ふりさけみれば","かすがなる"],"shimoH":["みかさのやまに","いでしつきかも"]},
+{"id":8,"color":"momo","kimari":"わが","poet":"きせん ほうし","story":"🏠 わたしの いえは みやこの たつみ。だれが なんと いっても、ここで のんびり すむよ","kami":["わがいほは","みやこのたつみ","しかぞすむ"],"shimo":["よをうぢやまと","ひとはいふなり"],"kamiR":["わがいおわ","みやこのたつみ","しかぞすむ"],"shimoR":["よをうじやまと","ひとはゆうなり"],"kamiH":["わがい<ruby>ほは<rt>おわ</rt></ruby>","みやこのたつみ","しかぞすむ"],"shimoH":["よをう<ruby>ぢ<rt>じ</rt></ruby>やまと","ひとは<ruby>いふ<rt>ゆう</rt></ruby>なり"]},
+{"id":9,"color":"momo","kimari":"はな","poet":"おのの こまち","story":"🌸 はなの いろが あせちゃった。わたしも すこし としを とったのかな","kami":["はなのいろは","うつりにけりな","いたづらに"],"shimo":["わがみよにふる","ながめせしまに"],"kamiR":["はなのいろわ","うつりにけりな","いたずらに"],"shimoR":["わがみよにふる","ながめせしまに"],"kamiH":["はなのいろ<ruby>は<rt>わ</rt></ruby>","うつりにけりな","いた<ruby>づ<rt>ず</rt></ruby>らに"],"shimoH":["わがみよにふる","ながめせしまに"]},
+{"id":10,"color":"momo","kimari":"これ","poet":"せみまる","story":"🚪 ここは あふさかの せき。いく ひと、かえる ひと、みんなが であう ばしょだよ","kami":["これやこの","ゆくもかへるも","わかれては"],"shimo":["しるもしらぬも","あふさかのせき"],"kamiR":["これやこの","ゆくもかえるも","わかれてわ"],"shimoR":["しるもしらぬも","おうさかのせき"],"kamiH":["これやこの","ゆくもか<ruby>へ<rt>え</rt></ruby>るも","わかれて<ruby>は<rt>わ</rt></ruby>"],"shimoH":["しるもしらぬも","<ruby>あふ<rt>おう</rt></ruby>さかのせき"]},
+{"id":11,"color":"momo","kimari":"わたの","poet":"さんぎ たかむら","story":"⛵ ひろい うみを、しまを めざして こぎだすよ。つりびとに つたえてね、って","kami":["わたのはら","やそしまかけて","こぎいでぬと"],"shimo":["ひとにはつげよ","あまのつりぶね"],"kamiR":["わたのはら","やそしまかけて","こぎいでぬと"],"shimoR":["ひとにわつげよ","あまのつりぶね"],"kamiH":["わたのはら","やそしまかけて","こぎいでぬと"],"shimoH":["ひとに<ruby>は<rt>わ</rt></ruby>つげよ","あまのつりぶね"]},
+{"id":12,"color":"momo","kimari":"あまつ","poet":"そうじょう へんじょう","story":"☁️ かぜさん、くもの みちを とじちゃって！おどる おんなのこを、もうすこし みていたいの","kami":["あまつかぜ","くものかよひぢ","ふきとぢよ"],"shimo":["をとめのすがた","しばしとどめむ"],"kamiR":["あまつかぜ","くものかよいじ","ふきとじよ"],"shimoR":["おとめのすがた","しばしとどめん"],"kamiH":["あまつかぜ","くものかよ<ruby>ひぢ<rt>いじ</rt></ruby>","ふきと<ruby>ぢ<rt>じ</rt></ruby>よ"],"shimoH":["<ruby>を<rt>お</rt></ruby>とめのすがた","しばしとどめ<ruby>む<rt>ん</rt></ruby>"]},
+{"id":13,"color":"momo","kimari":"つく","poet":"ようぜい いん","story":"💧 つくばやまから ながれる かわ。すきな きもちが たまって、ふかい ふちに なったよ","kami":["つくばねの","みねよりおつる","みなのがは"],"shimo":["こひぞつもりて","ふちとなりぬる"],"kamiR":["つくばねの","みねよりおつる","みなのがわ"],"shimoR":["こいぞつもりて","ふちとなりぬる"],"kamiH":["つくばねの","みねよりおつる","みなのが<ruby>は<rt>わ</rt></ruby>"],"shimoH":["こ<ruby>ひ<rt>い</rt></ruby>ぞつもりて","ふちとなりぬる"]},
+{"id":14,"color":"momo","kimari":"みち","poet":"かわらの さだいじん","story":"🌀 みちのくの もようは ぐるぐる。だれの せいで、わたしの こころも ぐちゃぐちゃなの","kami":["みちのくの","しのぶもぢずり","たれゆゑに"],"shimo":["みだれそめにし","われならなくに"],"kamiR":["みちのくの","しのぶもじずり","たれゆえに"],"shimoR":["みだれそめにし","われならなくに"],"kamiH":["みちのくの","しのぶも<ruby>ぢ<rt>じ</rt></ruby>ずり","たれゆ<ruby>ゑ<rt>え</rt></ruby>に"],"shimoH":["みだれそめにし","われならなくに"]},
+{"id":15,"color":"momo","kimari":"きみが","poet":"こうこう てんのう","story":"🌱 あなたに あげようと、はるの のはらで わかなを つむよ。ゆきまで ふってきた！","kami":["きみがため","はるののにいでて","わかなつむ"],"shimo":["わがころもでに","ゆきはふりつつ"],"kamiR":["きみがため","はるののにいでて","わかなつむ"],"shimoR":["わがころもでに","ゆきわふりつつ"],"kamiH":["きみがため","はるののにいでて","わかなつむ"],"shimoH":["わがころもでに","ゆき<ruby>は<rt>わ</rt></ruby>ふりつつ"]},
+{"id":16,"color":"momo","kimari":"たち","poet":"ちゅうなごん ゆきひら","story":"👋 さようなら。いなばの やまの まつが「まってる」と きいたら、すぐ かえるね","kami":["たちわかれ","いなばのやまの","みねにおふる"],"shimo":["まつとしきかば","いまかへりこむ"],"kamiR":["たちわかれ","いなばのやまの","みねにおうる"],"shimoR":["まつとしきかば","いまかえりこん"],"kamiH":["たちわかれ","いなばのやまの","みねにお<ruby>ふ<rt>う</rt></ruby>る"],"shimoH":["まつとしきかば","いまか<ruby>へ<rt>え</rt></ruby>りこ<ruby>む<rt>ん</rt></ruby>"]},
+{"id":17,"color":"momo","kimari":"ちは","poet":"ありわらの なりひら","story":"🍁 かみさまの むかしから、こんな いろは ないよ！たつたがわが、まっかっかに そまった！","kami":["ちはやぶる","かみよもきかず","たつたがは"],"shimo":["からくれなゐに","みづくくるとは"],"kamiR":["ちはやぶる","かみよもきかず","たつたがわ"],"shimoR":["からくれないに","みずくくるとわ"],"kamiH":["ちはやぶる","かみよもきかず","たつたが<ruby>は<rt>わ</rt></ruby>"],"shimoH":["からくれな<ruby>ゐ<rt>い</rt></ruby>に","み<ruby>づ<rt>ず</rt></ruby>くくると<ruby>は<rt>わ</rt></ruby>"]},
+{"id":18,"color":"momo","kimari":"すみ","poet":"ふじわらの としゆき","story":"🌊 よるの なみも、わたしの こころも ざわざわ。ゆめの みちで あなたに あいたいな","kami":["すみのえの","きしによるなみ","よるさへや"],"shimo":["ゆめのかよひぢ","ひとめよくらむ"],"kamiR":["すみのえの","きしによるなみ","よるさえや"],"shimoR":["ゆめのかよいじ","ひとめよくらん"],"kamiH":["すみのえの","きしによるなみ","よるさ<ruby>へ<rt>え</rt></ruby>や"],"shimoH":["ゆめのかよ<ruby>ひぢ<rt>いじ</rt></ruby>","ひとめよくら<ruby>む<rt>ん</rt></ruby>"]},
+{"id":19,"color":"momo","kimari":"なに","poet":"いせ","story":"🌾 あしの ふしと ふしの あいだ くらいの みじかい あいだも、あえないのは いやだよ","kami":["なにはがた","みじかきあしの","ふしのまも"],"shimo":["あはでこのよを","すぐしてよとや"],"kamiR":["なにわがた","みじかきあしの","ふしのまも"],"shimoR":["あわでこのよを","すぐしてよとや"],"kamiH":["なに<ruby>は<rt>わ</rt></ruby>がた","みじかきあしの","ふしのまも"],"shimoH":["あ<ruby>は<rt>わ</rt></ruby>でこのよを","すぐしてよとや"]},
+{"id":20,"color":"momo","kimari":"わび","poet":"もとよし しんのう","story":"💗 もう なにも いわない。からだを つかっても、あなたに あいたいんだ","kami":["わびぬれば","いまはたおなじ","なにはなる"],"shimo":["みをつくしても","あはむとぞおもふ"],"kamiR":["わびぬれば","いまはたおなじ","なにわなる"],"shimoR":["みをつくしても","あわんとぞおもう"],"kamiH":["わびぬれば","いまはたおなじ","なに<ruby>は<rt>わ</rt></ruby>なる"],"shimoH":["みをつくしても","あ<ruby>はむ<rt>わん</rt></ruby>とぞおも<ruby>ふ<rt>う</rt></ruby>"]},
+{"id":21,"color":"mizu","kimari":"いまこ","poet":"そせい ほうし","story":"🌙 「すぐ いくよ」って いったのに、よるじゅう まってた。もう あさの つきが でてるよ","kami":["いまこむと","いひしばかりに","ながつきの"],"shimo":["ありあけのつきを","まちいでつるかな"],"kamiR":["いまこんと","いいしばかりに","ながつきの"],"shimoR":["ありあけのつきを","まちいでつるかな"],"kamiH":["いまこ<ruby>む<rt>ん</rt></ruby>と","い<ruby>ひ<rt>い</rt></ruby>しばかりに","ながつきの"],"shimoH":["ありあけのつきを","まちいでつるかな"]},
+{"id":22,"color":"mizu","kimari":"ふく","poet":"ふんやの やすひで","story":"🍃 かぜが ふいたら、くさも きも しょんぼり。だから やまの かぜを「あらし」って いうんだね","kami":["ふくからに","あきのくさきの","しをるれば"],"shimo":["むべやまかぜを","あらしといふらむ"],"kamiR":["ふくからに","あきのくさきの","しおるれば"],"shimoR":["むべやまかぜを","あらしというらん"],"kamiH":["ふくからに","あきのくさきの","し<ruby>を<rt>お</rt></ruby>るれば"],"shimoH":["むべやまかぜを","あらしとい<ruby>ふ<rt>う</rt></ruby>ら<ruby>む<rt>ん</rt></ruby>"]},
+{"id":23,"color":"mizu","kimari":"つき","poet":"おおえの ちさと","story":"🌕 おつきさまを みていたら、なんだか せつない。わたし ひとりだけの あきじゃ ないのにね","kami":["つきみれば","ちぢにものこそ","かなしけれ"],"shimo":["わがみひとつの","あきにはあらねど"],"kamiR":["つきみれば","ちじにものこそ","かなしけれ"],"shimoR":["わがみひとつの","あきにわあらねど"],"kamiH":["つきみれば","ち<ruby>ぢ<rt>じ</rt></ruby>にものこそ","かなしけれ"],"shimoH":["わがみひとつの","あきに<ruby>は<rt>わ</rt></ruby>あらねど"]},
+{"id":24,"color":"mizu","kimari":"この","poet":"かんけ","story":"🍁 おそくなって ごめんね。もみじの にしきを おそなえするよ、かみさま","kami":["このたびは","ぬさもとりあへず","たむけやま"],"shimo":["もみぢのにしき","かみのまにまに"],"kamiR":["このたびわ","ぬさもとりあえず","たむけやま"],"shimoR":["もみじのにしき","かみのまにまに"],"kamiH":["このたび<ruby>は<rt>わ</rt></ruby>","ぬさもとりあ<ruby>へ<rt>え</rt></ruby>ず","たむけやま"],"shimoH":["もみ<ruby>ぢ<rt>じ</rt></ruby>のにしき","かみのまにまに"]},
+{"id":25,"color":"mizu","kimari":"なにし","poet":"さんじょうの うだいじん","story":"🌿 この つるは、あえば また あえる つる。だれにも ないしょで、あなたに あいたいな","kami":["なにしおはば","あふさかやまの","さねかづら"],"shimo":["ひとにしられで","くるよしもがな"],"kamiR":["なにしおわば","おうさかやまの","さねかずら"],"shimoR":["ひとにしられで","くるよしもがな"],"kamiH":["なにしお<ruby>は<rt>わ</rt></ruby>ば","<ruby>あふ<rt>おう</rt></ruby>さかやまの","さねか<ruby>づ<rt>ず</rt></ruby>ら"],"shimoH":["ひとにしられで","くるよしもがな"]},
+{"id":26,"color":"mizu","kimari":"をぐら","poet":"ていしんこう","story":"🍁 おぐらやまの もみじさん、もう いちど おうさまが くるまで、その いろで まっててね","kami":["をぐらやま","みねのもみぢば","こころあらば"],"shimo":["いまひとたびの","みゆきまたなむ"],"kamiR":["おぐらやま","みねのもみじば","こころあらば"],"shimoR":["いまひとたびの","みゆきまたなん"],"kamiH":["<ruby>を<rt>お</rt></ruby>ぐらやま","みねのもみ<ruby>ぢ<rt>じ</rt></ruby>ば","こころあらば"],"shimoH":["いまひとたびの","みゆきまたな<ruby>む<rt>ん</rt></ruby>"]},
+{"id":27,"color":"mizu","kimari":"みか","poet":"ちゅうなごん かねすけ","story":"💧 いづみがわは、わきでて ながれる かわ。いつ あなたに あったから、こんなに こいしいの？","kami":["みかのはら","わきてながるる","いづみがは"],"shimo":["いつみきとてか","こひしかるらむ"],"kamiR":["みかのはら","わきてながるる","いずみがわ"],"shimoR":["いつみきとてか","こいしかるらん"],"kamiH":["みかのはら","わきてながるる","い<ruby>づ<rt>ず</rt></ruby>みが<ruby>は<rt>わ</rt></ruby>"],"shimoH":["いつみきとてか","こ<ruby>ひ<rt>い</rt></ruby>しかるら<ruby>む<rt>ん</rt></ruby>"]},
+{"id":28,"color":"mizu","kimari":"やま","poet":"みなもとの むねゆき","story":"❄️ やまの さとは ふゆが いちばん さびしい。ひとの こえも、くさの いろも、きえちゃう","kami":["やまざとは","ふゆぞさびしさ","まさりける"],"shimo":["ひとめもくさも","かれぬとおもへば"],"kamiR":["やまざとわ","ふゆぞさびしさ","まさりける"],"shimoR":["ひとめもくさも","かれぬとおもえば"],"kamiH":["やまざと<ruby>は<rt>わ</rt></ruby>","ふゆぞさびしさ","まさりける"],"shimoH":["ひとめもくさも","かれぬとおも<ruby>へ<rt>え</rt></ruby>ば"]},
+{"id":29,"color":"mizu","kimari":"こころあ","poet":"おおしかうちの みつね","story":"🌼 あてずっぽうで つんでみようかな。しもで まっしろに なった しらぎくを","kami":["こころあてに","をらばやをらむ","はつしもの"],"shimo":["おきまどはせる","しらぎくのはな"],"kamiR":["こころあてに","おらばやおらん","はつしもの"],"shimoR":["おきまどわせる","しらぎくのはな"],"kamiH":["こころあてに","<ruby>を<rt>お</rt></ruby>らばや<ruby>を<rt>お</rt></ruby>ら<ruby>む<rt>ん</rt></ruby>","はつしもの"],"shimoH":["おきまど<ruby>は<rt>わ</rt></ruby>せる","しらぎくのはな"]},
+{"id":30,"color":"mizu","kimari":"ありあ","poet":"みぶの ただみね","story":"🌄 あの つきが つめたく みえた よるから、あさが いちばん つらいんだ","kami":["ありあけの","つれなくみえし","わかれより"],"shimo":["あかつきばかり","うきものはなし"],"kamiR":["ありあけの","つれなくみえし","わかれより"],"shimoR":["あかつきばかり","うきものわなし"],"kamiH":["ありあけの","つれなくみえし","わかれより"],"shimoH":["あかつきばかり","うきもの<ruby>は<rt>わ</rt></ruby>なし"]},
+{"id":31,"color":"mizu","kimari":"あさぼらけあ","poet":"さかのうえの これのり","story":"❄️ あさの そらの よしのの さとが まっしろ。おつきさまの ひかりみたいだね","kami":["あさぼらけ","ありあけのつきと","みるまでに"],"shimo":["よしののさとに","ふれるしらゆき"],"kamiR":["あさぼらけ","ありあけのつきと","みるまでに"],"shimoR":["よしののさとに","ふれるしらゆき"],"kamiH":["あさぼらけ","ありあけのつきと","みるまでに"],"shimoH":["よしののさとに","ふれるしらゆき"]},
+{"id":32,"color":"mizu","kimari":"やまが","poet":"はるみちの つらき","story":"🍁 かぜが かわに かけた しかけに、もみじが つまっちゃった。あかくて きれい！","kami":["やまがはに","かぜのかけたる","しがらみは"],"shimo":["ながれもあへぬ","もみぢなりけり"],"kamiR":["やまがわに","かぜのかけたる","しがらみわ"],"shimoR":["ながれもあえぬ","もみじなりけり"],"kamiH":["やまが<ruby>は<rt>わ</rt></ruby>に","かぜのかけたる","しがらみ<ruby>は<rt>わ</rt></ruby>"],"shimoH":["ながれもあ<ruby>へ<rt>え</rt></ruby>ぬ","もみ<ruby>ぢ<rt>じ</rt></ruby>なりけり"]},
+{"id":33,"color":"mizu","kimari":"ひさ","poet":"きの とものり","story":"🌸 ぽかぽか はるの ひなのに、はなは なんで いそいで ちるのかな","kami":["ひさかたの","ひかりのどけき","はるのひに"],"shimo":["しづごころなく","はなのちるらむ"],"kamiR":["ひさかたの","ひかりのどけき","はるのひに"],"shimoR":["しずごころなく","はなのちるらん"],"kamiH":["ひさかたの","ひかりのどけき","はるのひに"],"shimoH":["し<ruby>づ<rt>ず</rt></ruby>ごころなく","はなのちるら<ruby>む<rt>ん</rt></ruby>"]},
+{"id":34,"color":"mizu","kimari":"たれ","poet":"ふじわらの おきかぜ","story":"🌲 むかしからの ともだちは、もう いないのかな。たかさごの まつだけが ともだちだよ","kami":["たれをかも","しるひとにせむ","たかさごの"],"shimo":["まつもむかしの","ともならなくに"],"kamiR":["たれをかも","しるひとにせん","たかさごの"],"shimoR":["まつもむかしの","ともならなくに"],"kamiH":["たれをかも","しるひとにせ<ruby>む<rt>ん</rt></ruby>","たかさごの"],"shimoH":["まつもむかしの","ともならなくに"]},
+{"id":35,"color":"mizu","kimari":"ひと","poet":"きの つらゆき","story":"🌸 ひとの こころは わからない。でも ふるさとの はなは、むかしと おなじ においだよ","kami":["ひとはいさ","こころもしらず","ふるさとは"],"shimo":["はなぞむかしの","かににほひける"],"kamiR":["ひとわいさ","こころもしらず","ふるさとわ"],"shimoR":["はなぞむかしの","かににおいける"],"kamiH":["ひと<ruby>は<rt>わ</rt></ruby>いさ","こころもしらず","ふるさと<ruby>は<rt>わ</rt></ruby>"],"shimoH":["はなぞむかしの","かにに<ruby>ほひ<rt>おい</rt></ruby>ける"]},
+{"id":36,"color":"mizu","kimari":"なつ","poet":"きよはらの ふかやぶ","story":"🌙 なつの よるは まだ くらいと おもってたら、もう あけちゃった！つきは どこに かくれたの","kami":["なつのよは","まだよひながら","あけぬるを"],"shimo":["くものいづこに","つきやどるらむ"],"kamiR":["なつのよわ","まだよいながら","あけぬるを"],"shimoR":["くものいずこに","つきやどるらん"],"kamiH":["なつのよ<ruby>は<rt>わ</rt></ruby>","まだよ<ruby>ひ<rt>い</rt></ruby>ながら","あけぬるを"],"shimoH":["くものい<ruby>づ<rt>ず</rt></ruby>こに","つきやどるら<ruby>む<rt>ん</rt></ruby>"]},
+{"id":37,"color":"mizu","kimari":"しら","poet":"ふんやの ともやす","story":"💎 くさの つゆに かぜが ふいて、いとを とおさない たまが ぱらぱら こぼれるよ","kami":["しらつゆに","かぜのふきしく","あきののは"],"shimo":["つらぬきとめぬ","たまぞちりける"],"kamiR":["しらつゆに","かぜのふきしく","あきののわ"],"shimoR":["つらぬきとめぬ","たまぞちりける"],"kamiH":["しらつゆに","かぜのふきしく","あきのの<ruby>は<rt>わ</rt></ruby>"],"shimoH":["つらぬきとめぬ","たまぞちりける"]},
+{"id":38,"color":"mizu","kimari":"わす","poet":"うこん","story":"💔 わたしが わすれられても いい。でも、あなたには ながく いきてて ほしいの","kami":["わすらるる","みをばおもはず","ちかひてし"],"shimo":["ひとのいのちの","をしくもあるかな"],"kamiR":["わすらるる","みをばおもわず","ちかいてし"],"shimoR":["ひとのいのちの","おしくもあるかな"],"kamiH":["わすらるる","みをばおも<ruby>は<rt>わ</rt></ruby>ず","ちか<ruby>ひ<rt>い</rt></ruby>てし"],"shimoH":["ひとのいのちの","<ruby>を<rt>お</rt></ruby>しくもあるかな"]},
+{"id":39,"color":"mizu","kimari":"あさぢ","poet":"さんぎ ひとし","story":"🌾 かくれても かくれても、あなたが こいしくて たまらないの","kami":["あさぢふの","をののしのはら","しのぶれど"],"shimo":["あまりてなどか","ひとのこひしき"],"kamiR":["あさじうの","おののしのはら","しのぶれど"],"shimoR":["あまりてなどか","ひとのこいしき"],"kamiH":["あさ<ruby>ぢふ<rt>じう</rt></ruby>の","<ruby>を<rt>お</rt></ruby>ののしのはら","しのぶれど"],"shimoH":["あまりてなどか","ひとのこ<ruby>ひ<rt>い</rt></ruby>しき"]},
+{"id":40,"color":"mizu","kimari":"しの","poet":"たいらの かねもり","story":"😳 ないしょに してたのに、こいしてるって ばれちゃった！かおに でちゃったよ","kami":["しのぶれど","いろにいでにけり","わがこひは"],"shimo":["ものやおもふと","ひとのとふまで"],"kamiR":["しのぶれど","いろにいでにけり","わがこいわ"],"shimoR":["ものやおもうと","ひとのとうまで"],"kamiH":["しのぶれど","いろにいでにけり","わがこ<ruby>ひは<rt>いわ</rt></ruby>"],"shimoH":["ものやおも<ruby>ふ<rt>う</rt></ruby>と","ひとのと<ruby>ふ<rt>う</rt></ruby>まで"]},
+{"id":41,"color":"kiiro","kimari":"こひす","poet":"みぶの ただみ","story":"📣 わたしが すきなの、もう ばれちゃった！だれにも いってないのに、うわさに なったよ","kami":["こひすてふ","わがなはまだき","たちにけり"],"shimo":["ひとしれずこそ","おもひそめしか"],"kamiR":["こいすちょう","わがなわまだき","たちにけり"],"shimoR":["ひとしれずこそ","おもいそめしか"],"kamiH":["こ<ruby>ひ<rt>い</rt></ruby>す<ruby>てふ<rt>ちょう</rt></ruby>","わがな<ruby>は<rt>わ</rt></ruby>まだき","たちにけり"],"shimoH":["ひとしれずこそ","おも<ruby>ひ<rt>い</rt></ruby>そめしか"]},
+{"id":42,"color":"kiiro","kimari":"ちぎ","poet":"きよはらの もとすけ","story":"🌲 ふたりで やくそく したよね。すえの まつやまに、なみが こない くらい ずっと","kami":["ちぎりきな","かたみにそでを","しぼりつつ"],"shimo":["すゑのまつやま","なみこさじとは"],"kamiR":["ちぎりきな","かたみにそでを","しぼりつつ"],"shimoR":["すえのまつやま","なみこさじとわ"],"kamiH":["ちぎりきな","かたみにそでを","しぼりつつ"],"shimoH":["す<ruby>ゑ<rt>え</rt></ruby>のまつやま","なみこさじと<ruby>は<rt>わ</rt></ruby>"]},
+{"id":43,"color":"kiiro","kimari":"あひ","poet":"ごんちゅうなごん あつただ","story":"💭 あなたに あった いまの ほうが、まえより ずっと すきに なっちゃった","kami":["あひみての","のちのこころに","くらぶれば"],"shimo":["むかしはものを","おもはざりけり"],"kamiR":["あいみての","のちのこころに","くらぶれば"],"shimoR":["むかしわものを","おもわざりけり"],"kamiH":["あ<ruby>ひ<rt>い</rt></ruby>みての","のちのこころに","くらぶれば"],"shimoH":["むかし<ruby>は<rt>わ</rt></ruby>ものを","おも<ruby>は<rt>わ</rt></ruby>ざりけり"]},
+{"id":44,"color":"kiiro","kimari":"あふ","poet":"ふじわらの あさただ","story":"💔 あわなければ よかったのかな。あえないから、こんなに つらいんだ","kami":["あふことの","たえてしなくは","なかなかに"],"shimo":["ひとをもみをも","うらみざらまし"],"kamiR":["おうことの","たえてしなくわ","なかなかに"],"shimoR":["ひとをもみをも","うらみざらまし"],"kamiH":["<ruby>あふ<rt>おう</rt></ruby>ことの","たえてしなく<ruby>は<rt>わ</rt></ruby>","なかなかに"],"shimoH":["ひとをもみをも","うらみざらまし"]},
+{"id":45,"color":"kiiro","kimari":"あはれ","poet":"けんとくこう","story":"😢 だれも、かなしんで くれない。わたしは このまま きえちゃうの？","kami":["あはれとも","いふべきひとは","おもほえで"],"shimo":["みのいたづらに","なりぬべきかな"],"kamiR":["あわれとも","ゆうべきひとわ","おもおえで"],"shimoR":["みのいたずらに","なりぬべきかな"],"kamiH":["あ<ruby>は<rt>わ</rt></ruby>れとも","<ruby>いふ<rt>ゆう</rt></ruby>べきひと<ruby>は<rt>わ</rt></ruby>","おも<ruby>ほ<rt>お</rt></ruby>えで"],"shimoH":["みのいた<ruby>づ<rt>ず</rt></ruby>らに","なりぬべきかな"]},
+{"id":46,"color":"kiiro","kimari":"ゆら","poet":"そねの よしただ","story":"⛵ かじを なくした ふねが ゆらゆら。わたしの こいも、どこへ いくのかな","kami":["ゆらのとを","わたるふなびと","かぢをたえ"],"shimo":["ゆくへもしらぬ","こひのみちかな"],"kamiR":["ゆらのとを","わたるふなびと","かじをたえ"],"shimoR":["ゆくえもしらぬ","こいのみちかな"],"kamiH":["ゆらのとを","わたるふなびと","か<ruby>ぢ<rt>じ</rt></ruby>をたえ"],"shimoH":["ゆく<ruby>へ<rt>え</rt></ruby>もしらぬ","こ<ruby>ひ<rt>い</rt></ruby>のみちかな"]},
+{"id":47,"color":"kiiro","kimari":"やへ","poet":"えぎょう ほうし","story":"🌿 くさが ぼうぼうの からいえ。だれも こないけど、あきは きて くれたよ","kami":["やへむぐら","しげれるやどの","さびしきに"],"shimo":["ひとこそみえね","あきはきにけり"],"kamiR":["やえむぐら","しげれるやどの","さびしきに"],"shimoR":["ひとこそみえね","あきわきにけり"],"kamiH":["や<ruby>へ<rt>え</rt></ruby>むぐら","しげれるやどの","さびしきに"],"shimoH":["ひとこそみえね","あき<ruby>は<rt>わ</rt></ruby>きにけり"]},
+{"id":48,"color":"kiiro","kimari":"かぜ","poet":"みなもとの しげゆき","story":"🌊 いわに ぶつかる なみは、われて ばかり。わたしも こころが くだけそう","kami":["かぜをいたみ","いはうつなみの","おのれのみ"],"shimo":["くだけてものを","おもふころかな"],"kamiR":["かぜをいたみ","いわうつなみの","おのれのみ"],"shimoR":["くだけてものを","おもうころかな"],"kamiH":["かぜをいたみ","い<ruby>は<rt>わ</rt></ruby>うつなみの","おのれのみ"],"shimoH":["くだけてものを","おも<ruby>ふ<rt>う</rt></ruby>ころかな"]},
+{"id":49,"color":"kiiro","kimari":"みかき","poet":"おおなかとみの よしのぶ","story":"🔥 よるは ひを もやして おしごと。ひるは きえて、ものを かんがえるよ","kami":["みかきもり","ゑじのたくひの","よるはもえ"],"shimo":["ひるはきえつつ","ものをこそおもへ"],"kamiR":["みかきもり","えじのたくひの","よるわもえ"],"shimoR":["ひるわきえつつ","ものをこそおもえ"],"kamiH":["みかきもり","<ruby>ゑ<rt>え</rt></ruby>じのたくひの","よる<ruby>は<rt>わ</rt></ruby>もえ"],"shimoH":["ひる<ruby>は<rt>わ</rt></ruby>きえつつ","ものをこそおも<ruby>へ<rt>え</rt></ruby>"]},
+{"id":50,"color":"kiiro","kimari":"きみがた","poet":"ふじわらの よしたか","story":"💗 あなたの ためなら いのちも いらない、って おもってた。でも、ながく いきたいな","kami":["きみがため","をしからざりし","いのちさへ"],"shimo":["ながくもがなと","おもひけるかな"],"kamiR":["きみがため","おしからざりし","いのちさえ"],"shimoR":["ながくもがなと","おもいけるかな"],"kamiH":["きみがため","<ruby>を<rt>お</rt></ruby>しからざりし","いのちさ<ruby>へ<rt>え</rt></ruby>"],"shimoH":["ながくもがなと","おも<ruby>ひ<rt>い</rt></ruby>けるかな"]},
+{"id":51,"color":"kiiro","kimari":"かく","poet":"ふじわらの さねかた","story":"🔥 すきだって いえないまま。こころが もえちゃいそうだよ","kami":["かくとだに","えやはいぶきの","さしもぐさ"],"shimo":["さしもしらじな","もゆるおもひを"],"kamiR":["かくとだに","えやわいぶきの","さしもぐさ"],"shimoR":["さしもしらじな","もゆるおもいを"],"kamiH":["かくとだに","えや<ruby>は<rt>わ</rt></ruby>いぶきの","さしもぐさ"],"shimoH":["さしもしらじな","もゆるおも<ruby>ひ<rt>い</rt></ruby>を"]},
+{"id":52,"color":"kiiro","kimari":"あけ","poet":"ふじわらの みちのぶ","story":"🌅 あけて また くれれば いいのに。あなたに あえない あさが つらいよ","kami":["あけぬれば","くるるものとは","しりながら"],"shimo":["なほうらめしき","あさぼらけかな"],"kamiR":["あけぬれば","くるるものとわ","しりながら"],"shimoR":["なおうらめしき","あさぼらけかな"],"kamiH":["あけぬれば","くるるものと<ruby>は<rt>わ</rt></ruby>","しりながら"],"shimoH":["な<ruby>ほ<rt>お</rt></ruby>うらめしき","あさぼらけかな"]},
+{"id":53,"color":"kiiro","kimari":"なげ","poet":"うだいしょう みちつなの はは","story":"🛏️ なげきながら、ひとりで ねる よる。この よるが どれだけ ながいか しってる？","kami":["なげきつつ","ひとりぬるよの","あくるまは"],"shimo":["いかにひさしき","ものとかはしる"],"kamiR":["なげきつつ","ひとりぬるよの","あくるまわ"],"shimoR":["いかにひさしき","ものとかわしる"],"kamiH":["なげきつつ","ひとりぬるよの","あくるま<ruby>は<rt>わ</rt></ruby>"],"shimoH":["いかにひさしき","ものとか<ruby>は<rt>わ</rt></ruby>しる"]},
+{"id":54,"color":"kiiro","kimari":"わすれ","poet":"ぎどうさんしの はは","story":"💐 あなたに わすれて ほしくない。だったら、きょうの いのちで おしまいで いい","kami":["わすれじの","ゆくすゑまでは","かたければ"],"shimo":["けふをかぎりの","いのちともがな"],"kamiR":["わすれじの","ゆくすえまでわ","かたければ"],"shimoR":["きょうをかぎりの","いのちともがな"],"kamiH":["わすれじの","ゆくす<ruby>ゑ<rt>え</rt></ruby>まで<ruby>は<rt>わ</rt></ruby>","かたければ"],"shimoH":["<ruby>けふ<rt>きょう</rt></ruby>をかぎりの","いのちともがな"]},
+{"id":55,"color":"kiiro","kimari":"たき","poet":"だいなごん きんとう","story":"💧 たきの おとは きえても、なまえは ずっと ながれて、みんなが しってるよ","kami":["たきのおとは","たえてひさしく","なりぬれど"],"shimo":["なこそながれて","なほきこえけれ"],"kamiR":["たきのおとわ","たえてひさしく","なりぬれど"],"shimoR":["なこそながれて","なおきこえけれ"],"kamiH":["たきのおと<ruby>は<rt>わ</rt></ruby>","たえてひさしく","なりぬれど"],"shimoH":["なこそながれて","な<ruby>ほ<rt>お</rt></ruby>きこえけれ"]},
+{"id":56,"color":"kiiro","kimari":"あら","poet":"いずみしきぶ","story":"💭 もし いなくなっても、さいごの おもいでに、もう いちど あなたに あいたいな","kami":["あらざらむ","このよのほかの","おもひでに"],"shimo":["いまひとたびの","あふこともがな"],"kamiR":["あらざらん","このよのほかの","おもいでに"],"shimoR":["いまひとたびの","おうこともがな"],"kamiH":["あらざら<ruby>む<rt>ん</rt></ruby>","このよのほかの","おも<ruby>ひ<rt>い</rt></ruby>でに"],"shimoH":["いまひとたびの","<ruby>あふ<rt>おう</rt></ruby>こともがな"]},
+{"id":57,"color":"kiiro","kimari":"めぐ","poet":"むらさきしきぶ","story":"🌙 ひさしぶりに あったのに、あっというまに かくれちゃった。よるの おつきさまみたい","kami":["めぐりあひて","みしやそれとも","わかぬまに"],"shimo":["くもがくれにし","よはのつきかな"],"kamiR":["めぐりあいて","みしやそれとも","わかぬまに"],"shimoR":["くもがくれにし","よわのつきかな"],"kamiH":["めぐりあ<ruby>ひ<rt>い</rt></ruby>て","みしやそれとも","わかぬまに"],"shimoH":["くもがくれにし","よ<ruby>は<rt>わ</rt></ruby>のつきかな"]},
+{"id":58,"color":"kiiro","kimari":"ありま","poet":"だいにの さんみ","story":"🌾 かぜが ふいたら、ささが そよそよ。わたしは あなたを わすれないよ","kami":["ありまやま","ゐなのささはら","かぜふけば"],"shimo":["いでそよひとを","わすれやはする"],"kamiR":["ありまやま","いなのささはら","かぜふけば"],"shimoR":["いでそよひとを","わすれやわする"],"kamiH":["ありまやま","<ruby>ゐ<rt>い</rt></ruby>なのささはら","かぜふけば"],"shimoH":["いでそよひとを","わすれや<ruby>は<rt>わ</rt></ruby>する"]},
+{"id":59,"color":"kiiro","kimari":"やす","poet":"あかぞめ えもん","story":"🌙 まちくたびれて ねちゃった。つきが かたむくまで まってたのに","kami":["やすらはで","ねなましものを","さよふけて"],"shimo":["かたぶくまでの","つきをみしかな"],"kamiR":["やすらわで","ねなましものを","さよふけて"],"shimoR":["かたぶくまでの","つきをみしかな"],"kamiH":["やすら<ruby>は<rt>わ</rt></ruby>で","ねなましものを","さよふけて"],"shimoH":["かたぶくまでの","つきをみしかな"]},
+{"id":60,"color":"kiiro","kimari":"おほえ","poet":"こしきぶの ないし","story":"🌉 おおえやまも こえて、とおい みち。まだ あまのはしだてには、いってないよ","kami":["おほえやま","いくののみちの","とほければ"],"shimo":["まだふみもみず","あまのはしだて"],"kamiR":["おおえやま","いくののみちの","とおければ"],"shimoR":["まだふみもみず","あまのはしだて"],"kamiH":["お<ruby>ほ<rt>お</rt></ruby>えやま","いくののみちの","と<ruby>ほ<rt>お</rt></ruby>ければ"],"shimoH":["まだふみもみず","あまのはしだて"]},
+{"id":61,"color":"midori","kimari":"いに","poet":"いせの たいふ","story":"🌸 むかしの ならの みやこから きた さくら。きょう、みやかで いちばん きれいだよ","kami":["いにしへの","ならのみやこの","やへざくら"],"shimo":["けふここのへに","にほひぬるかな"],"kamiR":["いにしえの","ならのみやこの","やえざくら"],"shimoR":["きょうここのえに","においぬるかな"],"kamiH":["いにし<ruby>へ<rt>え</rt></ruby>の","ならのみやこの","や<ruby>へ<rt>え</rt></ruby>ざくら"],"shimoH":["<ruby>けふ<rt>きょう</rt></ruby>ここの<ruby>へ<rt>え</rt></ruby>に","に<ruby>ほひ<rt>おい</rt></ruby>ぬるかな"]},
+{"id":62,"color":"midori","kimari":"よを","poet":"せいしょうなごん","story":"🐔 にわとりの こえを まねしても、まよなかの せきは あかないよ","kami":["よをこめて","とりのそらねは","はかるとも"],"shimo":["よにあふさかの","せきはゆるさじ"],"kamiR":["よをこめて","とりのそらねわ","はかるとも"],"shimoR":["よにおうさかの","せきわゆるさじ"],"kamiH":["よをこめて","とりのそらね<ruby>は<rt>わ</rt></ruby>","はかるとも"],"shimoH":["よに<ruby>あふ<rt>おう</rt></ruby>さかの","せき<ruby>は<rt>わ</rt></ruby>ゆるさじ"]},
+{"id":63,"color":"midori","kimari":"いまは","poet":"さきょうの だいぶ みちまさ","story":"💬 「もう あきらめる」って ことだけ つたえたい。ひとづてじゃ なく、じかに","kami":["いまはただ","おもひたえなむ","とばかりを"],"shimo":["ひとづてならで","いふよしもがな"],"kamiR":["いまわただ","おもいたえなん","とばかりを"],"shimoR":["ひとづてならで","ゆうよしもがな"],"kamiH":["いま<ruby>は<rt>わ</rt></ruby>ただ","おも<ruby>ひ<rt>い</rt></ruby>たえな<ruby>む<rt>ん</rt></ruby>","とばかりを"],"shimoH":["ひとづてならで","<ruby>いふ<rt>ゆう</rt></ruby>よしもがな"]},
+{"id":64,"color":"midori","kimari":"あさぼらけう","poet":"ごんちゅうなごん さだより","story":"🌫️ あさもやの うじがわ。きりが きえたら、あみどが ずらっと みえたよ","kami":["あさぼらけ","うぢのかはぎり","たえだえに"],"shimo":["あらはれわたる","せぜのあじろぎ"],"kamiR":["あさぼらけ","うじのかわぎり","たえだえに"],"shimoR":["あらわれわたる","せぜのあじろぎ"],"kamiH":["あさぼらけ","う<ruby>ぢ<rt>じ</rt></ruby>のか<ruby>は<rt>わ</rt></ruby>ぎり","たえだえに"],"shimoH":["あら<ruby>は<rt>わ</rt></ruby>れわたる","せぜのあじろぎ"]},
+{"id":65,"color":"midori","kimari":"うらみ","poet":"さがみ","story":"🌧️ そでが ぬれて、かわかない。こいで きえても、なまえだけは いやだよ","kami":["うらみわび","ほさぬそでだに","あるものを"],"shimo":["こひにくちなむ","なこそをしけれ"],"kamiR":["うらみわび","ほさぬそでだに","あるものを"],"shimoR":["こいにくちなん","なこそおしけれ"],"kamiH":["うらみわび","ほさぬそでだに","あるものを"],"shimoH":["こ<ruby>ひ<rt>い</rt></ruby>にくちな<ruby>む<rt>ん</rt></ruby>","なこそ<ruby>を<rt>お</rt></ruby>しけれ"]},
+{"id":66,"color":"midori","kimari":"もろ","poet":"ぎょうそん そうじょう","story":"🌸 やまの さくら、いっしょに さいて、いっしょに さみしい。しってるのは はなだけだね","kami":["もろともに","あはれとおもへ","やまざくら"],"shimo":["はなよりほかに","しるひともなし"],"kamiR":["もろともに","あわれとおもえ","やまざくら"],"shimoR":["はなよりほかに","しるひともなし"],"kamiH":["もろともに","あ<ruby>は<rt>わ</rt></ruby>れとおも<ruby>へ<rt>え</rt></ruby>","やまざくら"],"shimoH":["はなよりほかに","しるひともなし"]},
+{"id":67,"color":"midori","kimari":"はるの","poet":"すおうの ないし","story":"🌙 はるの よるの ゆめみたいな ひじまくら。だれも しらないなら、いいのにね","kami":["はるのよの","ゆめばかりなる","たまくらに"],"shimo":["かひなくたたむ","なこそをしけれ"],"kamiR":["はるのよの","ゆめばかりなる","たまくらに"],"shimoR":["かいなくたたん","なこそおしけれ"],"kamiH":["はるのよの","ゆめばかりなる","たまくらに"],"shimoH":["か<ruby>ひ<rt>い</rt></ruby>なくたた<ruby>む<rt>ん</rt></ruby>","なこそ<ruby>を<rt>お</rt></ruby>しけれ"]},
+{"id":68,"color":"midori","kimari":"こころに","poet":"さんじょう いん","story":"🌕 いやでも いきて いるなら、この よるの おつきさまが きっと こいしくなるよ","kami":["こころにも","あらでうきよに","ながらへば"],"shimo":["こひしかるべき","よはのつきかな"],"kamiR":["こころにも","あらでうきよに","ながらえば"],"shimoR":["こいしかるべき","よわのつきかな"],"kamiH":["こころにも","あらでうきよに","ながら<ruby>へ<rt>え</rt></ruby>ば"],"shimoH":["こ<ruby>ひ<rt>い</rt></ruby>しかるべき","よ<ruby>は<rt>わ</rt></ruby>のつきかな"]},
+{"id":69,"color":"midori","kimari":"あらし","poet":"のういん ほうし","story":"🍁 あらしが ふいて、やまの もみじが たつたがわに おちた。かわが にしきに なったよ","kami":["あらしふく","みむろのやまの","もみぢばは"],"shimo":["たつたのかはの","にしきなりけり"],"kamiR":["あらしふく","みむろのやまの","もみじばわ"],"shimoR":["たつたのかわの","にしきなりけり"],"kamiH":["あらしふく","みむろのやまの","もみ<ruby>ぢ<rt>じ</rt></ruby>ば<ruby>は<rt>わ</rt></ruby>"],"shimoH":["たつたのか<ruby>は<rt>わ</rt></ruby>の","にしきなりけり"]},
+{"id":70,"color":"midori","kimari":"さび","poet":"りょうぜん ほうし","story":"🌇 さびしくて そとへ でたら、どこも おなじ あきの ゆうぐれ","kami":["さびしさに","やどをたちいでて","ながむれば"],"shimo":["いづこもおなじ","あきのゆふぐれ"],"kamiR":["さびしさに","やどをたちいでて","ながむれば"],"shimoR":["いずこもおなじ","あきのゆうぐれ"],"kamiH":["さびしさに","やどをたちいでて","ながむれば"],"shimoH":["い<ruby>づ<rt>ず</rt></ruby>こもおなじ","あきのゆ<ruby>ふ<rt>う</rt></ruby>ぐれ"]},
+{"id":71,"color":"midori","kimari":"ゆふ","poet":"だいなごん つねのぶ","story":"🌾 ゆうがたに なると、いねが さわさわ。あしで ふいた まるい こやに あきかぜが ふくよ","kami":["ゆふされば","かどたのいなば","おとづれて"],"shimo":["あしのまろやに","あきかぜぞふく"],"kamiR":["ゆうされば","かどたのいなば","おとずれて"],"shimoR":["あしのまろやに","あきかぜぞふく"],"kamiH":["ゆ<ruby>ふ<rt>う</rt></ruby>されば","かどたのいなば","おと<ruby>づ<rt>ず</rt></ruby>れて"],"shimoH":["あしのまろやに","あきかぜぞふく"]},
+{"id":72,"color":"midori","kimari":"おとに","poet":"ゆうし ないしんのうけの きい","story":"🌊 うわさの たかしの はまの なみ。どうか わたしの そでを ぬらさないでね","kami":["おとにきく","たかしのはまの","あだなみは"],"shimo":["かけじやそでの","ぬれもこそすれ"],"kamiR":["おとにきく","たかしのはまの","あだなみわ"],"shimoR":["かけじやそでの","ぬれもこそすれ"],"kamiH":["おとにきく","たかしのはまの","あだなみ<ruby>は<rt>わ</rt></ruby>"],"shimoH":["かけじやそでの","ぬれもこそすれ"]},
+{"id":73,"color":"midori","kimari":"たかさご","poet":"ごんちゅうなごん まさふさ","story":"🌸 たかさごの さくらが さいた！とおやまの かすみよ、はれないで いてね","kami":["たかさごの","をのへのさくら","さきにけり"],"shimo":["とやまのかすみ","たたずもあらなむ"],"kamiR":["たかさごの","おのえのさくら","さきにけり"],"shimoR":["とやまのかすみ","たたずもあらなん"],"kamiH":["たかさごの","<ruby>を<rt>お</rt></ruby>の<ruby>へ<rt>え</rt></ruby>のさくら","さきにけり"],"shimoH":["とやまのかすみ","たたずもあらな<ruby>む<rt>ん</rt></ruby>"]},
+{"id":74,"color":"midori","kimari":"うか","poet":"みなもとの としより","story":"🍃 きらいな ひとの ことを、たのんだのに。かぜが はげしくて、よけい つらいよ","kami":["うかりける","ひとをはつせの","やまおろしよ"],"shimo":["はげしかれとは","いのらぬものを"],"kamiR":["うかりける","ひとをはつせの","やまおろしよ"],"shimoR":["はげしかれとわ","いのらぬものを"],"kamiH":["うかりける","ひとをはつせの","やまおろしよ"],"shimoH":["はげしかれと<ruby>は<rt>わ</rt></ruby>","いのらぬものを"]},
+{"id":75,"color":"midori","kimari":"ちぎりお","poet":"ふじわらの もととし","story":"💧 やくそくの つゆを いのちに して まってたのに、ことしの あきも おわっちゃう","kami":["ちぎりおきし","させもがつゆを","いのちにて"],"shimo":["あはれことしの","あきもいぬめり"],"kamiR":["ちぎりおきし","させもがつゆを","いのちにて"],"shimoR":["あわれことしの","あきもいぬめり"],"kamiH":["ちぎりおきし","させもがつゆを","いのちにて"],"shimoH":["あ<ruby>は<rt>わ</rt></ruby>れことしの","あきもいぬめり"]},
+{"id":76,"color":"midori","kimari":"わたのはらこ","poet":"ほっしょうじ にゅうどう","story":"⛵ うみへ こぎだしたら、しらなみが くもと まざって みえるよ","kami":["わたのはら","こぎいでてみれば","ひさかたの"],"shimo":["くもゐにまがふ","おきつしらなみ"],"kamiR":["わたのはら","こぎいでてみれば","ひさかたの"],"shimoR":["くもいにまごう","おきつしらなみ"],"kamiH":["わたのはら","こぎいでてみれば","ひさかたの"],"shimoH":["くも<ruby>ゐ<rt>い</rt></ruby>にま<ruby>がふ<rt>ごう</rt></ruby>","おきつしらなみ"]},
+{"id":77,"color":"midori","kimari":"せを","poet":"すとく いん","story":"🌊 はやい かわで ふたつに わかれても、さいごは また あえるよ","kami":["せをはやみ","いはにせかるる","たきがはの"],"shimo":["われてもすゑに","あはむとぞおもふ"],"kamiR":["せをはやみ","いわにせかるる","たきがわの"],"shimoR":["われてもすえに","あわんとぞおもう"],"kamiH":["せをはやみ","い<ruby>は<rt>わ</rt></ruby>にせかるる","たきが<ruby>は<rt>わ</rt></ruby>の"],"shimoH":["われてもす<ruby>ゑ<rt>え</rt></ruby>に","あ<ruby>はむ<rt>わん</rt></ruby>とぞおも<ruby>ふ<rt>う</rt></ruby>"]},
+{"id":78,"color":"midori","kimari":"あはぢ","poet":"みなもとの かねまさ","story":"🐦 あわじじまから ちどりが ないてる。ねむれない よるが、なんども あるよ","kami":["あはぢしま","かよふちどりの","なくこゑに"],"shimo":["いくよねざめぬ","すまのせきもり"],"kamiR":["あわじしま","かようちどりの","なくこえに"],"shimoR":["いくよねざめぬ","すまのせきもり"],"kamiH":["あ<ruby>はぢ<rt>わじ</rt></ruby>しま","かよ<ruby>ふ<rt>う</rt></ruby>ちどりの","なくこ<ruby>ゑ<rt>え</rt></ruby>に"],"shimoH":["いくよねざめぬ","すまのせきもり"]},
+{"id":79,"color":"midori","kimari":"あきか","poet":"さきょうの だいぶ あきすけ","story":"🌕 くもの あいだから おつきさまが のぞいた。ひかりが とっても きれい！","kami":["あきかぜに","たなびくくもの","たえまより"],"shimo":["もれいづるつきの","かげのさやけさ"],"kamiR":["あきかぜに","たなびくくもの","たえまより"],"shimoR":["もれいずるつきの","かげのさやけさ"],"kamiH":["あきかぜに","たなびくくもの","たえまより"],"shimoH":["もれい<ruby>づ<rt>ず</rt></ruby>るつきの","かげのさやけさ"]},
+{"id":80,"color":"midori","kimari":"ながか","poet":"たいけんもんいんの ほりかわ","story":"💇 あなたの こころは わからない。くろかみ みたいに、わたしの こころも みだれてる","kami":["ながからむ","こころもしらず","くろかみの"],"shimo":["みだれてけさは","ものをこそおもへ"],"kamiR":["ながからん","こころもしらず","くろかみの"],"shimoR":["みだれてけさわ","ものをこそおもえ"],"kamiH":["ながから<ruby>む<rt>ん</rt></ruby>","こころもしらず","くろかみの"],"shimoH":["みだれてけさ<ruby>は<rt>わ</rt></ruby>","ものをこそおも<ruby>へ<rt>え</rt></ruby>"]},
+{"id":81,"color":"murasaki","kimari":"ほと","poet":"ごとくだいじの さだいじん","story":"🐦 ほととぎすが ないて、とんでった。あとには、あさの つきだけが のこったよ","kami":["ほととぎす","なきつるかたを","ながむれば"],"shimo":["ただありあけの","つきぞのこれる"],"kamiR":["ほととぎす","なきつるかたを","ながむれば"],"shimoR":["ただありあけの","つきぞのこれる"],"kamiH":["ほととぎす","なきつるかたを","ながむれば"],"shimoH":["ただありあけの","つきぞのこれる"]},
+{"id":82,"color":"murasaki","kimari":"おも","poet":"どういん ほうし","story":"💧 つらくても いきてる。たえられないのは、なみだの ほうなんだ","kami":["おもひわび","さてもいのちは","あるものを"],"shimo":["うきにたへぬは","なみだなりけり"],"kamiR":["おもいわび","さてもいのちわ","あるものを"],"shimoR":["うきにたえぬわ","なみだなりけり"],"kamiH":["おも<ruby>ひ<rt>い</rt></ruby>わび","さてもいのち<ruby>は<rt>わ</rt></ruby>","あるものを"],"shimoH":["うきにた<ruby>へ<rt>え</rt></ruby>ぬ<ruby>は<rt>わ</rt></ruby>","なみだなりけり"]},
+{"id":83,"color":"murasaki","kimari":"よのなかよ","poet":"ふじわらの しゅんぜい","story":"🦌 にげる ところは やまのおく。そこでも しかが、さびしく ないてる","kami":["よのなかよ","みちこそなけれ","おもひいる"],"shimo":["やまのおくにも","しかぞなくなる"],"kamiR":["よのなかよ","みちこそなけれ","おもいいる"],"shimoR":["やまのおくにも","しかぞなくなる"],"kamiH":["よのなかよ","みちこそなけれ","おも<ruby>ひ<rt>い</rt></ruby>いる"],"shimoH":["やまのおくにも","しかぞなくなる"]},
+{"id":84,"color":"murasaki","kimari":"ながら","poet":"ふじわらの きよすけ","story":"💭 いきて いれば、いやだった むかしも、いまは なつかしい","kami":["ながらへば","またこのごろや","しのばれむ"],"shimo":["うしとみしよぞ","いまはこひしき"],"kamiR":["ながらえば","またこのごろや","しのばれん"],"shimoR":["うしとみしよぞ","いまわこいしき"],"kamiH":["ながら<ruby>へ<rt>え</rt></ruby>ば","またこのごろや","しのばれ<ruby>む<rt>ん</rt></ruby>"],"shimoH":["うしとみしよぞ","いま<ruby>は<rt>わ</rt></ruby>こ<ruby>ひ<rt>い</rt></ruby>しき"]},
+{"id":85,"color":"murasaki","kimari":"よも","poet":"しゅんえ ほうし","story":"🌙 よるじゅう かんがえて、あさが こない。まどから つめたい かぜ","kami":["よもすがら","ものおもふころは","あけやらで"],"shimo":["ねやのひまさへ","つれなかりけり"],"kamiR":["よもすがら","ものおもうころわ","あけやらで"],"shimoR":["ねやのひまさえ","つれなかりけり"],"kamiH":["よもすがら","ものおも<ruby>ふ<rt>う</rt></ruby>ころ<ruby>は<rt>わ</rt></ruby>","あけやらで"],"shimoH":["ねやのひまさ<ruby>へ<rt>え</rt></ruby>","つれなかりけり"]},
+{"id":86,"color":"murasaki","kimari":"なげけ","poet":"さいぎょう ほうし","story":"🌙 おつきさま、わたしを なかせてるの？なみだが でるのは、つきの せいだよ","kami":["なげけとて","つきやはものを","おもはする"],"shimo":["かこちがほなる","わがなみだかな"],"kamiR":["なげけとて","つきやわものを","おもわする"],"shimoR":["かこちがおなる","わがなみだかな"],"kamiH":["なげけとて","つきや<ruby>は<rt>わ</rt></ruby>ものを","おも<ruby>は<rt>わ</rt></ruby>する"],"shimoH":["かこちが<ruby>ほ<rt>お</rt></ruby>なる","わがなみだかな"]},
+{"id":87,"color":"murasaki","kimari":"むら","poet":"じゃくれん ほうし","story":"🌫️ あめの あと、まきの はに きりが たちのぼる。あきの ゆうぐれ","kami":["むらさめの","つゆもまだひぬ","まきのはに"],"shimo":["きりたちのぼる","あきのゆふぐれ"],"kamiR":["むらさめの","つゆもまだひぬ","まきのはに"],"shimoR":["きりたちのぼる","あきのゆうぐれ"],"kamiH":["むらさめの","つゆもまだひぬ","まきのはに"],"shimoH":["きりたちのぼる","あきのゆ<ruby>ふ<rt>う</rt></ruby>ぐれ"]},
+{"id":88,"color":"murasaki","kimari":"なにはえ","poet":"こうかもんいんの べっとう","story":"🌾 なにわの あしの ねっこで、たった ひとよ。からだを つくして、ずっと こいして いいの？","kami":["なにはえの","あしのかりねの","ひとよゆゑ"],"shimo":["みをつくしてや","こひわたるべき"],"kamiR":["なにわえの","あしのかりねの","ひとよゆえ"],"shimoR":["みをつくしてや","こいわたるべき"],"kamiH":["なに<ruby>は<rt>わ</rt></ruby>えの","あしのかりねの","ひとよゆ<ruby>ゑ<rt>え</rt></ruby>"],"shimoH":["みをつくしてや","こ<ruby>ひ<rt>い</rt></ruby>わたるべき"]},
+{"id":89,"color":"murasaki","kimari":"たま","poet":"しきし ないしんのう","story":"💎 もう たえちゃいそう。いきてると、しのぶ ちからが よわくなるの","kami":["たまのをよ","たえなばたえね","ながらへば"],"shimo":["しのぶることの","よわりもぞする"],"kamiR":["たまのおよ","たえなばたえね","ながらえば"],"shimoR":["しのぶることの","よわりもぞする"],"kamiH":["たまの<ruby>を<rt>お</rt></ruby>よ","たえなばたえね","ながら<ruby>へ<rt>え</rt></ruby>ば"],"shimoH":["しのぶることの","よわりもぞする"]},
+{"id":90,"color":"murasaki","kimari":"みせ","poet":"いんぷもんいんの だいぶ","story":"🐚 おじまの あまの そでも、ぬれてる。でも、いろは かわらないね","kami":["みせばやな","をじまのあまの","そでだにも"],"shimo":["ぬれにぞぬれし","いろはかはらず"],"kamiR":["みせばやな","おじまのあまの","そでだにも"],"shimoR":["ぬれにぞぬれし","いろわかわらず"],"kamiH":["みせばやな","<ruby>を<rt>お</rt></ruby>じまのあまの","そでだにも"],"shimoH":["ぬれにぞぬれし","いろ<ruby>は<rt>わ</rt></ruby>か<ruby>は<rt>わ</rt></ruby>らず"]},
+{"id":91,"color":"murasaki","kimari":"きり","poet":"ごきょうごく せっしょう","story":"🦗 きりぎりすが ないてる。しもの よる、むしろで ひとり ねるよ","kami":["きりぎりす","なくやしもよの","さむしろに"],"shimo":["ころもかたしき","ひとりかもねむ"],"kamiR":["きりぎりす","なくやしもよの","さむしろに"],"shimoR":["ころもかたしき","ひとりかもねん"],"kamiH":["きりぎりす","なくやしもよの","さむしろに"],"shimoH":["ころもかたしき","ひとりかもね<ruby>む<rt>ん</rt></ruby>"]},
+{"id":92,"color":"murasaki","kimari":"わがそ","poet":"にじょういんの さぬき","story":"💧 ひが ひいても ぬれたまま。だれも しらないけど、わたしの そでは かわかない","kami":["わがそでは","しほひにみえぬ","おきのいしの"],"shimo":["ひとこそしらね","かわくまもなし"],"kamiR":["わがそでわ","しおひにみえぬ","おきのいしの"],"shimoR":["ひとこそしらね","かわくまもなし"],"kamiH":["わがそで<ruby>は<rt>わ</rt></ruby>","し<ruby>ほ<rt>お</rt></ruby>ひにみえぬ","おきのいしの"],"shimoH":["ひとこそしらね","かわくまもなし"]},
+{"id":93,"color":"murasaki","kimari":"よのなかは","poet":"かまくらの うだいじん","story":"⛵ この よが ずっと つづいたら いいな。ちいさな ふねの つなを ひく ひとが いとしい","kami":["よのなかは","つねにもがもな","なぎさこぐ"],"shimo":["あまのをぶねの","つなでかなしも"],"kamiR":["よのなかわ","つねにもがもな","なぎさこぐ"],"shimoR":["あまのおぶねの","つなでかなしも"],"kamiH":["よのなか<ruby>は<rt>わ</rt></ruby>","つねにもがもな","なぎさこぐ"],"shimoH":["あまの<ruby>を<rt>お</rt></ruby>ぶねの","つなでかなしも"]},
+{"id":94,"color":"murasaki","kimari":"みよ","poet":"さんぎ まさつね","story":"🍃 みよしのの やまの あきかぜ。よるに なって さむく、きぬを うつ おとが するよ","kami":["みよしのの","やまのあきかぜ","さよふけて"],"shimo":["ふるさとさむく","ころもうつなり"],"kamiR":["みよしのの","やまのあきかぜ","さよふけて"],"shimoR":["ふるさとさむく","ころもうつなり"],"kamiH":["みよしのの","やまのあきかぜ","さよふけて"],"shimoH":["ふるさとさむく","ころもうつなり"]},
+{"id":95,"color":"murasaki","kimari":"おほけ","poet":"さきの だいそうじょう じえん","story":"🖤 よの ひとを かくまおうと、やまに すんで、くろい そでを きたよ","kami":["おほけなく","うきよのたみに","おほふかな"],"shimo":["わがたつそまに","すみぞめのそで"],"kamiR":["おおけなく","うきよのたみに","おおうかな"],"shimoR":["わがたつそまに","すみぞめのそで"],"kamiH":["お<ruby>ほ<rt>お</rt></ruby>けなく","うきよのたみに","お<ruby>ほふ<rt>おう</rt></ruby>かな"],"shimoH":["わがたつそまに","すみぞめのそで"]},
+{"id":96,"color":"murasaki","kimari":"はなさ","poet":"さいおんじ きんつね","story":"❄️ はなを さそう あらし。にわに ふるのは ゆきじゃ なくて、としを とる わたしだよ","kami":["はなさそふ","あらしのにはの","ゆきならで"],"shimo":["ふりゆくものは","わがみなりけり"],"kamiR":["はなさそう","あらしのにわの","ゆきならで"],"shimoR":["ふりゆくものわ","わがみなりけり"],"kamiH":["はなさそ<ruby>ふ<rt>う</rt></ruby>","あらしのに<ruby>は<rt>わ</rt></ruby>の","ゆきならで"],"shimoH":["ふりゆくもの<ruby>は<rt>わ</rt></ruby>","わがみなりけり"]},
+{"id":97,"color":"murasaki","kimari":"こぬ","poet":"ごんちゅうなごん さだいえ","story":"🔥 こない ひとを まって、うみべで しおを やく。からだが もえて しまいそう","kami":["こぬひとを","まつほのうらの","ゆふなぎに"],"shimo":["やくやもしほの","みもこがれつつ"],"kamiR":["こぬひとを","まつほのうらの","ゆうなぎに"],"shimoR":["やくやもしおの","みもこがれつつ"],"kamiH":["こぬひとを","まつほのうらの","ゆ<ruby>ふ<rt>う</rt></ruby>なぎに"],"shimoH":["やくやもし<ruby>ほ<rt>お</rt></ruby>の","みもこがれつつ"]},
+{"id":98,"color":"murasaki","kimari":"かぜそ","poet":"じゅにい いえたか","story":"🍃 かぜが そよぐ ならの おがわ。ゆうぐれの みそぎで、なつが おわると しったよ","kami":["かぜそよぐ","ならのをがはの","ゆふぐれは"],"shimo":["みそぎぞなつの","しるしなりける"],"kamiR":["かぜそよぐ","ならのおがわの","ゆうぐれわ"],"shimoR":["みそぎぞなつの","しるしなりける"],"kamiH":["かぜそよぐ","ならの<ruby>を<rt>お</rt></ruby>が<ruby>は<rt>わ</rt></ruby>の","ゆ<ruby>ふ<rt>う</rt></ruby>ぐれ<ruby>は<rt>わ</rt></ruby>"],"shimoH":["みそぎぞなつの","しるしなりける"]},
+{"id":99,"color":"murasaki","kimari":"ひとも","poet":"ごとば いん","story":"😔 ひとが いとしくて、ひとが うらめしい。そんな ことばかり かんがえる わたし","kami":["ひともをし","ひともうらめし","あぢきなく"],"shimo":["よをおもふゆゑに","ものおもふみは"],"kamiR":["ひともおし","ひともうらめし","あじきなく"],"shimoR":["よをおもうゆえに","ものおもうみわ"],"kamiH":["ひとも<ruby>を<rt>お</rt></ruby>し","ひともうらめし","あ<ruby>ぢ<rt>じ</rt></ruby>きなく"],"shimoH":["よをおも<ruby>ふ<rt>う</rt></ruby>ゆ<ruby>ゑ<rt>え</rt></ruby>に","ものおも<ruby>ふ<rt>う</rt></ruby>み<ruby>は<rt>わ</rt></ruby>"]},
+{"id":100,"color":"murasaki","kimari":"もも","poet":"じゅんとく いん","story":"🏯 ふるい おしろの のきばに しのぶぐさ。むかしが なつかしくて たまらない","kami":["ももしきや","ふるきのきばの","しのぶにも"],"shimo":["なほあまりある","むかしなりけり"],"kamiR":["ももしきや","ふるきのきばの","しのぶにも"],"shimoR":["なおあまりある","むかしなりけり"],"kamiH":["ももしきや","ふるきのきばの","しのぶにも"],"shimoH":["な<ruby>ほ<rt>お</rt></ruby>あまりある","むかしなりけり"]}
+];
+
+/* =========================================================
+   うさぎひめ（SVG）
+   ========================================================= */
+function star(cx, cy, r, fill){
+  return '<path d="M'+cx+' '+(cy-r)+'L'+(cx+r*0.28)+' '+(cy-r*0.28)+'L'+(cx+r)+' '+cy
+    +'L'+(cx+r*0.28)+' '+(cy+r*0.28)+'L'+cx+' '+(cy+r)
+    +'L'+(cx-r*0.28)+' '+(cy+r*0.28)+'L'+(cx-r)+' '+cy
+    +'L'+(cx-r*0.28)+' '+(cy-r*0.28)+'Z" fill="'+fill+'"/>';
+}
+function charSVG(uid){
+  const g = "c"+uid;
+  return ''
+  +'<svg class="char-svg" viewBox="0 0 200 258" data-mood="idle" aria-hidden="true">'
+  +'<defs>'
+  +'<linearGradient id="robe'+g+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDEEF3"/><stop offset="1" stop-color="#F4C0D2"/></linearGradient>'
+  +'<linearGradient id="skirt'+g+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFBF2"/><stop offset="1" stop-color="#F6E0C4"/></linearGradient>'
+  +'<linearGradient id="hair'+g+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#926E60"/><stop offset="1" stop-color="#674A40"/></linearGradient>'
+  +'<linearGradient id="fan'+g+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFDF7"/><stop offset="1" stop-color="#FBE7BE"/></linearGradient>'
+  +'</defs>'
+  +'<ellipse class="shadow" cx="100" cy="249" rx="46" ry="6"/>'
+  +'<g class="float"><g class="jump">'
+
+  /* みみ */
+  +'<g class="ear ear-l"><path d="M88 80C79 57 66 24 75 13c10-11 22 26 24 57z" fill="url(#hair'+g+')"/>'
+  +'<path d="M87 74c-6-17-13-38-8-44 6-6 13 19 15 38z" fill="#F9C8D6"/></g>'
+  +'<g class="ear ear-r"><path d="M112 80c9-23 22-56 13-67-10-11-22 26-24 57z" fill="url(#hair'+g+')"/>'
+  +'<path d="M113 74c6-17 13-38 8-44-6-6-13 19-15 38z" fill="#F9C8D6"/></g>'
+
+  /* うしろかみ・くび */
+  +'<path d="M100 40c-31 0-45 18-45 49 0 21 5 37 11 47h68c6-10 11-26 11-47 0-31-14-49-45-49z" fill="url(#hair'+g+')"/>'
+  +'<path d="M92 124h16v22H92z" fill="#F6DCCF"/>'
+
+  /* そで */
+  +'<path class="sleeve-l" d="M74 148c-25 6-41 27-43 47-1 12 10 15 21 9 15-8 21-27 24-42z" fill="url(#robe'+g+')"/>'
+  +'<path class="sleeve-r" d="M126 148c25 6 41 27 43 47 1 12-10 15-21 9-15-8-21-27-24-42z" fill="url(#robe'+g+')"/>'
+  +'<path d="M33 191c-1 9 4 14 11 13l2-11z" fill="#CFE9DE"/>'
+  +'<path d="M167 191c1 9-4 14-11 13l-2-11z" fill="#CFE9DE"/>'
+
+  /* からだ */
+  +'<path d="M72 146c11-6 45-6 56 0l10 54c-22 9-54 9-76 0z" fill="url(#robe'+g+')"/>'
+  +'<path d="M89 145l11 30 11-30 5 3-16 39-16-39z" fill="#FFFDF8"/>'
+  +'<path d="M95 147l5 14 5-14z" fill="#EFC3D2"/>'
+  +'<path d="M93 146l7 20 7-20" stroke="#CFE9DE" stroke-width="2" fill="none" stroke-linejoin="round"/>'
+  +'<path d="M76 149c7 14 11 29 13 44" stroke="#EDB6C9" stroke-width="1.6" fill="none" stroke-linecap="round"/>'
+  +'<path d="M124 149c-7 14-11 29-13 44" stroke="#EDB6C9" stroke-width="1.6" fill="none" stroke-linecap="round"/>'
+  +'<path d="M63 186c22 9 52 9 74 0l1 11c-22 9-54 9-76 0z" fill="#F3D79F"/>'
+  +'<path d="M64 190c22 9 50 9 72 0" stroke="#E4C07A" stroke-width="1.2" fill="none"/>'
+
+  /* すかーと */
+  +'<path d="M64 194c-8 20-16 34-21 45 33 10 81 10 114 0-5-11-13-25-21-45-22 9-50 9-72 0z" fill="url(#skirt'+g+')"/>'
+  +'<path d="M43 231c31 9 83 9 114 0l1 5c-31 9-85 9-116 0z" fill="#CFE9DE"/>'
+  +'<path d="M42 238c31 9 85 9 116 0l0 4c-31 9-85 9-116 0z" fill="#F8C4D3"/>'
+  +'<circle cx="70" cy="214" r="1.7" fill="#E8C37C"/><circle cx="90" cy="222" r="1.7" fill="#E8C37C"/>'
+  +'<circle cx="112" cy="216" r="1.7" fill="#E8C37C"/><circle cx="130" cy="210" r="1.7" fill="#E8C37C"/>'
+
+  /* まえかみ・かお */
+  +'<path d="M66 92c-7 16-9 36-3 49 5-6 8-15 8-25 0-8 0-16-1-24z" fill="url(#hair'+g+')"/>'
+  +'<path d="M134 92c7 16 9 36 3 49-5-6-8-15-8-25 0-8 0-16 1-24z" fill="url(#hair'+g+')"/>'
+  +'<ellipse cx="100" cy="98" rx="36" ry="35" fill="#FFF7F1"/>'
+  +'<path d="M62 96c-2-32 15-46 38-46s40 14 38 46c-6-13-12-19-19-17-7-11-13-6-19-4-6-2-12-7-19 4-7-2-13 4-19 17z" fill="url(#hair'+g+')"/>'
+  /* さくらのかんざし */
+  +'<g transform="translate(132,64)">'
+  +'<circle cx="0" cy="-5.2" r="4.3" fill="#F9B9C9"/><circle cx="5" cy="-1.6" r="4.3" fill="#F9B9C9"/>'
+  +'<circle cx="3.1" cy="4.3" r="4.3" fill="#F9B9C9"/><circle cx="-3.1" cy="4.3" r="4.3" fill="#F9B9C9"/>'
+  +'<circle cx="-5" cy="-1.6" r="4.3" fill="#F9B9C9"/>'
+  +'<circle cx="0" cy="0" r="2.4" fill="#F5D375"/>'
+  +'<path d="M0 6v9" stroke="#E6BC6A" stroke-width="1.4"/><circle cx="0" cy="16" r="1.9" fill="#E6A9BC"/>'
+  +'</g>'
+  /* かお（ふつう） */
+  +'<g class="f-normal">'
+  +'<g class="eyes">'
+  +'<ellipse cx="86" cy="99" rx="6.4" ry="7.5" fill="#4A3A34"/>'
+  +'<circle cx="88.4" cy="96" r="2.5" fill="#fff"/><circle cx="84.4" cy="102.4" r="1.2" fill="#fff" opacity=".8"/>'
+  +'<ellipse cx="114" cy="99" rx="6.4" ry="7.5" fill="#4A3A34"/>'
+  +'<circle cx="116.4" cy="96" r="2.5" fill="#fff"/><circle cx="112.4" cy="102.4" r="1.2" fill="#fff" opacity=".8"/>'
+  +'</g>'
+  +'<ellipse class="blush" cx="74" cy="111" rx="8" ry="4.4" fill="#F7AEC0" opacity=".6"/>'
+  +'<ellipse class="blush" cx="126" cy="111" rx="8" ry="4.4" fill="#F7AEC0" opacity=".6"/>'
+  +'<circle cx="100" cy="107" r="1.1" fill="#E6B2A8"/>'
+  +'<path class="mouth" d="M95 117q5 5 10 0" stroke="#C97E86" stroke-width="2.1" fill="none" stroke-linecap="round"/>'
+  +'</g>'
+  /* かお（やったー） */
+  +'<g class="f-happy">'
+  +'<ellipse cx="86" cy="99" rx="6.8" ry="7.9" fill="#4A3A34"/>'
+  +'<ellipse cx="114" cy="99" rx="6.8" ry="7.9" fill="#4A3A34"/>'
+  +star(86,98.5,4.4,"#FFFFFF")+star(114,98.5,4.4,"#FFFFFF")
+  +'<circle cx="88.6" cy="102" r="1.3" fill="#fff" opacity=".9"/>'
+  +'<circle cx="116.6" cy="102" r="1.3" fill="#fff" opacity=".9"/>'
+  +'<ellipse class="blush" cx="71" cy="111" rx="9.5" ry="5" fill="#F79CB2" opacity=".9"/>'
+  +'<ellipse class="blush" cx="129" cy="111" rx="9.5" ry="5" fill="#F79CB2" opacity=".9"/>'
+  +'<ellipse cx="100" cy="119" rx="7.4" ry="6.4" fill="#D9718B"/>'
+  +'<ellipse cx="100" cy="122.4" rx="4.4" ry="2.9" fill="#F79FB2"/>'
+  +'</g>'
+  /* かお（おしい） */
+  +'<g class="f-cheer">'
+  +'<path d="M80 100q6-7 12 0" stroke="#4A3A34" stroke-width="3.2" fill="none" stroke-linecap="round"/>'
+  +'<ellipse cx="114" cy="99" rx="6.4" ry="7.5" fill="#4A3A34"/>'
+  +'<circle cx="116.4" cy="96" r="2.5" fill="#fff"/>'
+  +'<ellipse class="blush" cx="74" cy="111" rx="8" ry="4.4" fill="#F7AEC0" opacity=".7"/>'
+  +'<ellipse class="blush" cx="126" cy="111" rx="8" ry="4.4" fill="#F7AEC0" opacity=".7"/>'
+  +'<ellipse cx="100" cy="118" rx="4.4" ry="5" fill="#D9718B"/>'
+  +'<path d="M142 86q4 7 0 10-4-3 0-10" fill="#A9CFE6"/>'
+  +'</g>'
+  /* きらきら・おと */
+  +'<g class="sparkles">'+star(56,62,7,"#FFF1A8")+star(146,56,8,"#FFF1A8")+star(155,100,5.5,"#fff")
+  +star(45,106,5,"#fff")+star(100,32,6,"#FFF1A8")+star(68,36,4.5,"#fff")+'</g>'
+  +'<g class="notes">'
+  +'<path d="M158 92a6 5 0 1 0 3 4V82l8-3v11" fill="none" stroke="#9BD3C0" stroke-width="2.4" stroke-linecap="round"/>'
+  +'<path d="M42 74a5 4 0 1 0 2 3V66l7-2v9" fill="none" stroke="#F2AABA" stroke-width="2.2" stroke-linecap="round"/>'
+  +'</g>'
+
+  /* せんす */
+  +'<g class="fan">'
+  +'<path d="M141 180L120.4 143.4A40 40 0 0 1 172.1 154.6Z" fill="url(#fan'+g+')" stroke="#E7C48B" stroke-width="1.5"/>'
+  +'<g stroke="#EBCF9C" stroke-width="1.1">'
+  +'<path d="M141 180L133.1 140.1"/><path d="M141 180L146.5 139.8"/>'
+  +'<path d="M141 180L158.5 144.2"/><path d="M141 180L168 151.9"/>'
+  +'</g>'
+  +'<path d="M141 180L120.4 143.4" stroke="#E7C48B" stroke-width="1.7"/>'
+  +'<path d="M141 180L172.1 154.6" stroke="#E7C48B" stroke-width="1.7"/>'
+  +'<circle cx="141" cy="180" r="3.7" fill="#F4CBA6" stroke="#DFAE7F" stroke-width="1"/>'
+  +'</g>'
+  +'<ellipse cx="140" cy="182" rx="7.6" ry="6.6" fill="#FFF7F1"/>'
+
+  +'</g></g></svg>';
+}
+
+/* =========================================================
+   5つの いろ
+   ========================================================= */
+const COLORS = [
+  {id:"momo",    name:"ももいろ", emoji:"🌸", m:"#F2AABA", d:"#CC6E88", l:"#FDEDF1", ink:"#A9536B"},
+  {id:"mizu",    name:"みずいろ", emoji:"💧", m:"#A9CFE6", d:"#5C92B4", l:"#EBF5FB", ink:"#3F7391"},
+  {id:"kiiro",   name:"きいろ",   emoji:"🌻", m:"#F1D783", d:"#BC9A32", l:"#FBF4DC", ink:"#8C6C10"},
+  {id:"midori",  name:"みどり",   emoji:"🍀", m:"#ADD8C0", d:"#5A9876", l:"#EDF7F1", ink:"#3E6E52"},
+  {id:"murasaki",name:"むらさき", emoji:"🍇", m:"#C8B7E3", d:"#8670B0", l:"#F2EEFA", ink:"#64538A"}
+];
+const CMAP = {}; COLORS.forEach(c=>CMAP[c.id]=c);
+function C(cid){ return CMAP[cid] || COLORS[0]; }
+
+const byId = {};
+DATA.forEach(p=>{
+  byId[p.id] = p;
+  p.emoji = firstEmoji(p.story);
+  p.storyText = String(p.story).replace(/^\S+\s*/, "");
+  p.klen = Array.from(p.kimari).length;
+});
+const POEMS = {};
+COLORS.forEach(c=>{ POEMS[c.id] = DATA.filter(p=>p.color===c.id); });
+
+function firstEmoji(s){
+  try{
+    const m = String(s||"").match(/^(\p{Extended_Pictographic}(\uFE0F|\u200D\p{Extended_Pictographic})*)/u);
+    if(m && m[0]) return m[0];
+  }catch(e){}
+  const c = Array.from(String(s||""))[0] || "";
+  return (c && c.charCodeAt(0) > 0x2000) ? c : "🎉";
+}
+function plainOf(h){ return String(h).replace(/<rt>[\s\S]*?<\/rt>/g,"").replace(/<[^>]+>/g,""); }
+
+/* =========================================================
+   プレイヤーと セーブ
+   ========================================================= */
+const KEY = "hyakunin-isshu-v2";
+const PKEY = KEY + ":players";
+const CURKEY = KEY + ":current";
+const ICONS = ["🐰","🌸","🍡","🌙","⭐","🍓","🐱","🐶","🐼","🦊","🍀","💧"];
+
+let PLAYERS = [];
+let CUR = null;
+let S = blankState();
+
+function esc(t){
+  return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function loadPlayers(){
+  try{
+    const a = JSON.parse(localStorage.getItem(PKEY));
+    if(Array.isArray(a)) return a.filter(p=>p && p.id && p.name);
+  }catch(e){}
+  return [];
+}
+function savePlayers(){ try{ localStorage.setItem(PKEY, JSON.stringify(PLAYERS)); }catch(e){} }
+function progKey(pid){ return KEY + ":p:" + pid; }
+function blankState(){ return {cleared:{}, learned:{}, ok:{}, ng:{}, sound:true, rate:1, stage:0}; }
+function loadState(pid){
+  try{
+    const raw = JSON.parse(localStorage.getItem(progKey(pid)));
+    if(raw && typeof raw === "object"){
+      return {
+        cleared: raw.cleared || {},
+        learned: raw.learned || {},
+        ok: raw.ok || {},
+        ng: raw.ng || {},
+        sound: raw.sound !== false,
+        rate: [0.8,1,1.3,1.6].indexOf(Number(raw.rate)) >= 0 ? Number(raw.rate) : 1,
+        stage: [0,1,2].indexOf(Number(raw.stage)) >= 0 ? Number(raw.stage) : 0
+      };
+    }
+  }catch(e){}
+  return blankState();
+}
+function save(){ if(CUR){ try{ localStorage.setItem(progKey(CUR.id), JSON.stringify(S)); }catch(e){} } }
+function done(id){ return !!(S.cleared[id] || S.learned[id]); }
+function countDone(list){ return list.filter(p=>done(p.id)).length; }
+function countDoneIn(st, list){
+  return list.filter(p=>!!(st.cleared[p.id] || st.learned[p.id])).length;
+}
+/* よびかけ */
+function nm(){
+  if(!CUR) return "きみ";
+  const n = String(CUR.name);
+  return /(ちゃん|くん|さん)$/.test(n) ? n : n + "ちゃん";
+}
+function usePlayer(p){
+  CUR = p;
+  try{ localStorage.setItem(CURKEY, p.id); }catch(e){}
+  S = loadState(p.id);
+  setRate(S.rate);
+  applyStage();
+  paintMute();
+  refresh();
+  paintPlayer();
+}
+
+/* =========================================================
+   がめん
+   ========================================================= */
+const $ = id => document.getElementById(id);
+function show(name){
+  stopSpeech();
+  stopAuto();
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  const el = $("scr-"+name);
+  if(el) el.classList.add("active");
+  window.scrollTo({top:0,behavior:"instant"});
+}
+
+/* キャラクター（char.js） */
+const CHARS = {};
+function mountChar(slotId, uid){
+  const slot = $(slotId);
+  if(!slot) return;
+  slot.innerHTML = charSVG(uid);
+  CHARS[slotId] = slot;
+}
+function setMood(m, hold){
+  document.querySelectorAll(".char-svg").forEach(s=>s.setAttribute("data-mood", m));
+  clearTimeout(setMood._t);
+  if(m !== "idle"){
+    setMood._t = setTimeout(()=>{ document.querySelectorAll(".char-svg").forEach(s=>s.setAttribute("data-mood","idle")); }, hold || 2800);
+  }
+}
+
+/* =========================================================
+   こえ
+   ========================================================= */
+const RATES = [0.8, 1, 1.3, 1.6];
+function rateText(r){ return Number(r).toFixed(1) + "x"; }
+let voiceWarned = false;
+function hasJaVoice(){
+  try{
+    if(!("speechSynthesis" in window)) return false;
+    const v = window.speechSynthesis.getVoices() || [];
+    if(!v.length) return true;
+    return v.some(x=>/^ja/i.test(x.lang || ""));
+  }catch(e){ return false; }
+}
+let speechTok = 0;
+function stopSpeech(){
+  speechTok++;
+  try{ if("speechSynthesis" in window) window.speechSynthesis.cancel(); }catch(e){}
+}
+/*
+ parts: よみあげる ことば（ひょうじは れきしてきかなづかい、ここは げんだいの はつおん）
+ onDone: いいおわったら
+ */
+function speakSeq(parts, onDone){
+  const SS = window.speechSynthesis;
+  const tok = ++speechTok;
+  const later = (fn, ms)=>{ setTimeout(()=>{ if(tok===speechTok) fn(); }, ms); };
+  if(!S.sound){
+    later(onDone || function(){}, Math.min(5200, Math.max(800, parts.join("").length * 155 / Math.max(0.6, S.rate))));
+    return;
+  }
+  if(!SS || typeof SS.speak !== "function"){
+    toast("この たんまつでは こえが でないみたい。もじを よんで みよう！");
+    later(onDone || function(){}, 1400);
+    return;
+  }
+  if(!hasJaVoice() && !voiceWarned){
+    toast("にほんごの こえが ないみたい。もじを よんで みよう！");
+    voiceWarned = true;
+  }
+  let i = 0;
+  const step = ()=>{
+    if(tok !== speechTok) return;
+    if(i >= parts.length){
+      onDone && onDone();
+      return;
+    }
+    const text = String(parts[i++] || "");
+    let u;
+    try{ u = new SpeechSynthesisUtterance(text.replace(/ /g, "、")); }
+    catch(e){ later(step, 240); return; }
+    u.lang = "ja-JP";
+    u.rate = Math.min(2, Math.max(0.5, S.rate));
+    u.pitch = 1.1;
+    let ended = false;
+    let wd = null;
+    const next = ()=>{
+      if(ended) return;
+      ended = true;
+      if(wd) clearTimeout(wd);
+      setTimeout(step, 100);
+    };
+    u.onend = next;
+    u.onerror = next;
+    wd = setTimeout(next, Math.max(1500, text.length * 560 / u.rate));
+    try{ SS.speak(u); }catch(e){ next(); }
+  };
+  step();
+}
+function sayPoem(p){
+  speakSeq([p.kamiR.join(" "), p.shimoR.join(" ")]);
+}
+
+/* =========================================================
+   おと（WebAudioで つくる）
+   ========================================================= */
+let AC = null;
+function ac(){
+  if(!S.sound) return null;
+  try{
+    const A = window.AudioContext || window.webkitAudioContext;
+    if(!A) return null;
+    if(!AC) AC = new A();
+    if(AC.state === "suspended") AC.resume();
+    return AC;
+  }catch(e){ return null; }
+}
+function tone(a, freq, at, dur, type, vol){
+  const o = a.createOscillator(), g = a.createGain();
+  o.type = type || "sine";
+  o.frequency.value = freq;
+  const t0 = a.currentTime + at;
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(vol || 0.22, t0 + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  o.connect(g); g.connect(a.destination);
+  o.start(t0); o.stop(t0 + dur + 0.05);
+}
+function sndPinPon(){
+  const a = ac(); if(!a) return;
+  tone(a, 1046.5, 0, 0.20, "sine", 0.24);
+  tone(a, 783.99, 0.20, 0.42, "sine", 0.24);
+  tone(a, 2093, 0, 0.10, "triangle", 0.06);
+}
+function sndPop(){
+  const a = ac(); if(!a) return;
+  tone(a, 880, 0, 0.10, "triangle", 0.14);
+  tone(a, 1318.5, 0.07, 0.12, "sine", 0.10);
+}
+function sndSoft(){
+  const a = ac(); if(!a) return;
+  tone(a, 392, 0, 0.16, "sine", 0.13);
+  tone(a, 311, 0.13, 0.22, "sine", 0.11);
+}
+function sndKira(){
+  const a = ac(); if(!a) return;
+  [1567.98, 2093, 2637, 3135.96].forEach((f,i)=>tone(a, f, i*0.055, 0.20, "sine", 0.09));
+}
+function sndFanfare(){
+  const a = ac(); if(!a) return;
+  const seq = [[523.25,0],[659.25,0.14],[783.99,0.28],[1046.5,0.42],[783.99,0.62],[1046.5,0.76]];
+  seq.forEach(([f,t])=>tone(a, f, t, t>0.7?0.55:0.20, "triangle", 0.18));
+  tone(a, 1567.98, 0.76, 0.5, "sine", 0.10);
+}
+
+/* =========================================================
+   かみふぶき
+   ========================================================= */
+function confetti(){
+  const layer = document.createElement("div");
+  layer.className = "confetti";
+  const cs = ["#F2AABA","#A9CFE6","#F1D783","#ADD8C0","#C8B7E3","#FFFFFF"];
+  for(let i=0;i<38;i++){
+    const p = document.createElement("i");
+    p.style.left = (Math.random()*100) + "%";
+    p.style.background = cs[i % cs.length];
+    p.style.animationDelay = (Math.random()*0.3).toFixed(2) + "s";
+    p.style.animationDuration = (1.05 + Math.random()*0.8).toFixed(2) + "s";
+    p.style.transform = "rotate(" + Math.floor(Math.random()*360) + "deg)";
+    p.style.width = (6 + Math.random()*6).toFixed(0) + "px";
+    p.style.height = (10 + Math.random()*10).toFixed(0) + "px";
+    layer.appendChild(p);
+  }
+  document.body.appendChild(layer);
+  setTimeout(()=>{ try{ layer.remove(); }catch(e){} }, 2400);
+}
+
+/* =========================================================
+   く の ひょうじ（ルビ・きまりじ）
+   ========================================================= */
+function unitsOf(html){
+  const out = [];
+  const re = /<ruby>([\s\S]*?)<rt>([\s\S]*?)<\/rt><\/ruby>/g;
+  let last = 0, m;
+  while((m = re.exec(html))){
+    Array.from(html.slice(last, m.index)).forEach(ch=>out.push({b:ch, rt:null}));
+    out.push({b:m[1], rt:m[2]});
+    last = m.index + m[0].length;
+  }
+  Array.from(html.slice(last)).forEach(ch=>out.push({b:ch, rt:null}));
+  return out;
+}
+function kuHTML(chunks, klen, useRuby){
+  let used = 0;
+  return chunks.map(ch=>{
+    const units = unitsOf(ch);
+    return '<span class="ku">' + units.map(u=>{
+      const n = Array.from(u.b).length;
+      let inner = (useRuby && u.rt) ? '<ruby>'+u.b+'<rt>'+u.rt+'</rt></ruby>' : u.b;
+      if(klen && used < klen) inner = '<em class="ki">' + inner + '</em>';
+      used += n;
+      return inner;
+    }).join("") + '</span>';
+  }).join("");
+}
+
+/* =========================================================
+   ほーむ
+   ========================================================= */
+function renderHome(){
+  const n = countDone(DATA);
+  $("totalNow").textContent = n;
+  $("totalBar").style.width = n + "%";
+  $("totalCap").textContent = n===0
+    ? "20まい ずつ、5つの いろを あつめよう"
+    : (n>=100 ? "100まい ぜんぶ とった！👑 すごい！" : "あと " + (100-n) + "まい！");
+
+  $("colorList").innerHTML = COLORS.map(c=>{
+    const ps = POEMS[c.id], k = countDone(ps), pct = Math.round(k/ps.length*100);
+    return '<button class="crow" type="button" data-color="'+c.id+'" style="--cr:'+c.m+';--cr-d:'+c.d+';--cr-l:'+c.l+'">'
+      + '<span class="ce">'+c.emoji+'</span>'
+      + '<span class="cm"><span class="cn"><span>'+c.name+(k>=ps.length?' <span class="crown">👑</span>':'')+'</span>'
+      + '<span class="cp">'+k+' / '+ps.length+'</span></span>'
+      + '<span class="cbar"><i style="width:'+pct+'%"></i></span></span></button>';
+  }).join("");
+
+  $("board100").innerHTML = DATA.map(p=>{
+    const c = C(p.color);
+    const cls = S.cleared[p.id] ? "on" : (S.learned[p.id] ? "learnd" : "");
+    return '<button class="b100 '+cls+'" type="button" data-id="'+p.id+'" '
+      + 'style="--bc:'+c.m+';--bc-d:'+c.d+';--bc-l:'+c.l+'" aria-label="'+p.id+'ばん">'+p.id+'</button>';
+  }).join("");
+
+  const bubble = n===0
+    ? "<b>"+esc(nm())+"</b>、いっしょに 100まい あつめようね✨"
+    : (n>=100 ? "<b>"+esc(nm())+"</b>、100まい ぜんぶ！👑 あっぱれ！✨"
+             : "<b>"+esc(nm())+"</b>、あと <b>"+(100-n)+"まい</b>！きょうも やろうね✨");
+  $("heroBub").innerHTML = bubble;
+}
+
+function nextTarget(){
+  for(const c of COLORS){
+    const ps = POEMS[c.id];
+    const j = ps.findIndex(p=>!done(p.id));
+    if(j >= 0) return {cid:c.id, idx:j};
+  }
+  return {cid:"momo", idx:0};
+}
+
+/* =========================================================
+   いろの がめん
+   ========================================================= */
+let cur = "momo";
+function openColor(cid){
+  cur = cid;
+  renderColor();
+  show("color");
+  setMood("idle");
+  $("cSay").innerHTML = "<b>ふだを タップ</b>して おぼえよう！";
+}
+function renderColor(){
+  const c = C(cur), ps = POEMS[cur], k = countDone(ps);
+  $("cTitle").textContent = c.emoji + " " + c.name;
+  $("cProg").textContent = k + " / " + ps.length;
+  $("cProg").style.background = c.l;
+  $("cProg").style.color = c.ink;
+  $("board20").innerHTML = ps.map(p=>{
+    const cls = S.cleared[p.id] ? "on" : (S.learned[p.id] ? "learnd" : "");
+    return '<button class="b20 '+cls+'" type="button" data-id="'+p.id+'" '
+      + 'style="--bc:'+c.m+';--bc-d:'+c.d+';--bc-l:'+c.l+'">'
+      + '<span class="bem">'+p.emoji+'</span><span>'+p.id+'</span>'
+      + '<span class="bt">'+p.kimari+'</span></button>';
+  }).join("");
+}
+
+/* =========================================================
+   あんしょう
+   ========================================================= */
+let lIdx = 0;
+function openLearn(cid, idx){
+  cur = cid;
+  const ps = POEMS[cur];
+  if(idx == null){
+    const j = ps.findIndex(p=>!done(p.id));
+    idx = j < 0 ? 0 : j;
+  }
+  lIdx = Math.max(0, Math.min(ps.length-1, idx));
+  renderLearn();
+  show("learn");
+  setMood("listen", 1800);
+  $("lSay").innerHTML = stageHint();
+}
+function stageHint(){
+  const st = S.stage|0;
+  if(st === 2) return "こえだけ きいて、ぜんぶ となえてみよう！";
+  if(st === 1) return "うえの くを きいて、<b>したの く</b>を くちに だそう！";
+  return "きいろい もじが <b>きまりじ</b> だよ！";
+}
+function renderLearn(){
+  const ps = POEMS[cur], p = ps[lIdx], c = C(cur);
+  const card = $("learnCard");
+  card.style.setProperty("--bc", c.m);
+  card.style.setProperty("--bc-d", c.d);
+  card.style.setProperty("--bc-l", c.l);
+  $("lNo").textContent = p.id;
+  $("lPoet").textContent = p.poet;
+  $("lEmoji").textContent = p.emoji;
+  $("lWater").textContent = p.emoji;
+  $("lKimari").innerHTML = 'きまりじ「<b>'+p.kimari+'」</b>';
+  $("lKami").innerHTML = kuHTML(p.kamiH, p.klen, true);
+  $("lShimo").innerHTML = kuHTML(p.shimoH, 0, true);
+  $("lProg").textContent = (lIdx+1) + " / " + ps.length;
+  $("lProg").style.background = c.l; $("lProg").style.color = c.ink;
+  $("lNav").textContent = (lIdx+1) + " / " + ps.length;
+  $("learnedBtn").textContent = done(p.id) ? "もう おぼえたね！⭐️" : "おぼえた！⭐️";
+  $("learnedBtn").style.background = done(p.id) ? "linear-gradient(180deg,#C8E4D6,#9BD3C0)" : "";
+  $("learnedBtn").style.color = done(p.id) ? "#2F5A4D" : "";
+  applyStage();
+}
+function applyStage(){
+  const st = S.stage|0;
+  document.querySelectorAll("#stageSeg button").forEach(b=>{
+    b.classList.toggle("on", Number(b.dataset.stage) === st);
+  });
+  $("lKami").classList.toggle("blur", st >= 2);
+  $("lShimo").classList.toggle("blur", st >= 1);
+  $("peekHint").textContent = st === 0 ? "" : "かくれた ところを タップすると ちょっと みえるよ";
+  if(st === 0){ $("lKami").classList.remove("peeked"); $("lShimo").classList.remove("peeked"); }
+}
+function peek(el){
+  if(!el.classList.contains("blur")) return;
+  el.classList.add("peeked");
+  sndPop();
+  clearTimeout(el._peek);
+  el._peek = setTimeout(()=>el.classList.remove("peeked"), 2300);
+}
+function setRate(r){
+  S.rate = Number(r); save();
+  document.querySelectorAll("#rateSeg button").forEach(b=>{
+    b.classList.toggle("on", Number(b.dataset.rate) === S.rate);
+  });
+  $("qRate").textContent = rateText(S.rate);
+}
+
+/* ---------- れんぞく かけながし ---------- */
+let auto = {on:false, tok:0};
+function stopAuto(msg){
+  const was = auto.on;
+  auto.on = false; auto.tok++;
+  stopSpeech();
+  const b = $("autoBtn");
+  b.textContent = "▶ つづけて ながす";
+  b.classList.remove("on");
+  b.style.background = "";
+  setMood("idle");
+  if(was && msg) toast(msg);
+}
+function autoStart(from){
+  auto.on = true; auto.tok++;
+  const tok = auto.tok;
+  const b = $("autoBtn");
+  b.textContent = "⏸ とめる";
+  b.classList.add("on");
+  b.style.background = "linear-gradient(180deg,#FBEBBC,#F3D489)";
+  b.style.color = "#7C5A12";
+  autoStep(from == null ? lIdx : from, tok);
+}
+function autoStep(idx, tok){
+  if(!auto.on || tok !== auto.tok) return;
+  const ps = POEMS[cur];
+  if(idx >= ps.length){
+    auto.on = false;
+    const b = $("autoBtn");
+    b.textContent = "▶ つづけて ながす";
+    b.classList.remove("on"); b.style.background = "";
+    setMood("happy", 3200); sndFanfare(); confetti();
+    $("lSay").innerHTML = "<b>"+esc(nm())+"、20まい さいごまで きいたね！</b>あっぱれ✨";
+    toast("20まい さいごまで きいたよ！");
+    return;
+  }
+  lIdx = idx;
+  renderLearn();
+  const p = ps[idx];
+  $("lSay").innerHTML = "<b>" + (idx+1) + "ばんめ</b>　いっしょに となえてみよう！";
+  setMood("listen", 60000);
+  speakSeq([p.kamiR.join(" "), p.shimoR.join(" ")], ()=>{
+    setMood("idle");
+    if(!auto.on || tok !== auto.tok) return;
+    setTimeout(()=>autoStep(idx+1, tok), 700);
+  });
+}
+
+/* =========================================================
+   かるた クイズ
+   ========================================================= */
+let q = {list:[], i:0, locked:false, counted:false};
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); const t=a[i]; a[i]=a[j]; a[j]=t; }
+  return a;
+}
+function makeQ(id){
+  const p = byId[id], ps = POEMS[p.color];
+  const others = shuffle(ps.filter(x=>x.id!==id && plainOf(x.shimoH[0]+x.shimoH[1]) !== plainOf(p.shimoH[0]+p.shimoH[1])).map(x=>x.id));
+  const ch = [id].concat(others.slice(0,3));
+  return {id:id, choices:shuffle(ch)};
+}
+function startQuiz(){
+  const ps = POEMS[cur];
+  const fresh = ps.filter(p=>!done(p.id));
+  const hard = ps.filter(p=>done(p.id) && (S.ng[p.id]||0) > 0);
+  let pool = shuffle(fresh.map(p=>p.id)).concat(shuffle(hard.map(p=>p.id)));
+  pool = Array.from(new Set(pool));
+  const ids = [];
+  for(const id of pool){ if(ids.length >= 3) break; ids.push(id); }
+  if(ids.length < 3){
+    const rest = shuffle(ps.map(p=>p.id).filter(id=>ids.indexOf(id)<0));
+    while(ids.length < 3 && rest.length) ids.push(rest.shift());
+  }
+  q = {list: ids.map(makeQ), i:0, locked:false, counted:false};
+  renderQuiz();
+  show("quiz");
+  $("qSay").innerHTML = "この こえ、どの ふだかな？";
+  setMood("listen", 1500);
+  const p = byId[q.list[0].id];
+  setTimeout(()=>{ if($("scr-quiz").classList.contains("active")) sayPoemKami(p); }, 320);
+}
+function sayPoemKami(p){ speakSeq([p.kamiR.join(" ")]); }
+function renderQuiz(){
+  const qq = q.list[q.i], p = byId[qq.id], c = C(p.color);
+  const card = $("qCard");
+  card.style.setProperty("--bc", c.m);
+  card.style.setProperty("--bc-d", c.d);
+  card.style.setProperty("--bc-l", c.l);
+  $("qKami").innerHTML = kuHTML(p.kamiH, p.klen, false);
+  $("qEmoji").textContent = p.emoji;
+  $("qRate").textContent = rateText(S.rate);
+  $("feedback").textContent = "";
+  $("feedback").className = "feedback";
+  $("qDots").innerHTML = q.list.map((x,i)=>{
+    const cls = i < q.i ? "dot on" : (i===q.i ? "dot now" : "dot");
+    return '<span class="'+cls+'"></span>';
+  }).join("");
+  $("choices").innerHTML = qq.choices.map(id=>{
+    const o = byId[id];
+    return '<button class="choice" type="button" data-id="'+id+'">'
+      + '<span class="ku-text">'+kuHTML(o.shimoH, 0, false)+'</span></button>';
+  }).join("");
+  q.locked = false; q.counted = false;
+}
+function pickChoice(id, el){
+  if(q.locked) return;
+  const qq = q.list[q.i];
+  if(id === qq.id) doCorrect(el);
+  else doWrong(el, id);
+}
+function doWrong(el){
+  el.classList.add("wrong");
+  el.disabled = true;
+  el.classList.add("shake");
+  setTimeout(()=>{ try{ el.classList.add("gone"); }catch(e){} }, 480);
+  const qq = q.list[q.i];
+  if(!q.counted){ S.ng[qq.id] = (S.ng[qq.id]||0) + 1; save(); q.counted = true; }
+  const fb = $("feedback");
+  fb.textContent = "おしい！もう いっかい！";
+  fb.className = "feedback show";
+  sndSoft();
+  setMood("cheer", 2400);
+  $("qSay").innerHTML = "<b>おしい！</b>つぎは いけるよ！";
+  const dot = $("qDots").children[q.i];
+  if(dot) dot.className = "dot ng";
+}
+function doCorrect(el){
+  q.locked = true;
+  el.classList.add("correct");
+  const qq = q.list[q.i], p = byId[qq.id];
+  S.cleared[p.id] = 1;
+  S.ok[p.id] = (S.ok[p.id]||0) + 1;
+  save();
+  const fb = $("feedback");
+  fb.textContent = "せいかい！";
+  fb.className = "feedback show ok";
+  sndPinPon(); sndKira();
+  confetti();
+  setMood("happy", 3000);
+  $("qSay").innerHTML = "<b>やったー！</b>"+esc(nm())+"、あっぱれ！✨";
+  refresh();
+  const dot = $("qDots").children[q.i];
+  if(dot) dot.className = q.counted ? "dot ng" : "dot on";
+  setTimeout(()=>openStory(p), 520);
+}
+
+/* ---------- ごほうびカード ---------- */
+function openStory(p){
+  $("ovEmoji").textContent = p.emoji;
+  $("ovTitle").textContent = "せいかい！";
+  $("ovPoem").innerHTML =
+    '<div class="ov-line">' + kuHTML(p.kamiH, p.klen, true) + '</div>'
+    + '<div class="ov-line">' + kuHTML(p.shimoH, 0, true) + '</div>';
+  $("ovStoryText").textContent = p.storyText;
+  speakSeq([nm()+"、あっぱれ！", p.storyText]);
+  openOv("ovStory");
+}
+function openOv(id){ $(id).classList.add("open"); }
+function closeOv(id){ $(id).classList.remove("open"); }
+
+function nextQuestion(){
+  closeOv("ovStory");
+  q.i++;
+  if(q.i >= q.list.length){ showResult(); return; }
+  renderQuiz();
+  const p = byId[q.list[q.i].id];
+  $("qSay").innerHTML = "この こえ、どの ふだかな？";
+  setTimeout(()=>{ if($("scr-quiz").classList.contains("active")) sayPoemKami(p); }, 260);
+}
+function showResult(){
+  const total = q.list.length;
+  $("resTitle").textContent = total + "もん クリア！";
+  $("resStars").textContent = "⭐️⭐️⭐️";
+  const c = C(cur), ps = POEMS[cur], k = countDone(ps);
+  $("resSub").textContent = nm() + "、" + c.name + "は " + k + " / " + ps.length + " まい！";
+  show("result");
+  setMood("happy", 4000);
+  sndFanfare();
+  const completeColor = k >= ps.length;
+  const completeAll = countDone(DATA) >= 100;
+  if(completeColor || completeAll){
+    setTimeout(()=>{
+      sndFanfare(); confetti(); setTimeout(confetti, 300);
+      if(completeAll){
+        $("ovCrownTitle").textContent = "100まい ぜんぶ！";
+        $("ovCrownText").textContent = nm()+"、ひゃくにん いっしゅ ぜんぶ とれたよ！👑 とっても すごい！";
+      }else{
+        $("ovCrownTitle").textContent = c.name + " ぜんぶ！";
+        $("ovCrownText").textContent = nm()+"、20まい ぜんぶ とれたよ！👑 すごいよ！";
+      }
+      openOv("ovCrown");
+      setMood("happy", 5000);
+      if(S.sound) speakSeq([nm()+"、ぜんぶ とれたよ。すごいね！"]);
+    }, 620);
+  }
+}
+
+/* =========================================================
+   リセット
+   ========================================================= */
+function hardReset(){
+  S = blankState();
+  save();
+  cur = "momo";
+  setRate(1);
+  refresh();
+  closeOv("ovReset");
+  show("home");
+}
+
+/* =========================================================
+   こまごま
+   ========================================================= */
+let toastTimer = null;
+function toast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove("show"), 3200);
+}
+function refresh(){
+  renderHome();
+  renderColor();
+}
+
+/* =========================================================
+   イベント
+   ========================================================= */
+$("colorList").addEventListener("click", e=>{
+  const b = e.target.closest(".crow");
+  if(b) openColor(b.dataset.color);
+});
+$("board100").addEventListener("click", e=>{
+  const b = e.target.closest(".b100");
+  if(!b) return;
+  const id = Number(b.dataset.id), p = byId[id];
+  const ps = POEMS[p.color];
+  openLearn(p.color, ps.findIndex(x=>x.id===id));
+});
+$("board20").addEventListener("click", e=>{
+  const b = e.target.closest(".b20");
+  if(!b) return;
+  const id = Number(b.dataset.id);
+  const ps = POEMS[cur];
+  openLearn(cur, ps.findIndex(x=>x.id===id));
+});
+$("heroGo").addEventListener("click", ()=>{
+  const t = nextTarget();
+  openLearn(t.cid, t.idx);
+});
+
+$("backHome").addEventListener("click", ()=>{ stopAuto(); show("home"); });
+$("backColor1").addEventListener("click", ()=>{ stopAuto(); renderColor(); show("color"); });
+$("backColor2").addEventListener("click", ()=>{ stopAuto(); renderColor(); show("color"); });
+$("goLearn").addEventListener("click", ()=>openLearn(cur, null));
+$("goQuiz").addEventListener("click", startQuiz);
+$("goAuto").addEventListener("click", ()=>{
+  openLearn(cur, 0);
+  setTimeout(()=>autoStart(0), 260);
+});
+
+$("speakBtn").addEventListener("click", ()=>{
+  const p = POEMS[cur][lIdx];
+  setMood("listen", 4000);
+  sayPoem(p);
+});
+$("autoBtn").addEventListener("click", ()=>{
+  if(auto.on) stopAuto("とめたよ");
+  else autoStart(lIdx);
+});
+
+$("stageSeg").addEventListener("click", e=>{
+  const b = e.target.closest("button");
+  if(!b) return;
+  S.stage = Number(b.dataset.stage); save();
+  applyStage();
+  $("lSay").innerHTML = stageHint();
+  sndPop();
+});
+$("rateSeg").addEventListener("click", e=>{
+  const b = e.target.closest("button");
+  if(!b) return;
+  setRate(b.dataset.rate);
+  sndPop();
+  toast("はやさ " + rateText(S.rate) + " に したよ");
+});
+$("qRate").addEventListener("click", ()=>{
+  const i = RATES.indexOf(S.rate);
+  setRate(RATES[(i+1) % RATES.length]);
+  sndPop();
+  toast("はやさ " + rateText(S.rate));
+});
+
+$("lKami").addEventListener("click", ()=>peek($("lKami")));
+$("lShimo").addEventListener("click", ()=>peek($("lShimo")));
+
+$("learnedBtn").addEventListener("click", ()=>{
+  const ps = POEMS[cur], p = ps[lIdx];
+  const was = done(p.id);
+  S.learned[p.id] = 1; save();
+  sndPop();
+  if(!was){ confetti(); setMood("happy", 2600); sndKira(); }
+  refresh();
+  renderLearn();
+  if(!was){
+    $("lSay").innerHTML = "<b>"+esc(nm())+"、あっぱれ！</b>✨ つぎの うたへ いこう！";
+    setTimeout(()=>{
+      if(!$("scr-learn").classList.contains("active")) return;
+      if(countDone(ps) >= ps.length){
+        sndFanfare(); confetti();
+        if(countDone(DATA) >= 100){
+          $("ovCrownTitle").textContent = "100まい ぜんぶ！";
+          $("ovCrownText").textContent = nm()+"、ひゃくにん いっしゅ ぜんぶ とれたよ！👑 とっても すごい！";
+        }else{
+          $("ovCrownTitle").textContent = C(cur).name + " ぜんぶ！";
+          $("ovCrownText").textContent = nm()+"、20まい ぜんぶ おぼえたね！👑 すごいよ！";
+        }
+        openOv("ovCrown");
+        setMood("happy", 5000);
+      }else{
+        lIdx = (lIdx + 1) % ps.length;
+        renderLearn();
+        $("lSay").innerHTML = stageHint();
+      }
+    }, 760);
+  }
+});
+$("prevPoem").addEventListener("click", ()=>{
+  stopAuto();
+  const ps = POEMS[cur];
+  lIdx = (lIdx - 1 + ps.length) % ps.length;
+  renderLearn();
+  $("lSay").innerHTML = stageHint();
+  setMood("listen", 1600);
+  sayPoemKami(POEMS[cur][lIdx]);
+});
+$("nextPoem").addEventListener("click", ()=>{
+  stopAuto();
+  const ps = POEMS[cur];
+  lIdx = (lIdx + 1) % ps.length;
+  renderLearn();
+  $("lSay").innerHTML = stageHint();
+  setMood("listen", 1600);
+  sayPoemKami(POEMS[cur][lIdx]);
+});
+
+$("qSpeak").addEventListener("click", ()=>{
+  const p = byId[q.list[q.i].id];
+  setMood("listen", 3000);
+  sayPoemKami(p);
+});
+$("choices").addEventListener("click", e=>{
+  const b = e.target.closest(".choice");
+  if(!b || b.disabled) return;
+  pickChoice(Number(b.dataset.id), b);
+});
+
+$("ovNext").addEventListener("click", ()=>{ stopSpeech(); nextQuestion(); });
+$("ovCrownOk").addEventListener("click", ()=>{ stopSpeech(); closeOv("ovCrown"); });
+$("resAgain").addEventListener("click", startQuiz);
+$("resBack").addEventListener("click", ()=>{ renderColor(); show("color"); });
+
+$("resetBtn").addEventListener("click", ()=>openOv("ovReset"));
+$("resetYes").addEventListener("click", hardReset);
+$("resetNo").addEventListener("click", ()=>closeOv("ovReset"));
+
+$("muteBtn").addEventListener("click", ()=>{
+  S.sound = !S.sound;
+  save();
+  paintMute();
+  if(!S.sound){ stopSpeech(); stopAuto(); } else sndPop();
+});
+function paintMute(){
+  const b = $("muteBtn");
+  b.textContent = S.sound ? "🔊" : "🔇";
+  b.classList.toggle("off", !S.sound);
+  b.setAttribute("aria-label", S.sound ? "おとを けす" : "おとを つける");
+}
+
+/* ---------- start ---------- */
+mountChar("heroChar", "hero");
+mountChar("cChar", "color");
+mountChar("lChar", "learn");
+mountChar("qChar", "quiz");
+mountChar("resChar", "res");
+mountChar("crownChar", "crown");
+
+PLAYERS = loadPlayers();
+let lastId = "";
+try{ lastId = localStorage.getItem(CURKEY) || ""; }catch(e){}
+const first = PLAYERS.filter(p=>p.id === lastId)[0] || PLAYERS[0] || null;
+if(first) usePlayer(first);
+else { S = blankState(); setRate(1); refresh(); renderColor(); }
+
+/* ---------- プレイヤー ---------- */
+let pickedIcon = ICONS[0];
+function paintPlayer(){
+  if(!CUR) return;
+  $("plChipIcon").textContent = CUR.icon || "🐰";
+  $("plChipName").textContent = CUR.name;
+}
+function paintIcons(){
+  $("plIcons").innerHTML = ICONS.map(ic=>
+    '<button class="pl-ic '+(ic===pickedIcon?'on':'')+'" type="button" data-ic="'+ic+'">'+ic+'</button>'
+  ).join("");
+}
+function renderPlayers(){
+  $("plList").innerHTML = PLAYERS.map(p=>{
+    const st = loadState(p.id), k = countDoneIn(st, DATA);
+    return '<div class="pl-card '+(CUR && CUR.id===p.id?'on':'')+'" data-pid="'+p.id+'" role="button" tabindex="0">'
+      + '<span class="pl-ico">'+(p.icon||"🐰")+'</span>'
+      + '<span class="pl-mid"><span class="pl-nm">'+esc(p.name)+'</span>'
+      + '<span class="pl-num">'+k+' / 100 まい</span></span>'
+      + '<button class="pl-del" data-del="'+p.id+'" type="button">けす</button></div>';
+  }).join("");
+  const has = PLAYERS.length > 0;
+  $("plList").style.display = has ? "" : "none";
+  $("plNew").style.display = has ? "" : "none";
+  $("plClose").style.display = CUR ? "" : "none";
+  $("plTitle").textContent = has ? "だれが あそぶ？" : "なまえを とうろくしてね";
+  if(!has) $("plForm").classList.add("open");
+  paintIcons();
+}
+function openPlayers(){
+  renderPlayers();
+  openOv("ovPlayer");
+  if(!PLAYERS.length) setTimeout(()=>{ try{ $("plName").focus(); }catch(e){} }, 300);
+}
+function addPlayer(){
+  const name = ($("plName").value || "").replace(/\s+/g,"").slice(0,10);
+  if(!name){ toast("なまえを ひらがなで いれてね"); return; }
+  if(PLAYERS.length >= 6){ toast("プレイヤーは 6にんまで だよ"); return; }
+  const p = {id:"p"+Date.now().toString(36), name:name, icon:pickedIcon};
+  PLAYERS.push(p);
+  savePlayers();
+  usePlayer(p);
+  $("plName").value = "";
+  closeOv("ovPlayer");
+  sndKira(); sndPop();
+  $("heroBub").innerHTML = "<b>"+esc(nm())+"</b>、はじめまして！いっしょに 100まい あつめようね✨";
+  setMood("happy", 3200);
+  toast(nm() + "、よろしくね！");
+}
+$("plChip").addEventListener("click", openPlayers);
+$("plClose").addEventListener("click", ()=>{ closeOv("ovPlayer"); });
+$("plNew").addEventListener("click", ()=>{
+  $("plForm").classList.add("open");
+  pickedIcon = ICONS[(pickedIcon ? ICONS.indexOf(pickedIcon)+1 : 0) % ICONS.length] || ICONS[0];
+  paintIcons();
+  setTimeout(()=>{ try{ $("plName").focus(); }catch(e){} }, 200);
+});
+$("plName").addEventListener("keydown", e=>{ if(e.key === "Enter") addPlayer(); });
+$("plSave").addEventListener("click", addPlayer);
+$("plIcons").addEventListener("click", e=>{
+  const b = e.target.closest(".pl-ic");
+  if(!b) return;
+  pickedIcon = b.dataset.ic;
+  paintIcons();
+  sndPop();
+});
+$("plList").addEventListener("click", e=>{
+  const del = e.target.closest(".pl-del");
+  if(del){
+    const pid = del.dataset.del;
+    if(del.classList.contains("yes")){
+      PLAYERS = PLAYERS.filter(p=>p.id !== pid);
+      savePlayers();
+      try{ localStorage.removeItem(progKey(pid)); }catch(e){}
+      if(CUR && CUR.id === pid){
+        CUR = null;
+        try{ localStorage.removeItem(CURKEY); }catch(e){}
+        const nx = PLAYERS[0] || null;
+        if(nx) usePlayer(nx);
+      }
+      renderPlayers();
+      sndSoft();
+      if(!PLAYERS.length){
+        $("plForm").classList.add("open");
+        $("plClose").style.display = "none";
+      }
+    }else{
+      del.classList.add("yes");
+      del.textContent = "ほんとに？";
+      setTimeout(()=>{ del.classList.remove("yes"); del.textContent = "けす"; }, 2600);
+    }
+    return;
+  }
+  const card = e.target.closest(".pl-card");
+  if(!card) return;
+  const p = PLAYERS.filter(x=>x.id === card.dataset.pid)[0];
+  if(!p) return;
+  usePlayer(p);
+  closeOv("ovPlayer");
+  sndPop();
+  setMood("happy", 2200);
+});
+
+openPlayers();
+paintPlayer();
+paintMute();
+
+</script>
+</body>
+</html>
