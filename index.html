@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#FFF3F9">
 <meta name="format-detection" content="telephone=no">
-<meta name="description" content="わくわく ゲームパーク。こくご、さんすう、しりとり、ひゃくにんいっしゅ、にほんいっしゅう、こっきの 6つの ゲームが あるよ。">
+<meta name="description" content="わくわく ゲームパーク。こくご、さんすう、しりとり、ひゃくにんいっしゅ、にほんいっしゅう、こっき、つみき＆てんかいずの 7つの ゲームが あるよ。">
 <meta name="apple-mobile-web-app-title" content="わくわくゲームパーク">
 <title>🎉 わくわく ゲームパーク</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23FFB3D2'/%3E%3Cstop offset='1' stop-color='%23FF7FB0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='26' fill='url(%23g)'/%3E%3Cpath d='M50 16c3 12 7 20 12 26 6 5 14 8 22 8-8 0-16 3-22 8-5 6-9 14-12 26-3-12-7-20-12-26-6-5-14-8-22-8 8 0 16-3 22-8 5-6 9-14 12-26z' fill='%23fff'/%3E%3Ccircle cx='24' cy='24' r='7' fill='%23FFF178'/%3E%3Ccircle cx='78' cy='78' r='5' fill='%237BE0C0'/%3E%3C/svg%3E">
@@ -24,6 +24,7 @@
     --yl1:#FFF6D6; --yl2:#FFE39C; --yld:#F0C261; --ylt:#7A4A00;
     --sk1:#E0F5FF; --sk2:#BCE7FF; --skd:#82C9ED; --skt:#0F5C82;
     --pp1:#F4E6FF; --pp2:#E0C8FF; --ppd:#BE93E9; --ppt:#5D2691;
+    --ic1:#E4F7FA; --ic2:#B7E5F0; --icd:#7FC8DA; --ict:#1B6478;
   }
   *,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html{overflow-x:hidden}
@@ -265,6 +266,7 @@
   a.c-hyakunin{--c1:var(--yl1);--c2:var(--yl2);--cd:var(--yld);--ct:var(--ylt)}
   a.c-todofuken{--c1:var(--sk1);--c2:var(--sk2);--cd:var(--skd);--ct:var(--skt)}
   a.c-kokki{--c1:var(--pp1);--c2:var(--pp2);--cd:var(--ppd);--ct:var(--ppt)}
+  a.c-zukei{--c1:var(--ic1);--c2:var(--ic2);--cd:var(--icd);--ct:var(--ict)}
 
   /* ===== footer ===== */
   footer{text-align:center;padding:0 2px}
@@ -475,6 +477,14 @@
       <span class="prog" data-app="kokki" aria-hidden="true"><span class="pbar"><i></i></span><span class="ptxt">これから！</span></span>
     </a>
 
+    <a class="card c-zukei" href="zukei.html" aria-label="つみきと てんかいずで あそぶ">
+      <span class="tw" aria-hidden="true">✨</span>
+      <span class="ico" aria-hidden="true">🧊</span>
+      <span class="name"><span class="w">つみき＆</span> <span class="w">てんかいず</span></span>
+      <span class="desc"><span class="w">かぞえて</span> <span class="w">おって</span> <span class="w">ずけいマスター！</span></span>
+      <span class="prog" data-app="zukei" aria-hidden="true"><span class="pbar"><i></i></span><span class="ptxt">これから！</span></span>
+    </a>
+
   </main>
 
   <footer>
@@ -508,7 +518,7 @@
       <button class="pm-x" id="pmClose" type="button">とじる</button>
     </div>
     <div class="pm-body">
-      <p class="pm-lead">6つのアプリの保存データ（この端末のブラウザ内）をまとめて表示しています。CSVに保存すると、Numbers や Excel でそのまま開けます。</p>
+      <p class="pm-lead">7つのアプリの保存データ（この端末のブラウザ内）をまとめて表示しています。CSVに保存すると、Numbers や Excel でそのまま開けます。</p>
       <div id="pmList"></div>
     </div>
     <div class="pm-foot">
@@ -641,7 +651,8 @@
     { kind: 'array', k: 'hyakunin-isshu-v2:players' },
     { kind: 'obj', k: 'todofuken-sugoroku-v2' },
     { kind: 'array', k: 'kokki-flashcard-v2:players' },
-    { kind: 'array', k: 'sansu-board-v2:players' }
+    { kind: 'array', k: 'sansu-board-v2:players' },
+    { kind: 'array', k: 'zukei-v1:players' }
   ];
 
   /* これまで つかっていた なまえを ひろって、だぶりを まとめる */
@@ -665,7 +676,8 @@
     { list: 'kotoba-quiz-v2:players', cur: 'kotoba-quiz-v2:current' },
     { list: 'hyakunin-isshu-v2:players', cur: 'hyakunin-isshu-v2:current' },
     { list: 'kokki-flashcard-v2:players', cur: 'kokki-flashcard-v2:current' },
-    { list: 'sansu-board-v2:players', cur: 'sansu-board-v2:current' }
+    { list: 'sansu-board-v2:players', cur: 'sansu-board-v2:current' },
+    { list: 'zukei-v1:players', cur: 'zukei-v1:current' }
   ];
   function guessPlayer() {
     var i, k, src, m, cid, list, p;
@@ -717,7 +729,8 @@
     'shiritori-robot-v3',
     'hyakunin-isshu-v2',
     'todofuken-sugoroku-v2', 'todofuken-puzzle-v1',
-    'kokki-flashcard-v2', 'kokki-flashcard-v1'
+    'kokki-flashcard-v2', 'kokki-flashcard-v1',
+    'zukei-v1'
   ];
 
   function prefixOf(k) {
@@ -729,14 +742,15 @@
   }
 
   /* ---------------- per app readers ---------------- */
-  var TOTAL = { kokugo: 333, sansu: 162, shiritori: 727, hyakunin: 100, todofuken: 47, kokki: 50 };
+  var TOTAL = { kokugo: 333, sansu: 162, shiritori: 727, hyakunin: 100, todofuken: 47, kokki: 50, zukei: 12 };
   var APPNAME = {
     'wakuwaku-park': 'プレイヤー（ぜんぶの アプリで いっしょ）',
     'kotoba-quiz-v2': 'こくご クイズ', 'kotoba-gacha-v2': 'こくご クイズ',
     'sansu-board-v2': 'さんすう ボード', 'shiritori-robot-v3': 'しりとり ロボ',
     'hyakunin-isshu-v2': 'ひゃくにん いっしゅ', 'todofuken-sugoroku-v2': 'にほんいっしゅう クイズ',
     'todofuken-puzzle-v1': 'にほんいっしゅう クイズ',
-    'kokki-flashcard-v2': 'せかいの こっき', 'kokki-flashcard-v1': 'せかいの こっき'
+    'kokki-flashcard-v2': 'せかいの こっき', 'kokki-flashcard-v1': 'せかいの こっき',
+    'zukei-v1': 'つみき＆てんかいず'
   };
 
   function kokugoRows() {
@@ -890,11 +904,31 @@
     return out;
   }
 
+  /* つみき＆てんかいず: あつめた バッジ 12しゅるい が すすみぐあい */
+  function zukeiBadges(s) {
+    var b = (s && s.badges) || {}, n = 0, k;
+    for (k in b) { if (b.hasOwnProperty(k) && Number(b[k]) > 0) { n++; } }
+    return n;
+  }
+  function zukeiRows() {
+    var out = [], i, pl = asPlayers('zukei-v1:players');
+    for (i = 0; i < pl.length; i++) {
+      var s = readJSON('zukei-v1:p:' + pl[i].id) || {};
+      var n = zukeiBadges(s);
+      var memo = 'バッジ ' + n + ' / 12' +
+        '・⭐ ' + (typeof s.stars === 'number' ? s.stars : 0) +
+        (typeof s.best === 'number' && s.best > 0 ? '・さいこう ' + s.best + '/5' : '') +
+        (typeof s.plays === 'number' && s.plays > 0 ? '・' + s.plays + '回プレイ' : '');
+      out.push({ icon: pl[i].icon || '🧊', who: pl[i].name, n: n, memo: memo });
+    }
+    return out;
+  }
+
   var READERS = {
     kokugo: kokugoRows, sansu: sansuRows, shiritori: shiritoriRows,
-    hyakunin: hyakuninRows, todofuken: todofukenRows, kokki: kokkiRows
+    hyakunin: hyakuninRows, todofuken: todofukenRows, kokki: kokkiRows, zukei: zukeiRows
   };
-  var APP_LIST = ['kokugo', 'sansu', 'shiritori', 'hyakunin', 'todofuken', 'kokki'];
+  var APP_LIST = ['kokugo', 'sansu', 'shiritori', 'hyakunin', 'todofuken', 'kokki', 'zukei'];
 
   function collect() {
     var data = {}, i, j, me = curPlayer(), mn = me ? me.name : '';
@@ -931,10 +965,11 @@
   }
 
   /* ---------------- parent summary ---------------- */
-  var EMOJI = { kokugo: '📚', sansu: '🔢', shiritori: '🤖', hyakunin: '🎋', todofuken: '🚄', kokki: '🏳️' };
+  var EMOJI = { kokugo: '📚', sansu: '🔢', shiritori: '🤖', hyakunin: '🎋', todofuken: '🚄', kokki: '🏳️', zukei: '🧊' };
   var LABEL = {
     kokugo: 'こくご クイズ', sansu: 'さんすう ボード', shiritori: 'しりとり ロボ',
-    hyakunin: 'ひゃくにん いっしゅ', todofuken: 'にほんいっしゅう クイズ', kokki: 'せかいの こっき'
+    hyakunin: 'ひゃくにん いっしゅ', todofuken: 'にほんいっしゅう クイズ', kokki: 'せかいの こっき',
+    zukei: 'つみき＆てんかいず'
   };
 
   function renderSummary() {
@@ -1072,6 +1107,20 @@
         who = 'プレイヤー「' + playerName('kokki-flashcard-v2:players', id) + '」';
         memo = 'おみやげ ' + kokkiDone(d) + ' / 50・👑 ' + kokkiMaster(d) + '・' + (d && typeof d.plays === 'number' ? d.plays : 0) + '回プレイ';
       } else { who = 'きろく'; memo = ''; }
+    } else if (p === 'zukei-v1') {
+      if (k === 'zukei-v1:players') {
+        who = 'プレイヤー一覧'; memo = (Array.isArray(d) ? d.length : 0) + '人';
+      } else if (k === 'zukei-v1:current') {
+        who = 'いまのプレイヤー'; memo = 'ID: ' + raw;
+      } else if (k === 'zukei-v1') {
+        who = '設定：むずかしさ・おと';
+        memo = (d && d.level === 'easy' ? 'やさしい' : d && d.level === 'hard' ? 'むずかしい' : 'ふつう') + '・おと' + (d && d.sound === false ? 'なし' : 'あり');
+      } else if (k.indexOf(':p:') > 0) {
+        id = k.slice(k.indexOf(':p:') + 3);
+        who = 'プレイヤー「' + playerName('zukei-v1:players', id) + '」';
+        memo = 'バッジ ' + zukeiBadges(d) + ' / 12・⭐ ' + (d && typeof d.stars === 'number' ? d.stars : 0) +
+               '・' + (d && typeof d.plays === 'number' ? d.plays : 0) + '回プレイ';
+      } else { who = 'きろく'; memo = ''; }
     } else if (p === 'kokki-flashcard-v1') {
       who = 'きろく'; memo = 'おぼえた ' + keysOf(d && d.learned).length + ' / 50';
     } else {
@@ -1088,13 +1137,14 @@
   }
 
   function appRank(k) {
-    var p = prefixOf(k), order = ['kokugo', 'sansu', 'shiritori', 'hyakunin', 'todofuken', 'kokki'];
+    var p = prefixOf(k), order = ['kokugo', 'sansu', 'shiritori', 'hyakunin', 'todofuken', 'kokki', 'zukei'];
     var map = {
       'wakuwaku-park': -1,
       'kotoba-quiz-v2': 0, 'kotoba-gacha-v2': 0, 'sansu-board-v2': 1,
       'shiritori-robot-v3': 2, 'hyakunin-isshu-v2': 3,
       'todofuken-sugoroku-v2': 4, 'todofuken-puzzle-v1': 4,
-      'kokki-flashcard-v2': 5, 'kokki-flashcard-v1': 5
+      'kokki-flashcard-v2': 5, 'kokki-flashcard-v1': 5,
+      'zukei-v1': 6
     };
     return (p && map[p] != null) ? map[p] : order.length + 1;
   }
@@ -1102,7 +1152,8 @@
   function playerIndex(p, id) {
     var listKey = (p === 'kotoba-quiz-v2') ? 'kotoba-quiz-v2:players'
                 : (p === 'hyakunin-isshu-v2') ? 'hyakunin-isshu-v2:players'
-                : (p === 'kokki-flashcard-v2') ? 'kokki-flashcard-v2:players' : null;
+                : (p === 'kokki-flashcard-v2') ? 'kokki-flashcard-v2:players'
+                : (p === 'zukei-v1') ? 'zukei-v1:players' : null;
     var list = [];
     if (listKey) {
       list = asPlayers(listKey);
