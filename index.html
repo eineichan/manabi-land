@@ -742,7 +742,7 @@
   }
 
   /* ---------------- per app readers ---------------- */
-  var TOTAL = { kokugo: 333, sansu: 162, shiritori: 727, hyakunin: 100, todofuken: 47, kokki: 50, zukei: 12 };
+  var TOTAL = { kokugo: 333, sansu: 162, shiritori: 727, hyakunin: 100, todofuken: 47, kokki: 50, zukei: 50 };
   var APPNAME = {
     'wakuwaku-park': 'プレイヤー（ぜんぶの アプリで いっしょ）',
     'kotoba-quiz-v2': 'こくご クイズ', 'kotoba-gacha-v2': 'こくご クイズ',
@@ -904,20 +904,18 @@
     return out;
   }
 
-  /* つみき＆てんかいず: あつめた バッジ 12しゅるい が すすみぐあい */
-  function zukeiBadges(s) {
-    var b = (s && s.badges) || {}, n = 0, k;
-    for (k in b) { if (b.hasOwnProperty(k) && Number(b[k]) > 0) { n++; } }
-    return n;
+  /* つみき＆てんかいず: あつめた ⭐ の かず が すすみぐあい */
+  function zukeiStars(s) {
+    var n = (s && typeof s.stars === 'number') ? s.stars : 0;
+    return n > 0 ? n : 0;
   }
   function zukeiRows() {
     var out = [], i, pl = asPlayers('zukei-v1:players');
     for (i = 0; i < pl.length; i++) {
       var s = readJSON('zukei-v1:p:' + pl[i].id) || {};
-      var n = zukeiBadges(s);
-      var memo = 'バッジ ' + n + ' / 12' +
-        '・⭐ ' + (typeof s.stars === 'number' ? s.stars : 0) +
-        (typeof s.best === 'number' && s.best > 0 ? '・さいこう ' + s.best + '/5' : '') +
+      var n = zukeiStars(s);
+      var memo = '⭐ ' + n +
+        (typeof s.best === 'number' && s.best > 0 ? '・さいこうきろく ' + s.best + '/5' : '') +
         (typeof s.plays === 'number' && s.plays > 0 ? '・' + s.plays + '回プレイ' : '');
       out.push({ icon: pl[i].icon || '🧊', who: pl[i].name, n: n, memo: memo });
     }
@@ -1118,7 +1116,8 @@
       } else if (k.indexOf(':p:') > 0) {
         id = k.slice(k.indexOf(':p:') + 3);
         who = 'プレイヤー「' + playerName('zukei-v1:players', id) + '」';
-        memo = 'バッジ ' + zukeiBadges(d) + ' / 12・⭐ ' + (d && typeof d.stars === 'number' ? d.stars : 0) +
+        memo = '⭐ ' + (d && typeof d.stars === 'number' ? d.stars : 0) +
+               (d && typeof d.best === 'number' && d.best > 0 ? '・さいこうきろく ' + d.best + '/5' : '') +
                '・' + (d && typeof d.plays === 'number' ? d.plays : 0) + '回プレイ';
       } else { who = 'きろく'; memo = ''; }
     } else if (p === 'kokki-flashcard-v1') {

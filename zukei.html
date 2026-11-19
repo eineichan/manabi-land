@@ -140,12 +140,6 @@
     position:absolute;right:12px;top:50%;transform:translateY(-50%);
     font-size:15px;opacity:.42;font-weight:800;
   }
-  .badge-strip{display:flex;flex-wrap:nowrap;gap:3px;margin:7px 0 0;min-height:24px;overflow:hidden}
-  .badge-strip .bg{
-    display:flex;align-items:center;justify-content:center;flex:0 0 auto;width:23px;height:23px;border-radius:7px;
-    background:linear-gradient(180deg,#FFFDF6,#FCF2D9);border:1.5px solid #F2E3C0;font-size:13px;line-height:1;
-  }
-  .badge-strip .bg.lock{background:#fff;border-color:var(--line);font-size:12px;color:#D9CFC6}
   .foot-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0 2px}
   .snd-btn{
     display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:999px;
@@ -237,7 +231,7 @@
   .btn-ghost:active{box-shadow:0 2px 0 var(--line)}
   .btn-small{font-size:15px;padding:12px 12px;border-radius:20px}
 
-  /* ---------- gacha / result ---------- */
+  /* ---------- result ---------- */
   .ov{
     position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;
     padding:18px;background:rgba(60,44,50,.44);
@@ -252,26 +246,15 @@
   }
   .ov-card h2{margin:0;font-size:20px;font-weight:800;letter-spacing:.03em}
   .ov-card .lead{margin:5px 0 0;font-size:13px;font-weight:700;color:var(--ink2);line-height:1.6}
-  .gacha-stage{
-    position:relative;display:flex;align-items:center;justify-content:center;
-    height:132px;margin:8px 0 2px;
+  .res-lab{margin:14px 0 0;font-size:12px;font-weight:800;color:var(--ink3);letter-spacing:.1em}
+  .res-big{
+    position:relative;display:flex;align-items:baseline;justify-content:center;gap:4px;
+    margin:2px 0 0;font-weight:800;line-height:1.05;color:var(--mustard-ink);
   }
-  .gacha-stage .halo{
-    position:absolute;width:112px;height:112px;border-radius:50%;
-    background:radial-gradient(circle,rgba(233,196,106,.42),rgba(233,196,106,0) 70%);
-  }
-  .gacha-stage .box{
-    position:relative;display:flex;align-items:center;justify-content:center;
-    width:96px;height:96px;border-radius:28px;font-size:50px;line-height:1;
-    background:linear-gradient(180deg,#FFFDF4,#FBEBC6);
-    border:3px solid #F2DCA4;box-shadow:0 10px 24px rgba(201,156,60,.3);
-  }
-  .gacha-stage .box.shake{animation:boxShake .5s ease}
-  @keyframes boxShake{0%,100%{transform:rotate(0)}20%{transform:rotate(-9deg) scale(1.04)}45%{transform:rotate(8deg) scale(1.06)}70%{transform:rotate(-5deg)}90%{transform:rotate(3deg)}}
-  .gacha-stage .box.pop{animation:boxPop .55s cubic-bezier(.22,1.3,.4,1)}
-  @keyframes boxPop{0%{transform:scale(.6);opacity:.4}60%{transform:scale(1.16)}100%{transform:scale(1)}}
-  .badge-name{margin:4px 0 0;font-size:16px;font-weight:800;color:var(--mustard-ink);letter-spacing:.04em}
-  .badge-rare{margin:2px 0 0;font-size:11.5px;font-weight:800;color:var(--ink3);letter-spacing:.06em}
+  .res-big .n{font-size:62px;letter-spacing:-.02em}
+  .res-big .d{font-size:22px;color:var(--ink3)}
+  .ov.open .res-big{animation:resPop .55s cubic-bezier(.22,1.3,.4,1) both}
+  @keyframes resPop{0%{transform:scale(.7);opacity:0}60%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}
   .ov-btns{display:flex;flex-direction:column;gap:8px;margin-top:12px}
   .res-row{display:flex;align-items:center;justify-content:center;gap:10px;margin:10px 0 0}
   .res-row .r{
@@ -351,7 +334,6 @@
     .sheet{max-width:640px;padding-left:22px;padding-right:22px}
     .sheet .ex-msg{font-size:19px}
     .sheet .ex-sub{font-size:14px}
-    .badge-strip .bg{width:30px;height:30px;font-size:17px}
     .home-back{font-size:15px}
     .pl-chip{font-size:16px}
   }
@@ -564,8 +546,6 @@
     <div class="statcard">
       <div class="s1"><b id="stStars">0</b><span>⭐ ほし</span></div>
       <div class="sep"></div>
-      <div class="s1"><b id="stBadges">0<small style="font-size:11px;font-weight:800;color:#94867C"> / 12</small></b><span>🏅 バッジ</span></div>
-      <div class="sep"></div>
       <div class="s1"><b id="stBest">0</b><span>🎯 さいこう</span></div>
       <div class="sep"></div>
       <div class="s1"><b id="stPlays">0</b><span>▶ プレイ</span></div>
@@ -597,11 +577,9 @@
       </button>
     </div>
 
-    <div class="badge-strip" id="badgeStrip" aria-label="あつめた バッジ"></div>
-
     <div class="foot-row">
       <button class="snd-btn" id="sndBtn" type="button">🔊 おと</button>
-      <p class="mini-note">🎁 3もん せいかいで ガチャ</p>
+      <p class="mini-note">⭐ 5もん ぜんぶ あてて まんてん めざそう！</p>
     </div>
   </section>
 
@@ -641,25 +619,19 @@
   </div>
 </div>
 
-<!-- ============ result / gacha ============ -->
+<!-- ============ result（5もん おわり） ============ -->
 <div class="ov" id="ovResult" aria-hidden="true">
   <div class="ov-card">
-    <h2 id="resTitle">けっか</h2>
+    <h2 id="resTitle">🎉 おつかれさま！</h2>
     <p class="lead" id="resLead"></p>
-    <div class="res-row">
-      <div class="r"><b id="resOk">0</b><span>せいかい</span></div>
-      <div class="r"><b id="resStar">0</b><span>⭐ ほし</span></div>
-      <div class="r"><b id="resBest">0</b><span>さいこう</span></div>
-    </div>
+    <p class="res-lab">こんかいの ⭐</p>
+    <p class="res-big"><span class="n" id="resOk">0</span><span class="d">/ 5</span></p>
     <div class="res-stars" id="resStars"></div>
-    <div class="gacha-stage" id="gachaStage" hidden>
-      <div class="halo"></div>
-      <div class="box" id="gachaBox">🎁</div>
+    <div class="res-row">
+      <div class="r"><b id="resBest">0</b><span>さいこうきろく</span></div>
+      <div class="r"><b id="resPlays">0</b><span>プレイ</span></div>
     </div>
-    <p class="badge-name" id="badgeName"></p>
-    <p class="badge-rare" id="badgeRare"></p>
     <div class="ov-btns">
-      <button class="btn btn-mint" id="btnGacha" type="button" hidden>🎁 ガチャを ひく！</button>
       <button class="btn btn-primary" id="btnAgain" type="button">もう いちど あそぶ</button>
       <button class="btn btn-ghost btn-small" id="btnModes" type="button">🎮 モードを えらぶ</button>
       <a class="btn btn-ghost btn-small" href="./index.html" style="text-decoration:none">🏠 ゲームパークへ もどる</a>
@@ -876,7 +848,7 @@
   var st = blankState();
 
   function blankState() {
-    return { stars: 0, plays: 0, best: 0, badges: {}, blocks: 0, nets: 0 };
+    return { stars: 0, plays: 0, best: 0, blocks: 0, nets: 0 };
   }
   function loadMeta() {
     var m = readJSON(META_KEY) || {};
@@ -921,33 +893,11 @@
       if (typeof raw.stars === 'number') { st.stars = raw.stars; }
       if (typeof raw.plays === 'number') { st.plays = raw.plays; }
       if (typeof raw.best === 'number') { st.best = raw.best; }
-      if (raw.badges && typeof raw.badges === 'object') { st.badges = raw.badges; }
       if (typeof raw.blocks === 'number') { st.blocks = raw.blocks; }
       if (typeof raw.nets === 'number') { st.nets = raw.nets; }
     }
   }
   function saveState() { sRaw(P_KEY + curId, JSON.stringify(st)); }
-  function badgeCount() { return Object.keys(st.badges || {}).length; }
-
-  /* =========================================================
-     badges
-     ========================================================= */
-  var BADGES = [
-    { id: 'master', em: '🏆', name: 'ずけいマスター' },
-    { id: 'tsumiki', em: '🧊', name: 'つみきはかせ' },
-    { id: 'tenkai', em: '📦', name: 'てんかいずマイスター' },
-    { id: 'kakure', em: '🐰', name: 'かくれんぼ めいじん' },
-    { id: 'star', em: '⭐', name: 'スター コレクター' },
-    { id: 'color', em: '🌈', name: 'いろ マスター' },
-    { id: 'speed', em: '🚀', name: 'スピード せいかい' },
-    { id: 'lucky', em: '🍀', name: 'ラッキー ずけい' },
-    { id: 'nomiss', em: '🎯', name: 'ノーミス チャレンジャー' },
-    { id: 'brain', em: '🧠', name: 'あたまで おれた！' },
-    { id: 'future', em: '🔮', name: 'みらいが みえる' },
-    { id: 'king', em: '👑', name: 'キング オブ ずけい' }
-  ];
-  var TOTAL_BADGES = BADGES.length;
-
   /* =========================================================
      ISO blocks
      ========================================================= */
@@ -1351,14 +1301,18 @@
      question building
      ========================================================= */
   var LVL = {
-    easy: { blocks: { w: 2, h: 2, maxh: 2, zeros: 0, minT: 3, maxT: 6 }, stars: 1 },
-    normal: { blocks: { w: 3, h: 3, maxh: 3, zeros: 2, minT: 5, maxT: 9 }, stars: 1 },
-    hard: { blocks: { w: 3, h: 3, maxh: 4, zeros: 2, minT: 7, maxT: 11 }, stars: 1 }
+    easy: { blocks: { w: 2, h: 2, maxh: 2, minCells: 2, maxCells: 4, minT: 3, maxT: 7 }, stars: 1 },
+    normal: { blocks: { w: 3, h: 3, maxh: 3, minCells: 3, maxCells: 6, minT: 5, maxT: 12 }, stars: 1 },
+    hard: { blocks: { w: 3, h: 3, maxh: 4, minCells: 4, maxCells: 7, minT: 8, maxT: 18 }, stars: 1 }
   };
 
+  /* まず つち（よこに つながった ます）を つくり、そのあと たかさを きめる */
   function genShape(cfg) {
     var W = cfg.w, H = cfg.h, i;
-    var n = W * H - cfg.zeros;
+    var lo = Math.max(1, cfg.minCells || 1);
+    var hi = Math.min(W * H, cfg.maxCells || (W * H));
+    if (hi < lo) { hi = lo; }
+    var n = lo + rnd(hi - lo + 1);
     var seed = rnd(W * H), chosen = {}, list = [];
     chosen[seed] = true; list.push(seed);
     var guard = 0;
@@ -1374,7 +1328,7 @@
       if (chosen[ni]) { continue; }
       chosen[ni] = true; list.push(ni);
     }
-    if (list.length < n) { return null; }
+    if (list.length !== n) { return null; }
 
     var cellmap = {}, cells = [];
     for (i = 0; i < list.length; i++) {
@@ -1384,36 +1338,82 @@
     }
     for (var key in cellmap) { if (cellmap.hasOwnProperty(key)) { cells.push(cellmap[key]); } }
 
-    var total = 0, heights = {}, hidden = false;
-    for (i = 0; i < cells.length; i++) {
-      total += cells[i].h;
-      heights[cells[i].h] = 1;
+    /* ごうけいが はんいから はずれたら たかさを 1だんずつ ちょうせい */
+    var total = 0;
+    for (i = 0; i < cells.length; i++) { total += cells[i].h; }
+    guard = 0;
+    while (total > cfg.maxT && guard < 300) {
+      guard++;
+      var lows = [];
+      for (i = 0; i < cells.length; i++) { if (cells[i].h > 1) { lows.push(i); } }
+      if (!lows.length) { break; }
+      cells[lows[rnd(lows.length)]].h--;
+      total--;
+    }
+    guard = 0;
+    while (total < cfg.minT && guard < 300) {
+      guard++;
+      var highs = [];
+      for (i = 0; i < cells.length; i++) { if (cells[i].h < cfg.maxh) { highs.push(i); } }
+      if (!highs.length) { break; }
+      cells[highs[rnd(highs.length)]].h++;
+      total++;
     }
     if (total < cfg.minT || total > cfg.maxT) { return null; }
+
+    /* たかさが 1しゅるいだけだと つまらないので 2しゅるい いじょう */
+    var heights = {}, hidden = false;
+    for (i = 0; i < cells.length; i++) { heights[cells[i].h] = 1; }
     if (Object.keys(heights).length < 2) { return null; }
+
+    /* うしろに かくれる つみきが あること */
     for (i = 0; i < cells.length; i++) {
       var c = cells[i];
       var fx2 = cellmap[(c.x + 1) + ',' + c.y], fy2 = cellmap[c.x + ',' + (c.y + 1)];
       if ((fx2 && fx2.h > c.h) || (fy2 && fy2.h > c.h)) { hidden = true; }
     }
     if (!hidden && cfg.maxh > 2) { return null; }
-    for (i = 0; i < cells.length; i++) { }
+
+    /* あな あきは つくらない */
     for (var yy = 0; yy < H; yy++) {
       for (var xx = 0; xx < W; xx++) {
         if (cellmap[xx + ',' + yy]) { continue; }
         var n1 = cellmap[(xx + 1) + ',' + yy], n2 = cellmap[(xx - 1) + ',' + yy];
         var n3 = cellmap[xx + ',' + (yy + 1)], n4 = cellmap[xx + ',' + (yy - 1)];
-        if (n1 && n2 && n3 && n4) { return null; }  /* あな あきは つくらない */
+        if (n1 && n2 && n3 && n4) { return null; }
       }
     }
     return { cells: cells, total: total };
+  }
+
+  /* どうしても つくれなかった ときの ための いくつかの かたち */
+  var FB_SHAPES = [
+    { cells: [{ x: 0, y: 0, h: 1 }, { x: 1, y: 0, h: 2 }, { x: 0, y: 1, h: 1 }], total: 4 },
+    { cells: [{ x: 0, y: 0, h: 2 }, { x: 1, y: 0, h: 1 }, { x: 1, y: 1, h: 2 }], total: 5 },
+    { cells: [{ x: 0, y: 0, h: 1 }, { x: 1, y: 0, h: 2 }, { x: 2, y: 0, h: 1 }, { x: 1, y: 1, h: 2 }], total: 6 },
+    { cells: [{ x: 0, y: 0, h: 2 }, { x: 1, y: 0, h: 3 }, { x: 0, y: 1, h: 2 }], total: 7 },
+    { cells: [{ x: 0, y: 0, h: 1 }, { x: 1, y: 0, h: 2 }, { x: 1, y: 1, h: 3 }, { x: 2, y: 1, h: 2 }], total: 8 },
+    { cells: [{ x: 0, y: 0, h: 2 }, { x: 1, y: 0, h: 3 }, { x: 0, y: 1, h: 2 }, { x: 1, y: 1, h: 1 }], total: 8 },
+    { cells: [{ x: 0, y: 0, h: 3 }, { x: 1, y: 0, h: 2 }, { x: 1, y: 1, h: 3 }, { x: 2, y: 1, h: 2 }], total: 10 }
+  ];
+  var fbIdx = rnd(FB_SHAPES.length);
+  function fbShape(level) {
+    var cfg = (LVL[level] || LVL.normal).blocks;
+    var k, s;
+    for (k = 0; k < FB_SHAPES.length; k++) {
+      s = FB_SHAPES[(fbIdx + k) % FB_SHAPES.length];
+      if (s.total >= cfg.minT && s.total <= cfg.maxT) { fbIdx = (fbIdx + k + 1) % FB_SHAPES.length; return s; }
+    }
+    fbIdx = (fbIdx + 1) % FB_SHAPES.length;
+    return FB_SHAPES[0];
   }
 
   function makeBlockQ(level) {
     var cfg = LVL[level].blocks;
     var shape = null, guard = 0;
     while (!shape && guard < 300) { shape = genShape(cfg); guard++; }
-    if (!shape) { shape = { cells: [{ x: 0, y: 0, h: 1 }, { x: 1, y: 0, h: 2 }, { x: 0, y: 1, h: 1 }], total: 4 }; }
+    var fb = false;
+    if (!shape) { shape = fbShape(level); fb = true; }
     var n = shape.total;
     var cands = [n - 1, n + 1, n + 2, n - 2, n + 3, n - 3];
     var pool = [], i;
@@ -1427,8 +1427,59 @@
     for (i = 0; i < shape.cells.length; i++) { ans[shape.cells[i].h] = (ans[shape.cells[i].h] || 0) + 1; }
     return {
       kind: 'blocks', cells: shape.cells, total: n, choices: opts, answer: n,
-      lv: ans, level: level
+      lv: ans, level: level, fb: fb
     };
+  }
+
+  /* つみきクイズの かたち（おなじ ばしょ・おなじ たかさ なら おなじ かたち） */
+  function shapeSig(q) {
+    var a = [], i;
+    for (i = 0; i < q.cells.length; i++) { a.push(q.cells[i].x + ',' + q.cells[i].y + ',' + q.cells[i].h); }
+    a.sort();
+    return a.join('|');
+  }
+
+  /* 1ラウンド5もん。こたえも かたちも かぶらない ように えらぶ */
+  function makeBlockRound(level, count) {
+    count = count || 5;
+    var cands = [], sigs = {}, t, i, q, s;
+    for (t = 0; t < count * 14 && cands.length < 48; t++) {
+      q = makeBlockQ(level);
+      s = shapeSig(q);
+      if (sigs[s]) { continue; }
+      sigs[s] = 1;
+      cands.push(q);
+    }
+    if (!cands.length) { for (i = 0; i < count; i++) { cands.push(makeBlockQ(level)); } }
+
+    var pool = shuffle(cands), out = [], usedAns = {};
+    for (i = 0; i < pool.length && out.length < count; i++) {
+      if (usedAns[pool[i].answer]) { continue; }
+      usedAns[pool[i].answer] = 1;
+      out.push(pool[i]);
+    }
+    /* こたえが たりない ときは、すぐ まえと ちがう こたえで うめる */
+    for (i = 0; i < pool.length && out.length < count; i++) {
+      if (out.indexOf(pool[i]) >= 0) { continue; }
+      if (out.length && pool[i].answer === out[out.length - 1].answer) { continue; }
+      out.push(pool[i]);
+    }
+    var guard = 0;
+    while (out.length < count && guard < 400) {
+      guard++;
+      q = makeBlockQ(level);
+      s = shapeSig(q);
+      if (sigs[s]) { continue; }
+      if (out.length && q.answer === out[out.length - 1].answer) { continue; }
+      sigs[s] = 1;
+      out.push(q);
+    }
+    guard = 0;
+    while (out.length < count && guard < 200) {
+      guard++;
+      out.push(makeBlockQ(level));
+    }
+    return shuffle(out);
   }
 
   function makeNetQ(level) {
@@ -1507,16 +1558,20 @@
   function startRound(mode) {
     ensureAudio();
     R = { mode: mode, level: meta.level, qs: [], i: 0, ok: 0, stars: 0, done: false };
-    var used = {}, guard = 0;
-    for (var i = 0; i < 5; i++) {
-      var q = null, tries = 0;
-      do {
-        q = (mode === 'blocks') ? makeBlockQ(meta.level) : makeNetQ(meta.level);
-        tries++;
-        var sig = (mode === 'blocks') ? JSON.stringify(q.cells) : ('' + q.netIdx + '-' + q.star + '-' + (q.type || ''));
-        if (!used[sig] || tries > 12) { used[sig] = 1; break; }
-      } while (tries < 14);
-      R.qs.push(q);
+    if (mode === 'blocks') {
+      R.qs = makeBlockRound(meta.level, 5);
+    } else {
+      var used = {}, i;
+      for (i = 0; i < 5; i++) {
+        var q = null, tries = 0;
+        do {
+          q = makeNetQ(meta.level);
+          tries++;
+          var sig = '' + q.netIdx + '-' + q.star + '-' + (q.type || '');
+          if (!used[sig] || tries > 12) { used[sig] = 1; break; }
+        } while (tries < 14);
+        R.qs.push(q);
+      }
     }
     show('play');
     paintDots();
@@ -1791,65 +1846,38 @@
   }
 
   /* =========================================================
-     result / gacha
+     result（5もん おわり）
      ========================================================= */
   function finishRound() {
     stopAnim();
     st.plays++;
-    if (R.ok > st.best) { st.best = R.ok; }
+    var newBest = (R.ok > st.best);
+    if (newBest) { st.best = R.ok; }
     saveState();
     paintStart();
     $('resOk').textContent = R.ok;
-    $('resStar').textContent = R.stars;
     $('resBest').textContent = st.best;
+    $('resPlays').textContent = st.plays;
     var stars = '', i;
     for (i = 0; i < 5; i++) { stars += '<i class="' + (i < R.ok ? 'on' : '') + '">⭐</i>'; }
     $('resStars').innerHTML = stars;
-    var can = R.ok >= 3;
-    $('resTitle').textContent = can ? '🎉 ごほうび ゲット！' : 'おしい！ あと すこし';
-    $('resLead').textContent = can
-      ? '5もん ちゅう ' + R.ok + 'もん せいかい！ ガチャを ひいて、バッジを あつめよう。'
-      : '5もん ちゅう ' + R.ok + 'もん せいかい。3もん せいかいで ガチャが できるよ！';
-    $('btnGacha').hidden = !can;
-    $('gachaStage').hidden = !can;
-    $('gachaBox').textContent = '🎁';
-    $('gachaBox').classList.remove('shake');
-    $('gachaBox').classList.remove('pop');
-    $('badgeName').textContent = '';
-    $('badgeRare').textContent = '';
+    if (R.ok >= 5) {
+      $('resTitle').textContent = '🎉 まんてん！ すごい！';
+      $('resLead').textContent = '5もん ぜんぶ せいかい！ つみきマスターだね。';
+    } else if (R.ok >= 3) {
+      $('resTitle').textContent = '🎉 おつかれさま！';
+      $('resLead').textContent = '5もん ちゅう ' + R.ok + 'もん せいかい！ あと ' + (5 - R.ok) + 'もんで まんてんだよ。';
+    } else {
+      $('resTitle').textContent = 'おつかれさま！';
+      $('resLead').textContent = '5もん ちゅう ' + R.ok + 'もん せいかい。つぎは できるよ！';
+    }
+    if (newBest && R.ok > 0) {
+      $('resTitle').textContent = $('resTitle').textContent + ' 🏅';
+    }
     $('ovResult').classList.add('open');
-    if (can) { playCombo(4); }
-    else { playWrong(); }
-  }
-
-  function giveBadge() {
-    var owned = st.badges || {}, fresh = [], i;
-    for (i = 0; i < BADGES.length; i++) { if (!owned[BADGES[i].id]) { fresh.push(BADGES[i]); } }
-    var b = fresh.length ? pick(fresh) : pick(BADGES);
-    st.badges[b.id] = (st.badges[b.id] || 0) + 1;
-    saveState();
-    paintStart();
-    return b;
-  }
-
-  function doGacha() {
-    var box = $('gachaBox');
-    $('btnGacha').disabled = true;
-    box.classList.add('shake');
-    tone(660, 0, 0.1, { vol: 0.07, type: 'square' });
-    tone(880, 0.12, 0.1, { vol: 0.06, type: 'square' });
-    window.setTimeout(function () {
-      var b = giveBadge();
-      box.classList.remove('shake');
-      box.classList.add('pop');
-      box.textContent = b.em;
-      $('badgeName').textContent = b.name;
-      $('badgeRare').textContent = 'バッジを ゲット！（' + badgeCount() + ' / ' + TOTAL_BADGES + '）';
-      $('btnGacha').hidden = true;
-      playFanfare();
-      celebrate(true);
-      $('btnGacha').disabled = false;
-    }, 900);
+    playFanfare();
+    celebrate(true);
+    window.setTimeout(function () { burst(window.innerWidth * 0.5, window.innerHeight * 0.3, 26, 0.9, true); }, 340);
   }
 
   /* =========================================================
@@ -1857,18 +1885,9 @@
      ========================================================= */
   function paintStart() {
     $('stStars').textContent = st.stars;
-    $('stBadges').innerHTML = badgeCount() + '<small style="font-size:11px;font-weight:800;color:#94867C"> / ' + TOTAL_BADGES + '</small>';
     $('stBest').textContent = st.best;
     $('stPlays').textContent = st.plays;
-    var strip = $('badgeStrip'), html = '', i;
-    for (i = 0; i < BADGES.length; i++) {
-      var got = st.badges && st.badges[BADGES[i].id];
-      html += got
-        ? '<span class="bg" title="' + esc(BADGES[i].name) + '">' + BADGES[i].em + '</span>'
-        : '<span class="bg lock">🔒</span>';
-    }
-    strip.innerHTML = html;
-    var lv = meta.level, btns = document.querySelectorAll('.lvl-btn');
+    var lv = meta.level, btns = document.querySelectorAll('.lvl-btn'), i;
     for (i = 0; i < btns.length; i++) {
       btns[i].classList.toggle('on', btns[i].getAttribute('data-lv') === lv);
     }
@@ -1973,7 +1992,6 @@
     $('btnBlocks').addEventListener('click', function () { startRound('blocks'); });
     $('btnNets').addEventListener('click', function () { startRound('nets'); });
     $('btnNext').addEventListener('click', nextQ);
-    $('btnGacha').addEventListener('click', doGacha);
     $('btnAgain').addEventListener('click', function () {
       $('ovResult').classList.remove('open');
       startRound(R.mode);
@@ -2040,7 +2058,7 @@
     }
     return bad;
   }
-  window.ZUKEI_DEBUG = { checkNets: checkNets, NETS: NETS, foldFaces: foldFaces, makeNetQ: makeNetQ, makeBlockQ: makeBlockQ };
+  window.ZUKEI_DEBUG = { checkNets: checkNets, NETS: NETS, foldFaces: foldFaces, makeNetQ: makeNetQ, makeBlockQ: makeBlockQ, makeBlockRound: makeBlockRound, shapeSig: shapeSig, LVL: LVL };
   window.ZUKEI_DEBUG.cur = function () { return { q: curQ, i: R.i, ok: R.ok, mode: R.mode, total: R.qs.length }; };
 
   init();
