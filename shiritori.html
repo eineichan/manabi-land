@@ -289,19 +289,22 @@
     animation:dmgUp 1s cubic-bezier(.2,.8,.3,1) forwards;white-space:nowrap;
   }
   .dmg.crit{font-size:44px;color:#F07B2C}
+  .dmg.zero{color:#9A8C82;font-size:28px}
   @keyframes dmgUp{
     0%{opacity:0;transform:translate(-50%,12px) scale(.5)}
     22%{opacity:1;transform:translate(-50%,-4px) scale(1.16)}
     100%{opacity:0;transform:translate(-50%,-56px) scale(1)}
   }
   .dmg-badge{
-    position:absolute;left:52%;top:56%;transform:translateX(-50%);
+    position:absolute;left:52%;top:68%;transform:translateX(-50%);
     display:flex;gap:5px;animation:badgeUp 1.15s ease-out forwards;white-space:nowrap;
   }
   @keyframes badgeUp{0%{opacity:0;transform:translate(-50%,6px)}18%{opacity:1}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-16px)}}
   .db{padding:2px 9px;border-radius:999px;font-size:11px;font-weight:900;box-shadow:0 2px 6px rgba(0,0,0,.12)}
   .db.sp{background:#FFF3C4;color:#8C6220;border:2px solid #F5DFA0}
   .db.cr{background:#FFE0CE;color:#B04A16;border:2px solid #F7C4A6}
+  .db.ft{background:#E4F6EC;color:#2F7A5C;border:2px solid #B9E5CE}
+  .dmg.heal{color:#2F9E6E;font-size:30px}
   .shakeIt{animation:shakeApp .42s}
   @keyframes shakeApp{0%,100%{transform:none}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
 
@@ -404,6 +407,8 @@
   .card.trap{border-color:#E2D6F7;background:linear-gradient(180deg,#fff 0%,#FAF6FF 100%);box-shadow:0 3px 0 #EDE4FB}
   .card.trapwarn{opacity:.5;border-style:dashed;filter:saturate(.5)}
   .card.gone{animation:cardGone .3s ease forwards;pointer-events:none}
+  .card.guard{opacity:.55;filter:saturate(.5);box-shadow:0 3px 0 #EDE6D9;cursor:default;transform:none}
+  .card.guard:active{transform:none;box-shadow:0 3px 0 #EDE6D9}
   @keyframes cardGone{to{opacity:0;transform:scale(.7) rotate(7deg)}}
   .c-traptag{position:absolute;top:3px;right:6px;font-size:9px;font-weight:800;color:#9B86D6}
   .c-emo{font-size:31px;line-height:1.12}
@@ -2069,8 +2074,12 @@
   }
 
   /* ---- ことばカード ----
-     つぎの もじ から はじまる、まだ つかっていない ことば。
-     つづけられる ことばを えらぶが、しんぱいなら どんな ことばでも だす。 */
+     つぎの もじ から はじまる ことば（せいかい）と、
+     はじまらない ことば（おとり）を まぜて くばる。
+     Lv.1: せいかい 2 + おとり 2 / Lv.2・3: せいかい 1 + おとり 3
+     はじめの ばん（すきな ことばで はじめる）は、ぜんぶ せいかい。 */
+  var VALID_WANT = { 1: 2, 2: 1, 3: 1 };
+
   function pickCards(list, count, excl) {
     var pool = list.slice().sort(byLen);
     var head = pool.slice(0, Math.min(14, pool.length));
@@ -2083,11 +2092,29 @@
     return out;
   }
 
+
+  /* おとりの プール: まだ つかっていない、「つぎの もじ」から はじまらない ことば */
+  function wrongPool(used, excl, req) {
+    var out = [];
+    for (var i = 0; i < WORDS.length; i++) {
+      var it = WORDS[i];
+      if (used && used[it.w]) { continue; }
+      if (excl && excl[it.w]) { continue; }
+      if (endsWithN(it.w)) { continue; }
+      if (req && matchStart(it.w, req)) { continue; }
+      out.push(it);
+    }
+    return out;
+  }
+
   function deal(g, count, excl) {
     count = count || 4;
     var used = g.used || {};
     var req = g.req || '';
+    var lvId = (g.lv && g.lv.id) || 1;
     var i, it;
+
+    /* せいかい に なる ことば */
     var all = [];
     for (i = 0; i < WORDS.length; i++) {
       it = WORDS[i];
@@ -2097,70 +2124,103 @@
       if (excl && excl[it.w]) { continue; }
       all.push(it);
     }
-    var rescue = false;
+
+    /* つづけられる ことばが ない → すきな カードで あそぶ（フリー） */
     if (!all.length) {
-      rescue = true;
-      for (i = 0; i < WORDS.length; i++) {
-        it = WORDS[i];
-        if (used[it.w]) { continue; }
-        if (endsWithN(it.w)) { continue; }
-        if (excl && excl[it.w]) { continue; }
-        all.push(it);
+      var fc = pickCards(wrongPool(used, excl, ''), count, excl);
+      if (!fc.length) { return { cards: [], rescue: true, empty: true }; }
+      var fo = [];
+      for (i = 0; i < fc.length; i++) {
+        fo.push({ w: fc[i].w, e: fc[i].e, m: MEAN[fc[i].w] || '', free: true });
       }
+      shuffle(fo);
+      return { cards: fo, rescue: true, free: true, empty: false, valid: fo.length };
     }
-    if (!all.length) { return { cards: [], rescue: false, empty: true }; }
+
+    var base = (!req) ? count : ((count >= 4) ? (VALID_WANT[lvId] || 1) : count);
+    if (base > all.length) { base = all.length; }
+    if (base < 1) { base = 1; }
 
     var live = [], dead = [];
     for (i = 0; i < all.length; i++) {
       if (hasWordFor(endKana(all[i].w), used)) { live.push(all[i]); } else { dead.push(all[i]); }
     }
 
-    var trapSrc = req ? (TRAPS[baseKana(req)] || []) : TRAP_ALL;
-    var wantTrap = !rescue && trapSrc.length > 0 && Math.random() < 0.38;
-    var total = Math.min(count, all.length + (wantTrap ? 1 : 0));
-    var safeCount = total - (wantTrap ? 1 : 0);
-    if (safeCount < 1) { safeCount = 1; wantTrap = false; }
-
-    var cards = pickCards(live, safeCount, excl);
-    if (cards.length < safeCount) {
-      var more = pickCards(dead, safeCount - cards.length, excl);
+    var cards = pickCards(live, base, excl);
+    if (cards.length < base) {
+      var more = pickCards(dead, base - cards.length, excl);
       for (i = 0; i < more.length; i++) { cards.push(more[i]); }
     }
 
     /* 「うんち」は かならず でやすい（う から はじまる とき・はじめの ばん） */
-    if (!used['うんち'] && (!req || baseKana(req) === 'う')) {
+    if (cards.length && !used['うんち'] && (!req || baseKana(req) === 'う')) {
       var uc = findWord('うんち');
       var hasU = false;
       if (uc && !(excl && excl[uc.w])) {
         for (i = 0; i < cards.length; i++) { if (cards[i].w === 'うんち') { hasU = true; } }
-        if (!hasU) {
-          if (cards.length >= safeCount && cards.length) { cards[cards.length - 1] = uc; }
-          else { cards.push(uc); }
-        }
+        if (!hasU) { cards[cards.length - 1] = uc; }
       }
     }
 
-    /* 「ん」で おわる トラップカードを すこし だけ */
-    if (wantTrap) {
+    var taken = {};
+    for (i = 0; i < cards.length; i++) { taken[cards[i].w] = true; }
+
+    /* おとり（「ん」で おわる トラップカードは ときどき 1まい） */
+    var needDummy = Math.max(0, count - cards.length);
+    var trapSrc = req ? (TRAPS[baseKana(req)] || []) : TRAP_ALL;
+    var trapCard = null;
+    var trapChance = (lvId === 1) ? 0.3 : 0.4;
+    if (needDummy > 0 && trapSrc.length && Math.random() < trapChance) {
       var tp = [];
       for (i = 0; i < trapSrc.length; i++) {
-        if (used[trapSrc[i].w]) { continue; }
-        if (req && !matchStart(trapSrc[i].w, req)) { continue; }
-        tp.push(trapSrc[i]);
+        it = trapSrc[i];
+        if (used[it.w] || (excl && excl[it.w]) || taken[it.w]) { continue; }
+        if (req && !matchStart(it.w, req)) { continue; }
+        tp.push(it);
       }
       if (tp.length) {
         shuffle(tp);
-        cards.push({ w: tp[0].w, e: tp[0].e, trap: true });
+        trapCard = { w: tp[0].w, e: tp[0].e, m: MEAN[tp[0].w] || '', trap: true };
+        taken[trapCard.w] = true;
       }
+    }
+
+    var decoys = [];
+    var needWrong = needDummy - (trapCard ? 1 : 0);
+    if (needWrong > 0) {
+      decoys = pickCards(wrongPool(used, excl, req), needWrong, taken);
     }
 
     var out = [];
     for (i = 0; i < cards.length; i++) {
       it = cards[i];
-      out.push({ w: it.w, e: it.e, m: MEAN[it.w] || '', trap: !!it.trap });
+      out.push({ w: it.w, e: it.e, m: MEAN[it.w] || '' });
     }
+    for (i = 0; i < decoys.length; i++) {
+      it = decoys[i];
+      out.push({ w: it.w, e: it.e, m: MEAN[it.w] || '', wrong: true });
+    }
+    if (trapCard) { out.push(trapCard); }
     shuffle(out);
-    return { cards: out, rescue: rescue, empty: false };
+    return { cards: out, rescue: false, empty: false, valid: cards.length, trap: !!trapCard, free: false };
+  }
+
+  /* おとり カードを 1まい（「ん」の カードを とりのぞいた あとに つかう） */
+  function dealDecoy(g, excl) {
+    var used = g.used || {};
+    var req = g.req || '';
+    var pool = [];
+    for (var i = 0; i < WORDS.length; i++) {
+      var it = WORDS[i];
+      if (used[it.w]) { continue; }
+      if (excl && excl[it.w]) { continue; }
+      if (endsWithN(it.w)) { continue; }
+      if (req && matchStart(it.w, req)) { continue; }
+      pool.push(it);
+    }
+    var got = pickCards(pool, 1, excl);
+    if (!got.length) { return null; }
+    return { w: got[0].w, e: got[0].e, m: MEAN[got[0].w] || '', wrong: true };
   }
 
   function dealOne(g, excl) {
@@ -2232,7 +2292,7 @@
       hp: L.hp, hpMax: L.hp,
       combo: 0, maxCombo: 0,
       used: {}, chain: [], words: 0, dmg: 0, crits: 0, oops: 0, fastest: null,
-      req: '', first: true, hand: [],
+      req: '', first: true, hand: [], free: false, turnWrong: 0,
       time: 0, running: false, busy: false, over: false, won: false, endReason: ''
     };
   }
@@ -2241,6 +2301,7 @@
     g.time = 0;
     g.running = true;
     g.busy = false;
+    g.turnWrong = 0;
     return { time: 0 };
   }
 
@@ -2261,7 +2322,7 @@
     if (g.busy) { return { code: 'busy' }; }
     var ng = findNG(raw);
     if (ng) { return { code: 'ng', word: norm(raw), hit: ng }; }
-    var res = check(raw, g.req, g.used);
+    var res = check(raw, g.free ? '' : g.req, g.used);
     if (res.r === 'empty') { return { code: 'empty' }; }
     if (res.r === 'kana') { return { code: 'kana', word: res.w }; }
     if (res.r === 'short') { return { code: 'short', word: res.w }; }
@@ -2269,14 +2330,25 @@
       g.oops++;
       g.combo = 0;
       g.running = false;
+      g.turnWrong = (g.turnWrong || 0) + 1;
       return {
         code: 'miss', reason: res.r, word: res.w, req: g.req,
-        first: firstKana(res.w), left: g.hp
+        first: firstKana(res.w), left: g.hp, turnWrong: g.turnWrong
       };
     }
 
     var w = res.w;
     var d = damageFor(w, g.time, g.win);
+    if (g.turnWrong > 0) {
+      /* まちがえた あとの せいかい: 1かいなら 1ダメージ、
+         なんども おしていたら 0ダメージ（れんだ で かてない ように） */
+      var left = (g.turnWrong >= 2) ? 0 : 1;
+      d = { total: left, base: left, speed: 0, crit: 0, fast: false, isCrit: false, retry: true };
+    } else {
+      /* いちどめで せいかい: ボーナス +1 */
+      d.total += 1;
+      d.firstTry = 1;
+    }
     g.hp = Math.max(0, g.hp - d.total);
     g.dmg += d.total;
     if (d.isCrit) { g.crits++; }
@@ -2285,9 +2357,11 @@
     var it = info(w);
     g.chain.push({ w: w, e: it.e, m: it.m, who: 'you', dmg: d.total, crit: d.isCrit, known: it.known });
     g.words++;
-    g.combo++;
+    if (!d.retry) { g.combo++; }
     if (g.combo > g.maxCombo) { g.maxCombo = g.combo; }
     g.first = false;
+    g.free = false;
+    g.turnWrong = 0;
     g.running = false;
     g.busy = true;
 
@@ -2427,7 +2501,7 @@
     SPEED_CARD: SPEED_CARD, SPEED_TYPE: SPEED_TYPE,
     LEVELS: LEVELS, level: level,
     create: create, startTurn: startTurn, retry: retry, tick: tick,
-    submit: submit, robotTurn: robotTurn, deal: deal, dealOne: dealOne,
+    submit: submit, robotTurn: robotTurn, deal: deal, dealOne: dealOne, dealDecoy: dealDecoy,
     hintPool: hintPool
   };
 })(this);
@@ -3051,7 +3125,7 @@
   var G = null;
   var UI = {
     mode: 'card', lastTs: 0, busy: false, fastState: null, nextLv: 0, won: false,
-    kbPage: 'basic', kbText: '', trap2: {}
+    kbPage: 'basic', kbText: '', trap2: {}, guard: false
   };
 
   function startBattle(id, mode) {
@@ -3144,7 +3218,7 @@
       var c = el('span', 'cword ' + (it.who === 'you' ? 'you' : 'bot') + (freshLast && n === G.chain.length - 1 ? ' fresh' : ''));
       c.appendChild(el('span', 'cfx', it.e || '💬'));
       c.appendChild(el('span', null, it.w));
-      if (it.who === 'you') { c.appendChild(el('span', 'cdmg', '−' + it.dmg)); }
+      if (it.who === 'you' && it.dmg > 0) { c.appendChild(el('span', 'cdmg', '−' + it.dmg)); }
       box.appendChild(c);
     }
     try { box.scrollLeft = box.scrollWidth; } catch (e) {}
@@ -3153,7 +3227,7 @@
   function renderBanner() {
     var bn = $('banner');
     var kn = $('bannerKana');
-    if (G.first) {
+    if (G.first || G.free) {
       bn.className = 'banner first';
       kn.textContent = '✦';
       $('bannerLead1').textContent = 'すきな ことばで';
@@ -3227,7 +3301,9 @@
     if (!G) { return; }
     var r = SR.deal(G, 4);
     G.hand = r.cards;
+    G.free = !!r.free;
     var note = $('cardNote');
+    var lvId = (G.lv && G.lv.id) || 1;
     if (r.empty) {
       note.textContent = 'ことばが おわっちゃった。\nもう いちど はじめから あそぼう！';
       note.className = 'hint-note';
@@ -3235,20 +3311,52 @@
       $('cardFoot').textContent = 'ロボットは まいった！';
       return;
     }
-    if (r.rescue) {
-      note.textContent = 'ことばが すこし たりない みたい。\nすきな カードを どうぞ！';
+    if (r.free) {
+      note.textContent = 'すきな カードを えらんでね';
       note.className = 'hint-note rescue';
-      $('cardFoot').textContent = 'だいじょうぶ、まだ つづけられるよ';
+      $('cardFoot').textContent = 'ことばが すくない みたい。すきなので いいよ';
     } else if (G.first) {
       note.textContent = 'すきな カードを えらんでね';
       note.className = 'hint-note';
-      $('cardFoot').textContent = 'カードは なんどでも つかえるよ';
-    } else {
-      note.textContent = '「' + G.req + '」から はじまる ことばだよ';
+      $('cardFoot').textContent = 'よんでから えらんでね。カードは なんどでも つかえるよ';
+    } else if (lvId === 1) {
+      note.textContent = '「' + G.req + '」から はじまるのは どれかな？';
       note.className = 'hint-note';
-      $('cardFoot').textContent = 'カードは なんどでも つかえるよ';
+      $('cardFoot').textContent = 'よんでから えらんでね。カードは なんどでも つかえるよ';
+    } else {
+      note.textContent = '「' + G.req + '」から はじまる ことばは 1つ だけ！';
+      note.className = 'hint-note';
+      $('cardFoot').textContent = 'よんでから えらんでね。カードは なんどでも つかえるよ';
     }
     renderCards(r.cards);
+    guardCards();
+  }
+
+  /* カードが でた すぐは おせない（よんでから えらぶ） */
+  var CARD_GUARD_MS = 900;
+  var guardSeq = 0;
+  function guardCards() {
+    var box = $('cards');
+    if (!box) { return; }
+    var btns = box.querySelectorAll('.card');
+    var rl = $('btnReroll');
+    var tok = ++guardSeq;
+    UI.guard = true;
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].disabled = true;
+      btns[i].classList.add('guard');
+    }
+    if (rl) { rl.disabled = true; }
+    setTimeout(function () {
+      if (tok !== guardSeq) { return; }
+      UI.guard = false;
+      for (var j = 0; j < btns.length; j++) {
+        if (btns[j].classList.contains('gone')) { continue; }
+        btns[j].disabled = false;
+        btns[j].classList.remove('guard');
+      }
+      if (rl) { rl.disabled = false; }
+    }, CARD_GUARD_MS);
   }
 
   function cardNode(card) {
@@ -3271,6 +3379,7 @@
 
   function onCard(card, node) {
     if (!G || G.over || UI.busy) { return; }
+    if (UI.guard) { return; }
     ensureAudio();
     if (card.trap) { trapHit(card, node); return; }
     sfxTap();
@@ -3298,7 +3407,7 @@
       ex[w] = true;
       setTimeout(function () {
         if (!G) { return; }
-        var nc = SR.dealOne(G, ex);
+        var nc = SR.dealDecoy(G, ex) || SR.dealOne(G, ex);
         if (nc && node.parentNode) {
           node.parentNode.replaceChild(cardNode(nc), node);
           if (G.hand) {
@@ -3335,6 +3444,10 @@
   }
 
   function dmgText(d) {
+    if (d.retry) {
+      if (!d.total) { return '😴 ダメージ 0… ゆっくり えらぼう'; }
+      return '👀 よく みつけた！ ' + d.total + 'ダメージ';
+    }
     if (d.fast && d.isCrit) { return '⚡🔥 はやい＆クリティカル！ ' + d.total + 'ダメージ！'; }
     if (d.fast) { return '⚡ はやい！ ' + d.total + 'ダメージ！'; }
     if (d.isCrit) { return '🔥 クリティカル！ ' + d.total + 'ダメージ！'; }
@@ -3347,7 +3460,7 @@
     sfxNote(G.combo);
     sfxPiko(r.dmg.isCrit);
     setMood('hurt');
-    recoil();
+    if (r.dmg.total > 0) { recoil(); }
     floatDamage(r.dmg);
     renderHP(true);
     renderCombo(true);
@@ -3356,15 +3469,18 @@
     showMemo({ w: r.word, e: r.emoji, m: r.mean, known: r.known }, isNew);
     if (r.dmg.isCrit) { confetti(24); shakeStage(); }
     if (G.combo > 0 && G.combo % 5 === 0) { confetti(40); }
-    bubble('「' + r.word + '」！\n' + praise());
+    bubble(r.dmg.retry
+      ? (r.dmg.total ? '「' + r.word + '」！\nよく みつけたね。' : '「' + r.word + '」…\nなんども おすと ダメージ 0 だよ。\nゆっくり えらぼうね。')
+      : ('「' + r.word + '」！\n' + praise()));
     if (r.dmg.isCrit || (G.combo > 0 && G.combo % 3 === 0)) { speak(praise()); }
     toast(r.dmg.isCrit ? '🔥' : '⚡', dmgText(r.dmg));
     UI.kbText = '';
     if (UI.mode === 'type') { renderKb(); }
 
     var wait = r.dmg.isCrit ? 980 : 800;
+    var g0 = G;
     setTimeout(function () {
-      if (!G) { return; }
+      if (G !== g0 || !G) { return; }
       setMood('happy');
       if (r.code === 'win') { winSequence('ko'); return; }
       robotTurn();
@@ -3412,30 +3528,51 @@
     setMood('wow');
     var msg2;
     if (r.reason === 'n') {
-      msg2 = 'おっと！ 「' + r.word + '」は 「ん」で おわるよ。\nもう いっかい！';
+      msg2 = '「' + r.word + '」は 「ん」が ついちゃった！\n「ん」で おわる ことばは おしまい なんだ。';
     } else if (r.reason === 'dup') {
-      msg2 = 'おっと！ 「' + r.word + '」は もう つかったよ。\nちがう ことに しよう！';
+      msg2 = '「' + r.word + '」は もう つかったよ。\nちがう ことばを えらんでね。';
     } else {
-      msg2 = 'おっと！ 「' + r.word + '」は 「' + r.first + '」から はじまるよ。\nつぎは 「' + r.req + '」だよ！';
+      msg2 = '「' + r.first + '」から はじまらないよ！\nつぎは 「' + r.req + '」から だよ。';
     }
     bubble(msg2);
-    toast('😊', 'だいじょうぶ！ もう いっかい');
     if (srcEl) { shake(srcEl); }
     SR.retry(G);
+    var healed = false;
+    if ((r.turnWrong || 0) >= 2) { healed = healRobo(1); }
+    if (healed) { toast('🛠️', 'ロボが ちょっと げんきに なった +1'); }
+    else { toast('😊', 'だいじょうぶ！ もう いっかい'); }
     UI.lastTs = Date.now();
     renderSpeed({ fast: true });
     setTimeout(function () { if (G && !G.over) { setMood('happy'); } }, 760);
   }
 
+  /* れんだ で かてない ように、まちがいが かさなったら ロボが ちょっと かいふく */
+  function healRobo(n) {
+    if (!G || G.over) { return false; }
+    if (G.hp >= G.hpMax) { return false; }
+    var before = G.hp;
+    G.hp = Math.min(G.hpMax, G.hp + n);
+    if (G.hp === before) { return false; }
+    renderHP(true);
+    var layer = $('dmgLayer');
+    if (layer) {
+      var f = el('div', 'dmg heal', '+' + (G.hp - before));
+      layer.appendChild(f);
+      setTimeout(function () { if (f.parentNode) { f.parentNode.removeChild(f); } }, 1050);
+    }
+    return true;
+  }
+
   function floatDamage(d) {
     var layer = $('dmgLayer');
-    var n = el('div', 'dmg' + (d.isCrit ? ' crit' : ''), '−' + d.total);
+    var n = el('div', 'dmg' + (d.isCrit ? ' crit' : '') + (d.retry && !d.total ? ' zero' : ''), (d.retry && !d.total) ? '±0' : ('−' + d.total));
     layer.appendChild(n);
     setTimeout(function () { if (n.parentNode) { n.parentNode.removeChild(n); } }, 1050);
     if (d.fast || d.isCrit) {
       var b = el('div', 'dmg-badge');
       if (d.fast) { b.appendChild(el('span', 'db sp', '⚡ はやい！+1')); }
       if (d.isCrit) { b.appendChild(el('span', 'db cr', '🔥 クリティカル +1')); }
+      if (d.firstTry) { b.appendChild(el('span', 'db ft', '🎯 いちどめ +1')); }
       layer.appendChild(b);
       setTimeout(function () { if (b.parentNode) { b.parentNode.removeChild(b); } }, 1200);
     }
@@ -3452,13 +3589,14 @@
   /* ---- ロボットの ばん ---- */
   function robotTurn() {
     if (!G || G.over) { return; }
+    var g0 = G;
     setMood('think');
     thinkBubble(G.lv.think);
     sfxRobot();
     lockPanel(true);
     var wait = 760 + rnd(460) + (G.lv.id === 3 ? 160 : 0);
     setTimeout(function () {
-      if (!G || G.over) { return; }
+      if (G !== g0 || !G || G.over) { return; }
       var rr = SR.robotTurn(G);
       if (!rr) { return; }
       if (rr.giveUp) {
@@ -3477,16 +3615,16 @@
 
       if (rr.selfN) {
         setTimeout(function () {
-          if (!G) { return; }
+          if (G !== g0 || !G) { return; }
           setMood('wow');
           bubble('「' + rr.word + '」… あっ！\n「ん」が ついちゃった！');
         }, 760);
-        setTimeout(function () { winSequence('robotN'); }, 2150);
+        setTimeout(function () { if (G === g0) { winSequence('robotN'); } }, 2150);
         return;
       }
 
       setTimeout(function () {
-        if (!G || G.over) { return; }
+        if (G !== g0 || !G || G.over) { return; }
         SR.startTurn(G);
         UI.lastTs = Date.now();
         UI.busy = false;
