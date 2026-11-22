@@ -1291,7 +1291,7 @@ function quizTap(id, up, svg){
   id = Number(id);
   var target = S.qs[S.qi], p = PREF[target];
   if(!p){ return; }
-  if(nearPrefPx(target, up, 10, svg)){ id = target; }
+  if(nearPrefPx(target, up, assistPx(target, svg) - 4, svg)){ id = target; }
   if(id === target){
     var u = document.querySelector('#landQ path.pref[data-id="' + id + '"]') ||
             document.querySelector('#okiLandQ path.pref[data-id="' + id + '"]');
@@ -1373,6 +1373,14 @@ function nearPrefPx(id, up, px, svg){
   var dy = Math.max(b[1] - up.y, 0, up.y - b[3]);
   var pad = px / scaleOf(svg);
   return Math.max(dx, dy) <= pad;
+}
+/* ちいさい けんは ゆびで おしやすい ように はば を ひろげる */
+function assistPx(id, svg){
+  var g = prefGeom(id);
+  if(!g || !g.b){ return 14; }
+  var sc = scaleOf(svg) || 1, b = g.b;
+  var wpx = (b[2] - b[0]) * sc, hpx = (b[3] - b[1]) * sc;
+  return (wpx < 32 || hpx < 32) ? 22 : 14;
 }
 function bindMap(svgId, handler){
   var svg = $(svgId);
@@ -1531,7 +1539,7 @@ function onMap(id, up, svg){
     else if(id){ toast("さきに したの ピースを えらんでね", ""); AU.boop(); }
     return;
   }
-  if(Number(id) === S.sel || nearPrefPx(S.sel, up, 14, svg)){
+  if(Number(id) === S.sel || nearPrefPx(S.sel, up, assistPx(S.sel, svg), svg)){
     placePiece(S.sel);
     return;
   }
