@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#FFF3F9">
 <meta name="format-detection" content="telephone=no">
-<meta name="description" content="わくわく ゲームパーク。こくご、さんすう、しりとり、ひゃくにんいっしゅ、にほんいっしゅう、こっき、つみき＆てんかいずの 7つの ゲームが あるよ。">
+<meta name="description" content="わくわく ゲームパーク。こくご、さんすう、しりとり、ひゃくにんいっしゅ、にほんちず、こっき、つみき＆てんかいずの 7つの ゲームが あるよ。">
 <meta name="apple-mobile-web-app-title" content="わくわくゲームパーク">
 <title>🎉 わくわく ゲームパーク</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23FFB3D2'/%3E%3Cstop offset='1' stop-color='%23FF7FB0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='26' fill='url(%23g)'/%3E%3Cpath d='M50 16c3 12 7 20 12 26 6 5 14 8 22 8-8 0-16 3-22 8-5 6-9 14-12 26-3-12-7-20-12-26-6-5-14-8-22-8 8 0 16-3 22-8 5-6 9-14 12-26z' fill='%23fff'/%3E%3Ccircle cx='24' cy='24' r='7' fill='%23FFF178'/%3E%3Ccircle cx='78' cy='78' r='5' fill='%237BE0C0'/%3E%3C/svg%3E">
@@ -461,11 +461,11 @@
       <span class="prog" data-app="hyakunin" aria-hidden="true"><span class="pbar"><i></i></span><span class="ptxt">これから！</span></span>
     </a>
 
-    <a class="card c-todofuken" href="todofuken.html" aria-label="にほんいっしゅう クイズで あそぶ">
+    <a class="card c-todofuken" href="todofuken.html" aria-label="にほんちず パズルで あそぶ">
       <span class="tw" aria-hidden="true">✨</span>
-      <span class="ico" aria-hidden="true">🚄</span>
-      <span class="name"><span class="w">にほんいっしゅう</span> <span class="w">クイズ</span></span>
-      <span class="desc"><span class="w">しんかんせんで</span> <span class="w">めいぶつ</span> <span class="w">たび！</span></span>
+      <span class="ico" aria-hidden="true">🗾</span>
+      <span class="name"><span class="w">にほんちず</span> <span class="w">パズル</span></span>
+      <span class="desc"><span class="w">ちずに</span> <span class="w">ピースを</span> <span class="w">はめよう！</span></span>
       <span class="prog" data-app="todofuken" aria-hidden="true"><span class="pbar"><i></i></span><span class="ptxt">これから！</span></span>
     </a>
 
@@ -728,7 +728,7 @@
     'sansu-board-v2',
     'shiritori-robot-v3',
     'hyakunin-isshu-v2',
-    'todofuken-sugoroku-v2', 'todofuken-puzzle-v1',
+    'todofuken-map-v1', 'todofuken-sugoroku-v2', 'todofuken-puzzle-v1',
     'kokki-flashcard-v2', 'kokki-flashcard-v1',
     'zukei-v1'
   ];
@@ -747,8 +747,8 @@
     'wakuwaku-park': 'プレイヤー（ぜんぶの アプリで いっしょ）',
     'kotoba-quiz-v2': 'こくご クイズ', 'kotoba-gacha-v2': 'こくご クイズ',
     'sansu-board-v2': 'さんすう ボード', 'shiritori-robot-v3': 'しりとり ロボ',
-    'hyakunin-isshu-v2': 'ひゃくにん いっしゅ', 'todofuken-sugoroku-v2': 'にほんいっしゅう クイズ',
-    'todofuken-puzzle-v1': 'にほんいっしゅう クイズ',
+    'hyakunin-isshu-v2': 'ひゃくにん いっしゅ', 'todofuken-map-v1': 'にほんちず パズル',
+    'todofuken-sugoroku-v2': 'にほんいっしゅう クイズ', 'todofuken-puzzle-v1': 'にほんいっしゅう クイズ',
     'kokki-flashcard-v2': 'せかいの こっき', 'kokki-flashcard-v1': 'せかいの こっき',
     'zukei-v1': 'つみき＆てんかいず'
   };
@@ -852,6 +852,25 @@
   }
 
   function todofukenRows() {
+    /* にほんちず パズル（v1）：ちずに おいた けん と ⭐ */
+    var mpl = asPlayers('todofuken-map-v1:players');
+    var mout = [], mi;
+    for (mi = 0; mi < mpl.length; mi++) {
+      if (!mpl[mi] || !mpl[mi].id) { continue; }
+      var ms = readJSON('todofuken-map-v1:p:' + mpl[mi].id) || {};
+      var mn = ms.placed ? Object.keys(ms.placed).length : 0;
+      var mst = Number(ms.stars) || 0;
+      mout.push({ icon: mpl[mi].icon || '🗾', who: mpl[mi].name, n: mn,
+        memo: 'ちずに おいた ' + mn + ' / 47' + (mst ? '・⭐ ' + mst : '') });
+    }
+    if (mout.length) { return mout; }
+    var gs = readJSON('todofuken-map-v1:p:guest') || {};
+    var gn = gs.placed ? Object.keys(gs.placed).length : 0;
+    if (gn > 0) {
+      mout.push({ icon: '🗾', who: 'きろく', n: gn,
+        memo: 'ちずに おいた ' + gn + ' / 47' + (Number(gs.stars) ? '・⭐ ' + gs.stars : '') });
+      return mout;
+    }
     var app = readJSON('todofuken-sugoroku-v2') || {};
     var pl = Array.isArray(app.players) ? app.players : [];
     var out = [], i;
@@ -963,10 +982,10 @@
   }
 
   /* ---------------- parent summary ---------------- */
-  var EMOJI = { kokugo: '📚', sansu: '🔢', shiritori: '🤖', hyakunin: '🎋', todofuken: '🚄', kokki: '🏳️', zukei: '🧊' };
+  var EMOJI = { kokugo: '📚', sansu: '🔢', shiritori: '🤖', hyakunin: '🎋', todofuken: '🗾', kokki: '🏳️', zukei: '🧊' };
   var LABEL = {
     kokugo: 'こくご クイズ', sansu: 'さんすう ボード', shiritori: 'しりとり ロボ',
-    hyakunin: 'ひゃくにん いっしゅ', todofuken: 'にほんいっしゅう クイズ', kokki: 'せかいの こっき',
+    hyakunin: 'ひゃくにん いっしゅ', todofuken: 'にほんちず パズル', kokki: 'せかいの こっき',
     zukei: 'つみき＆てんかいず'
   };
 
